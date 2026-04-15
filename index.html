@@ -330,9 +330,21 @@ input,select,textarea{font:inherit;color:inherit}
   </div>
 </div>
 
+<!-- JSZip for batch download -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-<script>
+<!-- fal.ai official client via ESM shim -->
+<script type="importmap">
+{
+  "imports": {
+    "@fal-ai/client": "https://esm.sh/@fal-ai/client@1"
+  }
+}
+</script>
+
+<script type="module">
+import { fal } from "@fal-ai/client";
+
 // ─── PROMPTS ───────────────────────────────────────────────────────────────
 const PROMPTS = {
   general: `You are a professional sports photographer and retoucher. Transform this athlete photo into a standardized professional profile image.
@@ -362,103 +374,67 @@ APPEARANCE — PRESERVE EXACTLY:
 - All tattoos and scars — keep exactly as they appear
 - Hairstyle — preserve the original style and shape, but if hair is wet or sweaty make it appear dry and natural
 - Beard and facial hair — keep exactly as is, do not trim or alter
-- Eyebrows, facial features — no alterations
 
 RETOUCHING:
 - Remove any visible injuries: bruises, cuts, swelling, redness from recent fights or matches
 - Do not retouch healthy skin — no smoothing, no airbrushing, no beautification
 
-EDGES & QUALITY:
-- The athlete must have sharp, precise edges — clean separation from background
-- Preserve all fine details: hair strands, fabric texture, skin pores
-- Output at high resolution, professional studio quality
-
 OUTPUT:
 - 1:1 square PNG, minimum 512×512 pixels
 - White background (#FFFFFF), flat and uniform
 - Professional sports profile image suitable for a betting or sports website`,
+
   combat: `You are a professional sports photographer and retoucher. Transform this combat sports athlete photo into a standardized professional profile image.
 
 ORIENTATION & POSE:
 - The athlete must face directly toward the camera — front-facing portrait (en face)
-- If the athlete is turned sideways or at an angle, rotate and reconstruct them to face forward
-- Expression must be calm, neutral, and relaxed — no smile, no frown, no tension, no aggression
+- Expression must be calm, neutral, and relaxed
 
 CROP & FRAMING:
 - Crop to a perfect 1:1 square format
-- Frame from the very top of the head down to just above the armpits at collarbone level
+- Frame from the very top of the head down to just above the armpits
 - Center the athlete perfectly within the square
-- No excessive empty space above the head
 
 BACKGROUND:
-- Replace the background with a completely clean, pure white (#FFFFFF) background
-- The white background must be flat and uniform — no gradients, no vignette, no shadows behind the athlete
-- Remove any environmental elements: ring, cage, gym, crowd, arena lighting
+- Replace with a completely clean, pure white (#FFFFFF) background
+- Remove any environmental elements: ring, cage, gym, crowd
 
 CLOTHING & EQUIPMENT:
-- Male athletes: remove all upper body clothing — no shirt, no jersey, no rash guard, no tank top. The athlete must be shown shirtless from the waist up
-- Female athletes: keep sports bra or athletic top as worn — do not remove it
-- Remove all fight equipment: boxing gloves, MMA gloves, hand wraps, bandages on hands, mouthguard/mouthpiece
-- Remove any headgear or protective equipment
+- Male athletes: remove all upper body clothing — shirtless from waist up
+- Female athletes: keep sports bra or athletic top
+- Remove all fight equipment: gloves, hand wraps, mouthguard, headgear
 
 APPEARANCE — PRESERVE EXACTLY:
-- Skin tone, complexion, muscle definition, and all natural body details — preserve with full accuracy
-- All tattoos and scars anywhere on the visible body — keep exactly as they appear
-- Hairstyle — preserve the original style and shape, but if hair is wet or sweaty make it appear dry and natural
-- Beard and facial hair — keep exactly as is, do not trim or alter
-- Facial features — no alterations to natural appearance
-
-RETOUCHING:
-- Remove any visible fight injuries: bruises, cuts, swellings, blood, redness, black eyes
-- Do not retouch healthy skin — no smoothing, no airbrushing, no beautification beyond injury removal
-
-EDGES & QUALITY:
-- The athlete must have sharp, precise edges — clean separation from background
-- Preserve all fine details: hair strands, skin texture, muscle definition
-- Output at high resolution, professional studio quality
+- Skin tone, muscle definition, tattoos and scars — keep exactly as they appear
+- Hairstyle, beard — keep exactly as is
+- Remove fight injuries: bruises, cuts, swellings, blood, black eyes
 
 OUTPUT:
 - 1:1 square PNG, minimum 512×512 pixels
-- White background (#FFFFFF), flat and uniform
-- Professional combat sports profile image suitable for a betting or sports website`
+- White background (#FFFFFF)
+- Professional combat sports profile image`
 };
 
-const LOGO_PROMPT = `You are a professional image editor. Your task is to process a sports team logo/emblem with maximum precision.
-
-BACKGROUND REMOVAL:
-- Remove the background completely and make it fully transparent (alpha channel = 0)
-- Preserve the exact silhouette shape of the logo — do not simplify, round, or alter the outline in any way
-- If the logo has internal transparent elements (holes in letters, gaps in design) — make those transparent as well
-- Do not add any white matte or color fill around the edges
-
-EDGE QUALITY:
-- All edges must be sharp, crisp, and pixel-perfect — no soft anti-aliasing bleed, no fuzzy borders
-- Clean up any compression artifacts, halos, or fringing left from the original background
-
-LOGO CONTENT — PRESERVE EXACTLY:
-- Keep all text and team name lettering exactly as-is
-- Preserve all internal shadows, gradients, glows, and depth effects within the logo itself
-- Preserve all colors with full accuracy — do not alter hue, saturation, or brightness
-- Keep every detail: fine lines, small decorative elements, emblems within emblems
-
-RECONSTRUCTION:
-- If the original logo is low resolution, pixelated, or blurry — reconstruct and sharpen all details intelligently
-- Infer missing details from visible context and redraw them at high quality
-- Upscale the result to 512×512 pixels
-
-OUTPUT REQUIREMENTS:
-- Final size: exactly 512×512 pixels
-- Format: PNG with full transparency
-- Crop tightly to the logo — no padding, logo fills the canvas edge to edge
-- Do not add watermarks, backgrounds, shadows behind the logo, or any new elements`;
+const LOGO_PROMPT = `Process this sports team logo/emblem:
+- Remove background completely, make fully transparent
+- Preserve exact logo silhouette and all internal details
+- Sharp, crisp pixel-perfect edges — no halos or fringing
+- Keep all colors, gradients, shadows exactly as-is
+- Reconstruct and sharpen if low resolution
+- Output: 512×512 PNG with full transparency, tight crop`;
 
 // ─── STATE ─────────────────────────────────────────────────────────────────
-// Pre-fill the fal.ai key from the query (user can override via modal)
 let apiKey = localStorage.getItem('fal-api-key') || '59889dc7-7024-4b15-bc6e-1e26182c28a6:1a05ab0e87cfa3a0c50c65950cd06684';
 let logoFiles = [];
 let playerFiles = [];
 let logoResults = {};
 let playerResults = {};
+
+// Configure fal client with key
+function configureFal() {
+  fal.config({ credentials: apiKey });
+}
+configureFal();
 
 // ─── THEME ─────────────────────────────────────────────────────────────────
 let theme = localStorage.getItem('theme') || 'dark';
@@ -471,6 +447,8 @@ function toggleTheme() {
   localStorage.setItem('theme', theme);
   updateThemeIcon();
 }
+window.toggleTheme = toggleTheme;
+
 function updateThemeIcon() {
   const icon = document.getElementById('themeIcon');
   if (theme === 'dark') {
@@ -505,9 +483,14 @@ function saveApiKey() {
   if (!val) return;
   apiKey = val;
   localStorage.setItem('fal-api-key', apiKey);
+  configureFal(); // re-configure fal client with new key
   updateApiStatus();
   closeApiModal();
 }
+window.openApiModal = openApiModal;
+window.closeApiModal = closeApiModal;
+window.saveApiKey = saveApiKey;
+
 document.getElementById('apiModal').addEventListener('click', e => {
   if (e.target === document.getElementById('apiModal')) closeApiModal();
 });
@@ -519,6 +502,7 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('panel-' + tab).classList.add('active');
 }
+window.switchTab = switchTab;
 
 // ─── DRAG & DROP ───────────────────────────────────────────────────────────
 ['logo', 'player'].forEach(type => {
@@ -538,45 +522,18 @@ function updatePrompt() {
   const cat = document.getElementById('sportCategory').value;
   document.getElementById('playerPrompt').value = PROMPTS[cat];
 }
+window.updatePrompt = updatePrompt;
 updatePrompt();
 
-// ─── FAL.AI HELPERS ────────────────────────────────────────────────────────
-
-// Step 1: Upload file to fal.ai storage, get back a URL
-async function uploadToFal(file) {
-  const resp = await fetch('https://rest.fal.run/storage/upload/initiate', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Key ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ content_type: file.type, file_name: file.name })
-  });
-  if (!resp.ok) throw new Error(`fal.ai storage initiate error: ${await resp.text()}`);
-  const { upload_url, file_url } = await resp.json();
-
-  const uploadResp = await fetch(upload_url, {
-    method: 'PUT',
-    headers: { 'Content-Type': file.type },
-    body: file
-  });
-  if (!uploadResp.ok) throw new Error(`fal.ai upload error: ${uploadResp.status}`);
-  return file_url;
-}
-
-// Step 2: Call fal-ai/flux-1/dev/image-to-image with image_url + prompt
+// ─── FAL.AI CALL (uses official SDK — handles upload + CORS automatically) ─
 async function callFalImageEdit(file, prompt) {
   if (!apiKey) throw new Error('fal.ai API key not set');
 
-  const imageUrl = await uploadToFal(file);
+  // fal.storage.upload handles multipart upload with correct CORS headers
+  const imageUrl = await fal.storage.upload(file);
 
-  const resp = await fetch('https://rest.fal.run/fal-ai/flux-1/dev/image-to-image', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Key ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
+  const result = await fal.subscribe('fal-ai/flux-1/dev/image-to-image', {
+    input: {
       image_url: imageUrl,
       prompt: prompt,
       strength: 0.85,
@@ -584,25 +541,22 @@ async function callFalImageEdit(file, prompt) {
       guidance_scale: 3.5,
       num_images: 1,
       output_format: 'png'
-    })
+    },
+    logs: false
   });
 
-  if (!resp.ok) throw new Error(`fal.ai API error: ${(await resp.text()).slice(0, 200)}`);
-  const data = await resp.json();
-
-  // result image URL from fal.ai
-  const resultImageUrl = data?.images?.[0]?.url;
+  const resultImageUrl = result?.data?.images?.[0]?.url ?? result?.images?.[0]?.url;
   if (!resultImageUrl) throw new Error('fal.ai returned no image');
 
-  // Fetch the image and convert to base64
   const imgResp = await fetch(resultImageUrl);
+  if (!imgResp.ok) throw new Error('Failed to fetch result image from fal CDN');
   const blob = await imgResp.blob();
   const base64 = await blobToBase64(blob);
-  return { mimeType: 'image/png', data: base64, url: resultImageUrl };
+  return { mimeType: 'image/png', data: base64 };
 }
 
 async function blobToBase64(blob) {
-  return new Promise((res) => {
+  return new Promise(res => {
     const r = new FileReader();
     r.onload = () => res(r.result.split(',')[1]);
     r.readAsDataURL(blob);
@@ -634,7 +588,7 @@ async function removeBgBrowser(dataUrl) {
   return URL.createObjectURL(resultBlob);
 }
 
-// ─── UPSCALE via Canvas ────────────────────────────────────────────────────
+// ─── UPSCALE ───────────────────────────────────────────────────────────────
 async function upscaleImage(file, scale = 2) {
   return new Promise(res => {
     const img = new Image();
@@ -662,6 +616,7 @@ function handleLogoFiles(files) {
   document.getElementById('logoProcessBtn').disabled = logoFiles.length === 0;
   document.getElementById('logoQueueCount').textContent = logoFiles.length ? `(${logoFiles.length})` : '';
 }
+window.handleLogoFiles = handleLogoFiles;
 
 function renderLogoQueue() {
   const grid = document.getElementById('logoQueue');
@@ -680,16 +635,18 @@ function renderLogoQueue() {
       <div class="queue-item-info">
         <div class="queue-item-name" title="${f.name}">${f.name}</div>
         <div class="queue-item-status">
-          <span class="status-dot ${res ? 'done' : ''}"></span>
-          <span>${res ? 'Ready' : 'Pending'}</span>
+          <span class="status-dot ${res ? (res.error ? 'error' : 'done') : ''}"></span>
+          <span>${res ? (res.error ? 'Error' : 'Ready') : 'Pending'}</span>
         </div>
-        ${res && !res.error ? `<button class="btn-download" onclick="downloadSingle('${f.name}','logo')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download PNG
-        </button>` : `<button class="btn-process-single" onclick="processSingleLogo(${i})">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Process
-        </button>`}
+        ${res && !res.error
+          ? `<button class="btn-download" onclick="downloadSingle('${f.name}','logo')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download PNG
+            </button>`
+          : `<button class="btn-process-single" onclick="processSingleLogo(${i})">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Process
+            </button>`}
       </div>
     </div>`;
   }).join('');
@@ -703,6 +660,7 @@ function handlePlayerFiles(files) {
   document.getElementById('playerProcessBtn').disabled = playerFiles.length === 0;
   document.getElementById('playerQueueCount').textContent = playerFiles.length ? `(${playerFiles.length})` : '';
 }
+window.handlePlayerFiles = handlePlayerFiles;
 
 function renderPlayerQueue() {
   const grid = document.getElementById('playerQueue');
@@ -721,16 +679,18 @@ function renderPlayerQueue() {
       <div class="queue-item-info">
         <div class="queue-item-name" title="${f.name}">${f.name}</div>
         <div class="queue-item-status">
-          <span class="status-dot ${res ? 'done' : ''}"></span>
-          <span>${res ? 'Ready' : 'Pending'}</span>
+          <span class="status-dot ${res ? (res.error ? 'error' : 'done') : ''}"></span>
+          <span>${res ? (res.error ? 'Error' : 'Ready') : 'Pending'}</span>
         </div>
-        ${res && !res.error ? `<button class="btn-download" onclick="downloadSingle('${f.name}','player')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download PNG
-        </button>` : `<button class="btn-process-single" onclick="processSinglePlayer(${i})">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Process
-        </button>`}
+        ${res && !res.error
+          ? `<button class="btn-download" onclick="downloadSingle('${f.name}','player')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download PNG
+            </button>`
+          : `<button class="btn-process-single" onclick="processSinglePlayer(${i})">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Process
+            </button>`}
       </div>
     </div>`;
   }).join('');
@@ -746,25 +706,17 @@ async function processLogoQueue() {
   btn.disabled = true;
   btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Processing...`;
   bar.style.display = 'block';
-
   const method = document.getElementById('logoBgMethod').value;
 
   for (let i = 0; i < logoFiles.length; i++) {
     const f = logoFiles[i];
     fill.style.width = ((i / logoFiles.length) * 100) + '%';
-    const item = document.getElementById(`logo-item-${i}`);
-    if (item) {
-      const dot = item.querySelector('.status-dot');
-      const status = item.querySelector('.queue-item-status span:last-child');
-      if (dot) dot.className = 'status-dot processing';
-      if (status) status.textContent = 'Processing…';
-    }
+    updateItemStatus(`logo-item-${i}`, 'processing', 'Processing…');
     try {
       let resultUrl;
       if (method === 'fal') {
         const { mimeType, data } = await callFalImageEdit(f, LOGO_PROMPT);
-        resultUrl = `data:${mimeType};base64,${data}`;
-        resultUrl = await removeBgBrowser(resultUrl);
+        resultUrl = await removeBgBrowser(`data:${mimeType};base64,${data}`);
       } else {
         const upscaled = await upscaleImage(f, 2);
         resultUrl = await removeBgBrowser(upscaled);
@@ -772,14 +724,7 @@ async function processLogoQueue() {
       logoResults[f.name] = { url: resultUrl };
     } catch(e) {
       logoResults[f.name] = { url: URL.createObjectURL(f), error: e.message };
-      const item = document.getElementById(`logo-item-${i}`);
-      if (item) {
-        const dot = item.querySelector('.status-dot');
-        const status = item.querySelector('.queue-item-status span:last-child');
-        if (dot) dot.className = 'status-dot error';
-        if (status) status.textContent = 'Error: ' + e.message.slice(0, 40);
-      }
-      continue;
+      updateItemStatus(`logo-item-${i}`, 'error', 'Error: ' + e.message.slice(0, 40));
     }
   }
 
@@ -787,9 +732,10 @@ async function processLogoQueue() {
   setTimeout(() => { bar.style.display = 'none'; fill.style.width = '0%'; }, 1000);
   btn.disabled = false;
   btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Process All Logos`;
-  document.getElementById('logoDownloadAll').style.display = 'flex';
+  if (Object.values(logoResults).some(r => !r.error)) document.getElementById('logoDownloadAll').style.display = 'flex';
   renderLogoQueue();
 }
+window.processLogoQueue = processLogoQueue;
 
 // ─── PROCESS PLAYER QUEUE ──────────────────────────────────────────────────
 async function processPlayerQueue() {
@@ -806,33 +752,15 @@ async function processPlayerQueue() {
   for (let i = 0; i < playerFiles.length; i++) {
     const f = playerFiles[i];
     fill.style.width = ((i / playerFiles.length) * 100) + '%';
-    const item = document.getElementById(`player-item-${i}`);
-    if (item) {
-      const dot = item.querySelector('.status-dot');
-      const status = item.querySelector('.queue-item-status span:last-child');
-      if (dot) dot.className = 'status-dot processing';
-      if (status) status.textContent = 'Uploading to fal.ai…';
-    }
+    updateItemStatus(`player-item-${i}`, 'processing', 'Uploading…');
     try {
       const { mimeType, data } = await callFalImageEdit(f, prompt);
-      let resultUrl = `data:${mimeType};base64,${data}`;
-      const item2 = document.getElementById(`player-item-${i}`);
-      if (item2) {
-        const status = item2.querySelector('.queue-item-status span:last-child');
-        if (status) status.textContent = 'Removing bg…';
-      }
-      resultUrl = await removeBgBrowser(resultUrl);
+      updateItemStatus(`player-item-${i}`, 'processing', 'Removing bg…');
+      const resultUrl = await removeBgBrowser(`data:${mimeType};base64,${data}`);
       playerResults[f.name] = { url: resultUrl };
     } catch(e) {
       playerResults[f.name] = { url: URL.createObjectURL(f), error: e.message };
-      const item2 = document.getElementById(`player-item-${i}`);
-      if (item2) {
-        const dot = item2.querySelector('.status-dot');
-        const status = item2.querySelector('.queue-item-status span:last-child');
-        if (dot) dot.className = 'status-dot error';
-        if (status) status.textContent = 'Error: ' + e.message.slice(0, 40);
-      }
-      continue;
+      updateItemStatus(`player-item-${i}`, 'error', 'Error: ' + e.message.slice(0, 40));
     }
   }
 
@@ -840,29 +768,23 @@ async function processPlayerQueue() {
   setTimeout(() => { bar.style.display = 'none'; fill.style.width = '0%'; }, 1000);
   btn.disabled = false;
   btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Process All Players`;
-  document.getElementById('playerDownloadAll').style.display = 'flex';
+  if (Object.values(playerResults).some(r => !r.error)) document.getElementById('playerDownloadAll').style.display = 'flex';
   renderPlayerQueue();
 }
+window.processPlayerQueue = processPlayerQueue;
 
 // ─── PROCESS SINGLE ────────────────────────────────────────────────────────
 async function processSingleLogo(idx) {
   const f = logoFiles[idx];
   if (!f) return;
   if (!apiKey) { openApiModal(); return; }
-  const item = document.getElementById(`logo-item-${idx}`);
-  const dot = item?.querySelector('.status-dot');
-  const status = item?.querySelector('.queue-item-status span:last-child');
-  const btn = item?.querySelector('.btn-process-single');
-  if (dot) dot.className = 'status-dot processing';
-  if (status) status.textContent = 'Processing…';
-  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  updateItemStatus(`logo-item-${idx}`, 'processing', 'Processing…');
   const method = document.getElementById('logoBgMethod').value;
   try {
     let resultUrl;
     if (method === 'fal') {
       const { mimeType, data } = await callFalImageEdit(f, LOGO_PROMPT);
-      resultUrl = `data:${mimeType};base64,${data}`;
-      resultUrl = await removeBgBrowser(resultUrl);
+      resultUrl = await removeBgBrowser(`data:${mimeType};base64,${data}`);
     } else {
       const upscaled = await upscaleImage(f, 2);
       resultUrl = await removeBgBrowser(upscaled);
@@ -870,43 +792,45 @@ async function processSingleLogo(idx) {
     logoResults[f.name] = { url: resultUrl };
   } catch(e) {
     logoResults[f.name] = { url: URL.createObjectURL(f), error: e.message };
-    if (dot) dot.className = 'status-dot error';
-    if (status) status.textContent = 'Error: ' + e.message.slice(0, 40);
+    updateItemStatus(`logo-item-${idx}`, 'error', 'Error: ' + e.message.slice(0, 40));
     return;
   }
   if (Object.values(logoResults).some(r => !r.error)) document.getElementById('logoDownloadAll').style.display = 'flex';
   renderLogoQueue();
 }
+window.processSingleLogo = processSingleLogo;
 
 async function processSinglePlayer(idx) {
   const f = playerFiles[idx];
   if (!f) return;
   if (!apiKey) { openApiModal(); return; }
-  const item = document.getElementById(`player-item-${idx}`);
-  const dot = item?.querySelector('.status-dot');
-  const status = item?.querySelector('.queue-item-status span:last-child');
-  const btn = item?.querySelector('.btn-process-single');
-  if (dot) dot.className = 'status-dot processing';
-  if (status) status.textContent = 'Uploading to fal.ai…';
-  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  updateItemStatus(`player-item-${idx}`, 'processing', 'Uploading…');
   const prompt = document.getElementById('playerPrompt').value;
   try {
     const { mimeType, data } = await callFalImageEdit(f, prompt);
-    let resultUrl = `data:${mimeType};base64,${data}`;
-    if (status) status.textContent = 'Removing bg…';
-    resultUrl = await removeBgBrowser(resultUrl);
+    updateItemStatus(`player-item-${idx}`, 'processing', 'Removing bg…');
+    const resultUrl = await removeBgBrowser(`data:${mimeType};base64,${data}`);
     playerResults[f.name] = { url: resultUrl };
   } catch(e) {
     playerResults[f.name] = { url: URL.createObjectURL(f), error: e.message };
-    if (dot) dot.className = 'status-dot error';
-    if (status) status.textContent = 'Error: ' + e.message.slice(0, 40);
+    updateItemStatus(`player-item-${idx}`, 'error', 'Error: ' + e.message.slice(0, 40));
     return;
   }
   if (Object.values(playerResults).some(r => !r.error)) document.getElementById('playerDownloadAll').style.display = 'flex';
   renderPlayerQueue();
 }
+window.processSinglePlayer = processSinglePlayer;
 
-// ─── DOWNLOADS ─────────────────────────────────────────────────────────────
+// ─── HELPERS ───────────────────────────────────────────────────────────────
+function updateItemStatus(itemId, dotClass, text) {
+  const item = document.getElementById(itemId);
+  if (!item) return;
+  const dot = item.querySelector('.status-dot');
+  const status = item.querySelector('.queue-item-status span:last-child');
+  if (dot) dot.className = `status-dot ${dotClass}`;
+  if (status) status.textContent = text;
+}
+
 function getBaseName(filename) {
   return filename.replace(/\.[^.]+$/, '');
 }
@@ -920,6 +844,7 @@ function downloadSingle(name, type) {
   a.download = getBaseName(name) + '_processed.png';
   a.click();
 }
+window.downloadSingle = downloadSingle;
 
 async function downloadAll(type) {
   const results = type === 'logo' ? logoResults : playerResults;
@@ -937,6 +862,7 @@ async function downloadAll(type) {
   a.download = (type === 'logo' ? 'logos' : 'players') + '_processed.zip';
   a.click();
 }
+window.downloadAll = downloadAll;
 
 // ─── SPIN KEYFRAME ─────────────────────────────────────────────────────────
 const style = document.createElement('style');
@@ -946,6 +872,7 @@ document.head.appendChild(style);
 // ─── INIT ──────────────────────────────────────────────────────────────────
 updateApiStatus();
 if (!apiKey) setTimeout(openApiModal, 800);
+
 </script>
 </body>
 </html>
