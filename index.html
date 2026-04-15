@@ -817,7 +817,7 @@ async function processLogoQueue() {
 // ─── PROCESS PLAYER QUEUE ──────────────────────────────────────────────────
 async function processPlayerQueue() {
   if (playerFiles.length === 0) return;
-  if (!apiKey) { openApiModal(); return; }
+  if (!hfToken) { alert('No HuggingFace token set'); return; }
   const btn = document.getElementById('playerProcessBtn');
   const bar = document.getElementById('playerProgressBar');
   const fill = document.getElementById('playerProgressFill');
@@ -904,7 +904,7 @@ async function processSingleLogo(idx) {
 async function processSinglePlayer(idx) {
   const f = playerFiles[idx];
   if (!f) return;
-  if (!apiKey) { openApiModal(); return; }
+  if (!hfToken) { alert('No HuggingFace token set'); return; }
   const item = document.getElementById(`player-item-${idx}`);
   const dot = item?.querySelector('.status-dot');
   const status = item?.querySelector('.queue-item-status span:last-child');
