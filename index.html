@@ -24,46 +24,22 @@
   --font-display:'Space Grotesk',sans-serif;
 }
 [data-theme="dark"]{
-  --bg:#0f0f0f;
-  --surface:#161616;
-  --surface-2:#1e1e1e;
-  --surface-3:#252525;
-  --border:rgba(255,255,255,0.08);
-  --border-strong:rgba(255,255,255,0.14);
-  --text:#e8e8e8;
-  --text-muted:#888;
-  --text-faint:#555;
-  --accent:#3b82f6;
-  --accent-hover:#2563eb;
-  --accent-subtle:rgba(59,130,246,0.12);
-  --success:#22c55e;
-  --success-subtle:rgba(34,197,94,0.12);
-  --warning:#f59e0b;
-  --error:#ef4444;
-  --shadow-sm:0 1px 3px rgba(0,0,0,0.4);
-  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
-  --shadow-lg:0 12px 40px rgba(0,0,0,0.6);
+  --bg:#0f0f0f;--surface:#161616;--surface-2:#1e1e1e;--surface-3:#252525;
+  --border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.14);
+  --text:#e8e8e8;--text-muted:#888;--text-faint:#555;
+  --accent:#3b82f6;--accent-hover:#2563eb;--accent-subtle:rgba(59,130,246,0.12);
+  --success:#22c55e;--success-subtle:rgba(34,197,94,0.12);
+  --warning:#f59e0b;--error:#ef4444;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.4);--shadow-md:0 4px 16px rgba(0,0,0,0.5);--shadow-lg:0 12px 40px rgba(0,0,0,0.6);
 }
 [data-theme="light"]{
-  --bg:#f5f5f5;
-  --surface:#ffffff;
-  --surface-2:#f9f9f9;
-  --surface-3:#f0f0f0;
-  --border:rgba(0,0,0,0.08);
-  --border-strong:rgba(0,0,0,0.14);
-  --text:#111;
-  --text-muted:#666;
-  --text-faint:#aaa;
-  --accent:#2563eb;
-  --accent-hover:#1d4ed8;
-  --accent-subtle:rgba(37,99,235,0.1);
-  --success:#16a34a;
-  --success-subtle:rgba(22,163,74,0.1);
-  --warning:#d97706;
-  --error:#dc2626;
-  --shadow-sm:0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md:0 4px 16px rgba(0,0,0,0.1);
-  --shadow-lg:0 12px 40px rgba(0,0,0,0.15);
+  --bg:#f5f5f5;--surface:#ffffff;--surface-2:#f9f9f9;--surface-3:#f0f0f0;
+  --border:rgba(0,0,0,0.08);--border-strong:rgba(0,0,0,0.14);
+  --text:#111;--text-muted:#666;--text-faint:#aaa;
+  --accent:#2563eb;--accent-hover:#1d4ed8;--accent-subtle:rgba(37,99,235,0.1);
+  --success:#16a34a;--success-subtle:rgba(22,163,74,0.1);
+  --warning:#d97706;--error:#dc2626;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.08);--shadow-md:0 4px 16px rgba(0,0,0,0.1);--shadow-lg:0 12px 40px rgba(0,0,0,0.15);
 }
 html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth}
 body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--text);background:var(--bg);line-height:1.6}
@@ -72,7 +48,6 @@ button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;tra
 input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--radius-sm)}
 
-/* LAYOUT */
 .app{display:flex;flex-direction:column;min-height:100dvh}
 .header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-8);border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
 .logo-mark{display:flex;align-items:center;gap:var(--space-3)}
@@ -95,7 +70,6 @@ input,select,textarea{font:inherit;color:inherit}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
-/* UPLOAD ZONE */
 .module-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);align-items:start}
 @media(max-width:900px){.module-grid{grid-template-columns:1fr}}
 
@@ -107,7 +81,6 @@ input,select,textarea{font:inherit;color:inherit}
 .upload-zone p{font-size:var(--text-sm);color:var(--text-muted)}
 .upload-zone .formats{font-size:var(--text-xs);color:var(--text-faint);margin-top:var(--space-2)}
 
-/* SETTINGS PANEL */
 .settings-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:var(--space-6)}
 .settings-panel h3{font-family:var(--font-display);font-weight:600;font-size:var(--text-base);margin-bottom:var(--space-5)}
 .field{margin-bottom:var(--space-5)}
@@ -120,7 +93,6 @@ input,select,textarea{font:inherit;color:inherit}
 .btn-primary:active{transform:scale(0.98)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-/* QUEUE */
 .queue-section{margin-top:var(--space-8)}
 .queue-section h3{font-family:var(--font-display);font-weight:600;font-size:var(--text-base);margin-bottom:var(--space-4);color:var(--text-muted)}
 .queue-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:var(--space-4)}
@@ -144,11 +116,9 @@ input,select,textarea{font:inherit;color:inherit}
 .btn-download-all{display:flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-2) var(--space-5);background:var(--surface);border:1px solid var(--border);color:var(--text-muted);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:500;margin-left:auto;margin-bottom:var(--space-4);transition:all var(--transition)}
 .btn-download-all:hover{border-color:var(--success);color:var(--success)}
 
-/* PROGRESS BAR */
 .progress-bar{height:3px;background:var(--border);border-radius:var(--radius-full);overflow:hidden;margin-top:var(--space-3)}
 .progress-bar-fill{height:100%;background:var(--accent);border-radius:var(--radius-full);transition:width .3s ease;width:0%}
 
-/* API MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:var(--space-4);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity var(--transition)}
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal{background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--radius-xl);padding:var(--space-8);width:100%;max-width:480px;box-shadow:var(--shadow-lg)}
@@ -161,19 +131,15 @@ input,select,textarea{font:inherit;color:inherit}
 .btn-secondary{flex:1;padding:var(--space-3);border:1px solid var(--border);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:500;color:var(--text-muted);transition:all var(--transition)}
 .btn-secondary:hover{border-color:var(--border-strong);color:var(--text)}
 
-/* EMPTY STATE */
 .empty-queue{display:flex;flex-direction:column;align-items:center;padding:var(--space-12) var(--space-8);color:var(--text-faint);text-align:center;gap:var(--space-3)}
 .empty-queue svg{opacity:.3}
 .empty-queue p{font-size:var(--text-sm);max-width:28ch}
 
-/* SHIMMER SKELETON */
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .skeleton{background:linear-gradient(90deg,var(--surface-2) 25%,var(--surface-3) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:var(--radius-sm)}
 
-/* LOGO MODULE INFO */
 .info-badge{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);background:var(--accent-subtle);border:1px solid rgba(59,130,246,.2);border-radius:var(--radius-full);font-size:var(--text-xs);color:var(--accent);margin-bottom:var(--space-4)}
 
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:var(--radius-full)}
@@ -182,7 +148,6 @@ input,select,textarea{font:inherit;color:inherit}
 <body>
 <div class="app">
 
-<!-- HEADER -->
 <header class="header">
   <div class="logo-mark">
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="Sports Asset Studio">
@@ -199,7 +164,7 @@ input,select,textarea{font:inherit;color:inherit}
   <div class="header-actions">
     <button class="btn-api" id="apiBtn" onclick="openApiModal()" aria-label="Configure API Key">
       <span class="dot" id="apiDot"></span>
-      <span id="apiLabel">Set API Key</span>
+      <span id="apiLabel">Set fal.ai Key</span>
     </button>
     <button class="btn-icon" onclick="toggleTheme()" data-theme-toggle aria-label="Toggle theme">
       <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -207,7 +172,6 @@ input,select,textarea{font:inherit;color:inherit}
   </div>
 </header>
 
-<!-- MAIN -->
 <main class="main">
   <div class="tabs">
     <button class="tab active" onclick="switchTab('logo')" id="tab-logo">🏆 Logo / Emblem</button>
@@ -220,7 +184,7 @@ input,select,textarea{font:inherit;color:inherit}
       <div>
         <div class="info-badge">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-          Upscale → Remove background → Transparent PNG
+          fal.ai FLUX → Remove background → Transparent PNG
         </div>
         <div class="upload-zone" id="logoDropZone">
           <input type="file" id="logoInput" accept="image/*" multiple onchange="handleLogoFiles(this.files)">
@@ -247,7 +211,7 @@ input,select,textarea{font:inherit;color:inherit}
           <label>Background removal method</label>
           <select id="logoBgMethod">
             <option value="browser">Browser-based (free, no API)</option>
-            <option value="gemini">Gemini API (higher quality)</option>
+            <option value="fal">fal.ai FLUX (higher quality)</option>
           </select>
         </div>
         <div class="field">
@@ -259,9 +223,9 @@ input,select,textarea{font:inherit;color:inherit}
         </div>
         <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-4);font-size:var(--text-xs);color:var(--text-muted);line-height:1.7">
           <strong style="color:var(--text);display:block;margin-bottom:var(--space-2)">How it works</strong>
-          1. Image is upscaled via canvas interpolation<br>
-          2. Background removed using AI segmentation<br>
-          3. Exported as transparent PNG with original filename + <code style="color:var(--accent)">_processed</code>
+          1. Image uploaded to fal.ai storage<br>
+          2. FLUX image-to-image model processes it<br>
+          3. Background removed → Exported as transparent PNG with <code style="color:var(--accent)">_processed</code>
         </div>
       </div>
     </div>
@@ -288,7 +252,7 @@ input,select,textarea{font:inherit;color:inherit}
       <div>
         <div class="info-badge">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-          Gemini AI generation → Remove background → Transparent PNG
+          fal.ai FLUX generation → Remove background → Transparent PNG
         </div>
         <div class="upload-zone" id="playerDropZone">
           <input type="file" id="playerInput" accept="image/*" multiple onchange="handlePlayerFiles(this.files)">
@@ -349,14 +313,14 @@ input,select,textarea{font:inherit;color:inherit}
 <!-- API KEY MODAL -->
 <div class="modal-overlay" id="apiModal">
   <div class="modal">
-    <h2>Gemini API Key</h2>
-    <p>Required for AI-powered background removal and player photo generation. Your key is stored locally in your browser only.</p>
+    <h2>fal.ai API Key</h2>
+    <p>Required for AI-powered image processing via fal.ai FLUX models. Your key is stored locally in your browser only.</p>
     <div class="field">
       <label>API Key</label>
-      <input type="password" id="apiKeyInput" placeholder="AIzaSy..." autocomplete="off">
-      <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="modal-link">
+      <input type="password" id="apiKeyInput" placeholder="59889dc7-..." autocomplete="off">
+      <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener noreferrer" class="modal-link">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Get your free API key at aistudio.google.com
+        Get your API key at fal.ai/dashboard/keys
       </a>
     </div>
     <div class="modal-actions">
@@ -366,7 +330,6 @@ input,select,textarea{font:inherit;color:inherit}
   </div>
 </div>
 
-<!-- JSZip for batch download -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <script>
@@ -437,7 +400,6 @@ CLOTHING & EQUIPMENT:
 - Female athletes: keep sports bra or athletic top as worn — do not remove it
 - Remove all fight equipment: boxing gloves, MMA gloves, hand wraps, bandages on hands, mouthguard/mouthpiece
 - Remove any headgear or protective equipment
-- Boxing shorts or fight shorts below the crop line — not visible in the final crop anyway
 
 APPEARANCE — PRESERVE EXACTLY:
 - Skin tone, complexion, muscle definition, and all natural body details — preserve with full accuracy
@@ -491,8 +453,8 @@ OUTPUT REQUIREMENTS:
 - Do not add watermarks, backgrounds, shadows behind the logo, or any new elements`;
 
 // ─── STATE ─────────────────────────────────────────────────────────────────
-let apiKey = localStorage.getItem('gemini-api-key') || '';
-let hfToken = localStorage.getItem('hf-token') || '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';
+// Pre-fill the fal.ai key from the query (user can override via modal)
+let apiKey = localStorage.getItem('fal-api-key') || '59889dc7-7024-4b15-bc6e-1e26182c28a6:1a05ab0e87cfa3a0c50c65950cd06684';
 let logoFiles = [];
 let playerFiles = [];
 let logoResults = {};
@@ -524,10 +486,10 @@ function updateApiStatus() {
   const label = document.getElementById('apiLabel');
   if (apiKey) {
     dot.classList.add('connected');
-    label.textContent = 'API Connected';
+    label.textContent = 'fal.ai Connected';
   } else {
     dot.classList.remove('connected');
-    label.textContent = 'Set API Key';
+    label.textContent = 'Set fal.ai Key';
   }
 }
 function openApiModal() {
@@ -542,7 +504,7 @@ function saveApiKey() {
   const val = document.getElementById('apiKeyInput').value.trim();
   if (!val) return;
   apiKey = val;
-  localStorage.setItem('gemini_api_key', apiKey);
+  localStorage.setItem('fal-api-key', apiKey);
   updateApiStatus();
   closeApiModal();
 }
@@ -577,6 +539,120 @@ function updatePrompt() {
   document.getElementById('playerPrompt').value = PROMPTS[cat];
 }
 updatePrompt();
+
+// ─── FAL.AI HELPERS ────────────────────────────────────────────────────────
+
+// Step 1: Upload file to fal.ai storage, get back a URL
+async function uploadToFal(file) {
+  const resp = await fetch('https://rest.fal.run/storage/upload/initiate', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Key ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ content_type: file.type, file_name: file.name })
+  });
+  if (!resp.ok) throw new Error(`fal.ai storage initiate error: ${await resp.text()}`);
+  const { upload_url, file_url } = await resp.json();
+
+  const uploadResp = await fetch(upload_url, {
+    method: 'PUT',
+    headers: { 'Content-Type': file.type },
+    body: file
+  });
+  if (!uploadResp.ok) throw new Error(`fal.ai upload error: ${uploadResp.status}`);
+  return file_url;
+}
+
+// Step 2: Call fal-ai/flux-1/dev/image-to-image with image_url + prompt
+async function callFalImageEdit(file, prompt) {
+  if (!apiKey) throw new Error('fal.ai API key not set');
+
+  const imageUrl = await uploadToFal(file);
+
+  const resp = await fetch('https://rest.fal.run/fal-ai/flux-1/dev/image-to-image', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Key ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      image_url: imageUrl,
+      prompt: prompt,
+      strength: 0.85,
+      num_inference_steps: 28,
+      guidance_scale: 3.5,
+      num_images: 1,
+      output_format: 'png'
+    })
+  });
+
+  if (!resp.ok) throw new Error(`fal.ai API error: ${(await resp.text()).slice(0, 200)}`);
+  const data = await resp.json();
+
+  // result image URL from fal.ai
+  const resultImageUrl = data?.images?.[0]?.url;
+  if (!resultImageUrl) throw new Error('fal.ai returned no image');
+
+  // Fetch the image and convert to base64
+  const imgResp = await fetch(resultImageUrl);
+  const blob = await imgResp.blob();
+  const base64 = await blobToBase64(blob);
+  return { mimeType: 'image/png', data: base64, url: resultImageUrl };
+}
+
+async function blobToBase64(blob) {
+  return new Promise((res) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.readAsDataURL(blob);
+  });
+}
+
+// ─── BROWSER BG REMOVAL ────────────────────────────────────────────────────
+async function removeBgBrowser(dataUrl) {
+  if (!window.imglyBgRemoval) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.type = 'module';
+      s.textContent = `
+        import { removeBackground } from 'https://esm.sh/@imgly/background-removal@1.4.5';
+        window.imglyRemoveBackground = removeBackground;
+        window.dispatchEvent(new Event('imgly_ready'));
+      `;
+      document.head.appendChild(s);
+      window.addEventListener('imgly_ready', res, { once: true });
+      setTimeout(() => rej(new Error('Background removal library load timeout')), 30000);
+    });
+    window.imglyBgRemoval = true;
+  }
+  const blob = await fetch(dataUrl).then(r => r.blob());
+  const resultBlob = await window.imglyRemoveBackground(blob, {
+    model: 'medium',
+    output: { format: 'image/png', quality: 1 }
+  });
+  return URL.createObjectURL(resultBlob);
+}
+
+// ─── UPSCALE via Canvas ────────────────────────────────────────────────────
+async function upscaleImage(file, scale = 2) {
+  return new Promise(res => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      res(canvas.toDataURL('image/png', 1));
+    };
+    img.src = url;
+  });
+}
 
 // ─── LOGO FILES ────────────────────────────────────────────────────────────
 function handleLogoFiles(files) {
@@ -660,106 +736,10 @@ function renderPlayerQueue() {
   }).join('');
 }
 
-// ─── GEMINI API CALL ───────────────────────────────────────────────────────
-async function fileToBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
-
-async function callGeminiImageEdit(file, prompt) {
-  const b64 = await fileToBase64(file);
-  const mimeType = file.type || 'image/jpeg';
-
-  // Convert base64 to blob for HF
-  const byteString = atob(b64);
-  const ab = new ArrayBuffer(byteString.length);
-  const ia = new Uint8Array(ab);
-  for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
-  const imageBlob = new Blob([ab], { type: mimeType });
-
-  const formData = new FormData();
-  formData.append('inputs', imageBlob, 'image.jpg');
-  formData.append('parameters', JSON.stringify({ prompt: prompt }));
-
-  const resp = await fetch(
-    'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev',
-    {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${hfToken}` },
-      body: formData
-    }
-  );
-
-  if (!resp.ok) {
-    const err = await resp.text();
-    throw new Error(`HuggingFace API error: ${err.slice(0, 200)}`);
-  }
-
-  const blob = await resp.blob();
-  return { mimeType: 'image/png', data: await blobToBase64(blob) };
-}
-
-async function blobToBase64(blob) {
-  return new Promise((res) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.readAsDataURL(blob);
-  });
-}
-
-// ─── BROWSER BG REMOVAL (canvas-based) ────────────────────────────────────
-async function removeBgBrowser(dataUrl) {
-  // Load @imgly/background-removal dynamically
-  if (!window.imglyBgRemoval) {
-    await new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.type = 'module';
-      s.textContent = `
-        import { removeBackground } from 'https://esm.sh/@imgly/background-removal@1.4.5';
-        window.imglyRemoveBackground = removeBackground;
-        window.dispatchEvent(new Event('imgly_ready'));
-      `;
-      document.head.appendChild(s);
-      window.addEventListener('imgly_ready', res, { once: true });
-      setTimeout(() => rej(new Error('Background removal library load timeout')), 30000);
-    });
-    window.imglyBgRemoval = true;
-  }
-  const blob = await fetch(dataUrl).then(r => r.blob());
-  const resultBlob = await window.imglyRemoveBackground(blob, {
-    model: 'medium',
-    output: { format: 'image/png', quality: 1 }
-  });
-  return URL.createObjectURL(resultBlob);
-}
-
-// ─── UPSCALE via Canvas ────────────────────────────────────────────────────
-async function upscaleImage(file, scale = 2) {
-  return new Promise(res => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      URL.revokeObjectURL(url);
-      res(canvas.toDataURL('image/png', 1));
-    };
-    img.src = url;
-  });
-}
-
 // ─── PROCESS LOGO QUEUE ────────────────────────────────────────────────────
 async function processLogoQueue() {
   if (logoFiles.length === 0) return;
+  if (!apiKey) { openApiModal(); return; }
   const btn = document.getElementById('logoProcessBtn');
   const bar = document.getElementById('logoProgressBar');
   const fill = document.getElementById('logoProgressFill');
@@ -772,23 +752,20 @@ async function processLogoQueue() {
   for (let i = 0; i < logoFiles.length; i++) {
     const f = logoFiles[i];
     fill.style.width = ((i / logoFiles.length) * 100) + '%';
-    // Update item status
     const item = document.getElementById(`logo-item-${i}`);
     if (item) {
       const dot = item.querySelector('.status-dot');
       const status = item.querySelector('.queue-item-status span:last-child');
-      if (dot) { dot.className = 'status-dot processing'; }
+      if (dot) dot.className = 'status-dot processing';
       if (status) status.textContent = 'Processing…';
     }
     try {
       let resultUrl;
-      if (method === 'gemini') {
-        const prompt = LOGO_PROMPT;
-        resultUrl = await callGeminiImageEdit(f, prompt);
-        // then strip remaining bg via browser method
+      if (method === 'fal') {
+        const { mimeType, data } = await callFalImageEdit(f, LOGO_PROMPT);
+        resultUrl = `data:${mimeType};base64,${data}`;
         resultUrl = await removeBgBrowser(resultUrl);
       } else {
-        // upscale first
         const upscaled = await upscaleImage(f, 2);
         resultUrl = await removeBgBrowser(upscaled);
       }
@@ -817,7 +794,7 @@ async function processLogoQueue() {
 // ─── PROCESS PLAYER QUEUE ──────────────────────────────────────────────────
 async function processPlayerQueue() {
   if (playerFiles.length === 0) return;
-  if (!hfToken) { alert('No HuggingFace token set'); return; }
+  if (!apiKey) { openApiModal(); return; }
   const btn = document.getElementById('playerProcessBtn');
   const bar = document.getElementById('playerProgressBar');
   const fill = document.getElementById('playerProgressFill');
@@ -834,25 +811,24 @@ async function processPlayerQueue() {
       const dot = item.querySelector('.status-dot');
       const status = item.querySelector('.queue-item-status span:last-child');
       if (dot) dot.className = 'status-dot processing';
-      if (status) status.textContent = 'Generating…';
+      if (status) status.textContent = 'Uploading to fal.ai…';
     }
     try {
-      // Step 1: Gemini generates the image
-      const { mimeType, data } = await callGeminiImageEdit(f, prompt);
-let resultUrl = `data:${mimeType};base64,${data}`;
-      // Step 2: Remove background
-      if (item) {
-        const status = item.querySelector('.queue-item-status span:last-child');
+      const { mimeType, data } = await callFalImageEdit(f, prompt);
+      let resultUrl = `data:${mimeType};base64,${data}`;
+      const item2 = document.getElementById(`player-item-${i}`);
+      if (item2) {
+        const status = item2.querySelector('.queue-item-status span:last-child');
         if (status) status.textContent = 'Removing bg…';
       }
       resultUrl = await removeBgBrowser(resultUrl);
       playerResults[f.name] = { url: resultUrl };
     } catch(e) {
       playerResults[f.name] = { url: URL.createObjectURL(f), error: e.message };
-      const item = document.getElementById(`player-item-${i}`);
-      if (item) {
-        const dot = item.querySelector('.status-dot');
-        const status = item.querySelector('.queue-item-status span:last-child');
+      const item2 = document.getElementById(`player-item-${i}`);
+      if (item2) {
+        const dot = item2.querySelector('.status-dot');
+        const status = item2.querySelector('.queue-item-status span:last-child');
         if (dot) dot.className = 'status-dot error';
         if (status) status.textContent = 'Error: ' + e.message.slice(0, 40);
       }
@@ -868,11 +844,11 @@ let resultUrl = `data:${mimeType};base64,${data}`;
   renderPlayerQueue();
 }
 
-
 // ─── PROCESS SINGLE ────────────────────────────────────────────────────────
 async function processSingleLogo(idx) {
   const f = logoFiles[idx];
   if (!f) return;
+  if (!apiKey) { openApiModal(); return; }
   const item = document.getElementById(`logo-item-${idx}`);
   const dot = item?.querySelector('.status-dot');
   const status = item?.querySelector('.queue-item-status span:last-child');
@@ -883,8 +859,9 @@ async function processSingleLogo(idx) {
   const method = document.getElementById('logoBgMethod').value;
   try {
     let resultUrl;
-    if (method === 'gemini') {
-      resultUrl = await callGeminiImageEdit(f, LOGO_PROMPT);
+    if (method === 'fal') {
+      const { mimeType, data } = await callFalImageEdit(f, LOGO_PROMPT);
+      resultUrl = `data:${mimeType};base64,${data}`;
       resultUrl = await removeBgBrowser(resultUrl);
     } else {
       const upscaled = await upscaleImage(f, 2);
@@ -904,17 +881,17 @@ async function processSingleLogo(idx) {
 async function processSinglePlayer(idx) {
   const f = playerFiles[idx];
   if (!f) return;
-  if (!hfToken) { alert('No HuggingFace token set'); return; }
+  if (!apiKey) { openApiModal(); return; }
   const item = document.getElementById(`player-item-${idx}`);
   const dot = item?.querySelector('.status-dot');
   const status = item?.querySelector('.queue-item-status span:last-child');
   const btn = item?.querySelector('.btn-process-single');
   if (dot) dot.className = 'status-dot processing';
-  if (status) status.textContent = 'Generating…';
+  if (status) status.textContent = 'Uploading to fal.ai…';
   if (btn) { btn.disabled = true; btn.textContent = '…'; }
   const prompt = document.getElementById('playerPrompt').value;
   try {
-    const { mimeType, data } = await callGeminiImageEdit(f, prompt);
+    const { mimeType, data } = await callFalImageEdit(f, prompt);
     let resultUrl = `data:${mimeType};base64,${data}`;
     if (status) status.textContent = 'Removing bg…';
     resultUrl = await removeBgBrowser(resultUrl);
