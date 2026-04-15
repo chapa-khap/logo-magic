@@ -139,6 +139,8 @@ input,select,textarea{font:inherit;color:inherit}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .btn-download{display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:var(--space-2);background:var(--success-subtle);color:var(--success);border-radius:var(--radius-sm);font-size:var(--text-xs);font-weight:600;margin-top:var(--space-2);transition:all var(--transition)}
 .btn-download:hover{background:var(--success);color:#fff}
+.btn-process-single{display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:var(--space-2);background:var(--accent-subtle);color:var(--accent);border-radius:var(--radius-sm);font-size:var(--text-xs);font-weight:600;margin-top:var(--space-2);transition:all var(--transition)}
+.btn-process-single:hover{background:var(--accent);color:#fff}
 .btn-download-all{display:flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-2) var(--space-5);background:var(--surface);border:1px solid var(--border);color:var(--text-muted);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:500;margin-left:auto;margin-bottom:var(--space-4);transition:all var(--transition)}
 .btn-download-all:hover{border-color:var(--success);color:var(--success)}
 
@@ -489,7 +491,7 @@ OUTPUT REQUIREMENTS:
 - Do not add watermarks, backgrounds, shadows behind the logo, or any new elements`;
 
 // ─── STATE ─────────────────────────────────────────────────────────────────
-let apiKey = localStorage.getItem('gemini_api_key') || '';
+let apiKey = localStorage.getItem('gemini_api_key') || 'AIzaSyD-vZLEFPcY5m7lsZ31-g8O2BTMEbu3Bt4';
 let logoFiles = [];
 let playerFiles = [];
 let logoResults = {};
@@ -604,10 +606,13 @@ function renderLogoQueue() {
           <span class="status-dot ${res ? 'done' : ''}"></span>
           <span>${res ? 'Ready' : 'Pending'}</span>
         </div>
-        ${res ? `<button class="btn-download" onclick="downloadSingle('${f.name}','logo')">
+        ${res && !res.error ? `<button class="btn-download" onclick="downloadSingle('${f.name}','logo')">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PNG
-        </button>` : ''}
+        </button>` : `<button class="btn-process-single" onclick="processSingleLogo(${i})">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Process
+        </button>`}
       </div>
     </div>`;
   }).join('');
@@ -642,10 +647,13 @@ function renderPlayerQueue() {
           <span class="status-dot ${res ? 'done' : ''}"></span>
           <span>${res ? 'Ready' : 'Pending'}</span>
         </div>
-        ${res ? `<button class="btn-download" onclick="downloadSingle('${f.name}','player')">
+        ${res && !res.error ? `<button class="btn-download" onclick="downloadSingle('${f.name}','player')">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PNG
-        </button>` : ''}
+        </button>` : `<button class="btn-process-single" onclick="processSinglePlayer(${i})">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Process
+        </button>`}
       </div>
     </div>`;
   }).join('');
@@ -675,7 +683,7 @@ async function callGeminiImageEdit(file, prompt) {
     generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
   };
   const resp = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`,
     { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
   );
   if (!resp.ok) {
@@ -845,6 +853,66 @@ async function processPlayerQueue() {
   btn.disabled = false;
   btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Process All Players`;
   document.getElementById('playerDownloadAll').style.display = 'flex';
+  renderPlayerQueue();
+}
+
+
+// ─── PROCESS SINGLE ────────────────────────────────────────────────────────
+async function processSingleLogo(idx) {
+  const f = logoFiles[idx];
+  if (!f) return;
+  const item = document.getElementById(`logo-item-${idx}`);
+  const dot = item?.querySelector('.status-dot');
+  const status = item?.querySelector('.queue-item-status span:last-child');
+  const btn = item?.querySelector('.btn-process-single');
+  if (dot) dot.className = 'status-dot processing';
+  if (status) status.textContent = 'Processing…';
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  const method = document.getElementById('logoBgMethod').value;
+  try {
+    let resultUrl;
+    if (method === 'gemini') {
+      resultUrl = await callGeminiImageEdit(f, LOGO_PROMPT);
+      resultUrl = await removeBgBrowser(resultUrl);
+    } else {
+      const upscaled = await upscaleImage(f, 2);
+      resultUrl = await removeBgBrowser(upscaled);
+    }
+    logoResults[f.name] = { url: resultUrl };
+  } catch(e) {
+    logoResults[f.name] = { url: URL.createObjectURL(f), error: e.message };
+    if (dot) dot.className = 'status-dot error';
+    if (status) status.textContent = 'Error: ' + e.message.slice(0, 40);
+    return;
+  }
+  if (Object.values(logoResults).some(r => !r.error)) document.getElementById('logoDownloadAll').style.display = 'flex';
+  renderLogoQueue();
+}
+
+async function processSinglePlayer(idx) {
+  const f = playerFiles[idx];
+  if (!f) return;
+  if (!apiKey) { openApiModal(); return; }
+  const item = document.getElementById(`player-item-${idx}`);
+  const dot = item?.querySelector('.status-dot');
+  const status = item?.querySelector('.queue-item-status span:last-child');
+  const btn = item?.querySelector('.btn-process-single');
+  if (dot) dot.className = 'status-dot processing';
+  if (status) status.textContent = 'Generating…';
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  const prompt = document.getElementById('playerPrompt').value;
+  try {
+    let resultUrl = await callGeminiImageEdit(f, prompt);
+    if (status) status.textContent = 'Removing bg…';
+    resultUrl = await removeBgBrowser(resultUrl);
+    playerResults[f.name] = { url: resultUrl };
+  } catch(e) {
+    playerResults[f.name] = { url: URL.createObjectURL(f), error: e.message };
+    if (dot) dot.className = 'status-dot error';
+    if (status) status.textContent = 'Error: ' + e.message.slice(0, 40);
+    return;
+  }
+  if (Object.values(playerResults).some(r => !r.error)) document.getElementById('playerDownloadAll').style.display = 'flex';
   renderPlayerQueue();
 }
 
