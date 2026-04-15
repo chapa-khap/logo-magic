@@ -673,49 +673,39 @@ async function callGeminiImageEdit(file, prompt) {
   if (!apiKey) throw new Error('No API key set. Click "Set API Key" in the header.');
   const b64 = await fileToBase64(file);
   const mimeType = file.type || 'image/jpeg';
-  // Use Gemini 2.0 Flash with image generation capability
   const body = {
     contents: [{
       parts: [
-        { inlineData: { mimeType: mimeType, data: b64 } },
+        { inline_data: { mime_type: mimeType, data: b64 } },
         { text: prompt }
       ]
     }],
     generationConfig: {
-      responseModalities: ["IMAGE", "TEXT"],
-      temperature: 1,
-      topP: 0.95,
-      topK: 40
+      responseModalities: ["IMAGE", "TEXT"]
     }
   };
-  // Try gemini-2.0-flash-exp first (supports image output)
-  let resp = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
-  );
-  // If that fails, try gemini-2.0-flash-preview-image-generation
+  const model = 'gemini-3.1-flash-image-preview';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
   if (!resp.ok) {
-    const errText = await resp.text();
-    resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`,
-      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
-    );
-  }
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    throw new Error(err.error?.message || `Gemini API error ${resp.status}`);
+    let errMsg = `HTTP ${resp.status}`;
+    try { const e = await resp.json(); errMsg = e.error?.message || errMsg; } catch(_) {}
+    throw new Error(errMsg);
   }
   const data = await resp.json();
   const parts = data.candidates?.[0]?.content?.parts || [];
   for (const part of parts) {
-    if (part.inlineData?.mimeType?.startsWith('image/')) {
-      return 'data:' + part.inlineData.mimeType + ';base64,' + part.inlineData.data;
+    if (part.inline_data?.mime_type?.startsWith('image/')) {
+      return 'data:' + part.inline_data.mime_type + ';base64,' + part.inline_data.data;
     }
   }
-  // Log actual response for debugging
   const textPart = parts.find(p => p.text);
-  const debugMsg = textPart ? textPart.text.slice(0, 200) : JSON.stringify(data).slice(0, 300);
-  throw new Error('No image returned. API response: ' + debugMsg);
+  const debugMsg = textPart ? textPart.text.slice(0, 300) : JSON.stringify(data).slice(0, 300);
+  throw new Error('No image in response: ' + debugMsg);
 }
 
 // ─── BROWSER BG REMOVAL (canvas-based) ────────────────────────────────────
