@@ -526,33 +526,54 @@ window.updatePrompt = updatePrompt;
 updatePrompt();
 
 // ─── FAL.AI CALL (uses official SDK — handles upload + CORS automatically) ─
+// ─── FAL.AI CALL (без upload в storage — передаємо base64 data URL напряму) ─
 async function callFalImageEdit(file, prompt) {
   if (!apiKey) throw new Error('fal.ai API key not set');
 
-  // fal.storage.upload handles multipart upload with correct CORS headers
-  const imageUrl = await fal.storage.upload(file);
+  // Конвертуємо файл в base64 data URL — fal.ai приймає це як image_url
+  const dataUrl = await fileToDataUrl(file);
 
-  const result = await fal.subscribe('fal-ai/flux-1/dev/image-to-image', {
-    input: {
-      image_url: imageUrl,
+  const resp = await fetch('https://fal.run/fal-ai/flux-1/dev/image-to-image', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Key ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      image_url: dataUrl,        // ← base64 data URL замість storage URL
       prompt: prompt,
       strength: 0.85,
       num_inference_steps: 28,
       guidance_scale: 3.5,
       num_images: 1,
       output_format: 'png'
-    },
-    logs: false
+    })
   });
 
-  const resultImageUrl = result?.data?.images?.[0]?.url ?? result?.images?.[0]?.url;
+  if (!resp.ok) {
+    const errText = await resp.text();
+    throw new Error(`fal.ai error ${resp.status}: ${errText.slice(0, 200)}`);
+  }
+
+  const data = await resp.json();
+  const resultImageUrl = data?.images?.[0]?.url;
   if (!resultImageUrl) throw new Error('fal.ai returned no image');
 
   const imgResp = await fetch(resultImageUrl);
-  if (!imgResp.ok) throw new Error('Failed to fetch result image from fal CDN');
+  if (!imgResp.ok) throw new Error('Failed to fetch result from fal CDN');
   const blob = await imgResp.blob();
   const base64 = await blobToBase64(blob);
   return { mimeType: 'image/png', data: base64 };
+}
+
+// Конвертація File → повний data URL (з префіксом data:image/...;base64,)
+async function fileToDataUrl(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result); // повертає повний data URL
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
 }
 
 async function blobToBase64(blob) {
