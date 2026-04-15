@@ -491,7 +491,8 @@ OUTPUT REQUIREMENTS:
 - Do not add watermarks, backgrounds, shadows behind the logo, or any new elements`;
 
 // ─── STATE ─────────────────────────────────────────────────────────────────
-let apiKey = localStorage.getItem('gemini_api_key') || 'AIzaSyD3j1sKNTFcqkYW5MXoryMxPgxoiT8UtF4';
+let apiKey = localStorage.getItem('gemini-api-key') || '';
+let hfToken = localStorage.getItem('hf-token') || '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';
 let logoFiles = [];
 let playerFiles = [];
 let logoResults = {};
@@ -670,42 +671,44 @@ async function fileToBase64(file) {
 }
 
 async function callGeminiImageEdit(file, prompt) {
-  if (!apiKey) throw new Error('No API key set. Click "Set API Key" in the header.');
   const b64 = await fileToBase64(file);
   const mimeType = file.type || 'image/jpeg';
-  const body = {
-    contents: [{
-      parts: [
-        { inline_data: { mime_type: mimeType, data: b64 } },
-        { text: prompt }
-      ]
-    }],
-    generationConfig: {
-      responseModalities: ["IMAGE", "TEXT"]
+
+  // Convert base64 to blob for HF
+  const byteString = atob(b64);
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+  const imageBlob = new Blob([ab], { type: mimeType });
+
+  const formData = new FormData();
+  formData.append('inputs', imageBlob, 'image.jpg');
+  formData.append('parameters', JSON.stringify({ prompt: prompt }));
+
+  const resp = await fetch(
+    'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev',
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${hfToken}` },
+      body: formData
     }
-  };
-  const model = 'gemini-2.5-flash-image';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-  const resp = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+  );
+
   if (!resp.ok) {
-    let errMsg = `HTTP ${resp.status}`;
-    try { const e = await resp.json(); errMsg = e.error?.message || errMsg; } catch(_) {}
-    throw new Error(errMsg);
+    const err = await resp.text();
+    throw new Error(`HuggingFace API error: ${err.slice(0, 200)}`);
   }
-  const data = await resp.json();
-  const parts = data.candidates?.[0]?.content?.parts || [];
-  for (const part of parts) {
-    if (part.inline_data?.mime_type?.startsWith('image/')) {
-      return 'data:' + part.inline_data.mime_type + ';base64,' + part.inline_data.data;
-    }
-  }
-  const textPart = parts.find(p => p.text);
-  const debugMsg = textPart ? textPart.text.slice(0, 300) : JSON.stringify(data).slice(0, 300);
-  throw new Error('No image in response: ' + debugMsg);
+
+  const blob = await resp.blob();
+  return { mimeType: 'image/png', data: await blobToBase64(blob) };
+}
+
+async function blobToBase64(blob) {
+  return new Promise((res) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.readAsDataURL(blob);
+  });
 }
 
 // ─── BROWSER BG REMOVAL (canvas-based) ────────────────────────────────────
@@ -835,7 +838,8 @@ async function processPlayerQueue() {
     }
     try {
       // Step 1: Gemini generates the image
-      let resultUrl = await callGeminiImageEdit(f, prompt);
+      const { mimeType, data } = await callGeminiImageEdit(f, prompt);
+let resultUrl = `data:${mimeType};base64,${data}`;
       // Step 2: Remove background
       if (item) {
         const status = item.querySelector('.queue-item-status span:last-child');
@@ -910,7 +914,8 @@ async function processSinglePlayer(idx) {
   if (btn) { btn.disabled = true; btn.textContent = '…'; }
   const prompt = document.getElementById('playerPrompt').value;
   try {
-    let resultUrl = await callGeminiImageEdit(f, prompt);
+    const { mimeType, data } = await callGeminiImageEdit(f, prompt);
+    let resultUrl = `data:${mimeType};base64,${data}`;
     if (status) status.textContent = 'Removing bg…';
     resultUrl = await removeBgBrowser(resultUrl);
     playerResults[f.name] = { url: resultUrl };
