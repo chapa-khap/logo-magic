@@ -129,7 +129,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .efname{font-size:11px;color:var(--text-faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}
 .ehspc{flex:1}
 .ehist{font-size:10px;color:var(--text-faint)}
-.ebody{display:flex;flex:1;overflow:hidden;min-height:0}
+.ebody{display:flex;flex:1;overflow:hidden;min-height:0;position:relative}
 
 /* Canvas area */
 .ecwrap{flex:1;position:relative;overflow:hidden;background:repeating-conic-gradient(#1e1e1e 0% 25%,#141414 0% 50%) 0 0/24px 24px;display:flex;align-items:center;justify-content:center}
@@ -323,17 +323,17 @@ textarea:focus{outline:none;border-color:var(--accent)}
       <button class="hbtn" id="ed-undo" style="margin-left:8px">↩ Undo</button>
       <button class="hbtn ico" id="ed-close" style="margin-left:4px">✕</button>
     </div>
-    <div class="ebody">
+    <div class="ebody" id="ebody-ref">
       <!-- Canvas -->
       <div class="ecwrap" id="ecwrap">
         <canvas id="ec"></canvas>
-        <div id="crop-frame">
-          <div class="ch ch-tl" data-h="tl"></div><div class="ch ch-tr" data-h="tr"></div>
-          <div class="ch ch-bl" data-h="bl"></div><div class="ch ch-br" data-h="br"></div>
-          <div class="ch ch-tc" data-h="tc"></div><div class="ch ch-bc" data-h="bc"></div>
-          <div class="ch ch-lc" data-h="lc"></div><div class="ch ch-rc" data-h="rc"></div>
-        </div>
         <div id="brush-cursor"></div>
+      </div>
+      <div id="crop-frame">
+        <div class="ch ch-tl" data-h="tl"></div><div class="ch ch-tr" data-h="tr"></div>
+        <div class="ch ch-bl" data-h="bl"></div><div class="ch ch-br" data-h="br"></div>
+        <div class="ch ch-tc" data-h="tc"></div><div class="ch ch-bc" data-h="bc"></div>
+        <div class="ch ch-lc" data-h="lc"></div><div class="ch ch-rc" data-h="rc"></div>
       </div>
 
       <!-- Sidebar -->
@@ -433,7 +433,7 @@ Expression must be calm, neutral, and relaxed. No smile, no frown, no tension, n
 
 CROP & FRAMING
 Output must be a perfect 1:1 square format.
-Frame from the very top of the head down to just below the armpits — both shoulders must be fully visible and not cut off.
+Frame from the very top of the head down to mid-chest level (just below the collarbone / clavicle line) — both shoulders must be fully visible and not cut off. Do NOT frame down to the armpits — stop at the chest.
 The athlete must be perfectly centered horizontally and vertically.
 Leave a small amount of space above the head — do not crop tightly to the top of the skull.
 The athlete must not be cut off by any edge of the frame.
@@ -480,7 +480,7 @@ Expression must be calm, neutral, and relaxed. No aggression, no tension, no fig
 
 CROP & FRAMING
 Output must be a perfect 1:1 square format.
-Frame from the very top of the head down to just below the armpits — both shoulders must be fully visible and not cut off.
+Frame from the very top of the head down to mid-chest level (just below the collarbone / clavicle line) — both shoulders must be fully visible and not cut off. Do NOT frame down to the armpits — stop at the chest.
 The athlete must be perfectly centered horizontally and vertically.
 Leave a small amount of space above the head — do not crop tightly to the top of the skull.
 The athlete must not be cut off by any edge of the frame.
@@ -1115,11 +1115,11 @@ document.getElementById('c-169').addEventListener('click',()=>startCrop(16/9,'c-
 function updateCropFrame(){
   if(!ED.crop) return;
   const {x,y,w,h}=ED.crop;const s=ED.scale;
-  const cr=$ec().getBoundingClientRect();const wr=$wrap().getBoundingClientRect();
+  const cr=$ec().getBoundingClientRect();
+  const br=document.getElementById('ebody-ref').getBoundingClientRect();
   const cf=$cf();
-  // x/y can be negative — crop frame can extend outside canvas
-  cf.style.left=(cr.left-wr.left+x*s)+'px';
-  cf.style.top=(cr.top-wr.top+y*s)+'px';
+  cf.style.left=(cr.left-br.left+x*s)+'px';
+  cf.style.top=(cr.top-br.top+y*s)+'px';
   cf.style.width=(w*s)+'px';cf.style.height=(h*s)+'px';
 }
 
