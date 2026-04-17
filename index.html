@@ -139,9 +139,17 @@ textarea:focus{outline:none;border-color:var(--accent)}
 #crop-frame{
   position:absolute;display:none;z-index:10;
   border:2px solid var(--accent);
-  box-shadow:0 0 0 9999px rgba(0,0,0,.52);
   cursor:move;
   user-select:none;
+}
+/* Rule lines inside crop frame for visual reference */
+#crop-frame::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(to right, rgba(255,255,255,.18) 1px, transparent 1px) 33.3% 0/33.3% 100%,
+    linear-gradient(to right, rgba(255,255,255,.18) 1px, transparent 1px) 66.6% 0/33.3% 100%,
+    linear-gradient(to bottom,rgba(255,255,255,.18) 1px, transparent 1px) 0 33.3%/100% 33.3%,
+    linear-gradient(to bottom,rgba(255,255,255,.18) 1px, transparent 1px) 0 66.6%/100% 33.3%;
 }
 #crop-frame.vis{display:block}
 /* corner guides */
@@ -254,6 +262,28 @@ textarea:focus{outline:none;border-color:var(--accent)}
 }
 .preview-info{font-size:10px;color:var(--text-faint);line-height:1.7}
 .preview-info strong{color:var(--text-dim);display:block;font-size:11px;margin-bottom:2px}
+
+/* Zoom controls */
+#zoom-bar{
+  position:absolute;bottom:10px;left:10px;
+  display:flex;align-items:center;gap:6px;
+  background:rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;
+  padding:4px 10px;
+  z-index:15;
+  backdrop-filter:blur(6px);
+}
+.zoom-btn{
+  width:24px;height:24px;
+  background:none;border:none;
+  color:#fff;font-size:16px;font-weight:700;
+  cursor:pointer;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .12s;line-height:1;
+}
+.zoom-btn:hover{background:rgba(255,255,255,.15)}
+#zoom-label{font-size:11px;color:rgba(255,255,255,.7);font-family:var(--fm);min-width:36px;text-align:center}
 
 /* c-apply glow when crop active */
 #c-apply.crop-active{
@@ -383,6 +413,11 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="ecwrap" id="ecwrap">
           <canvas id="ec"></canvas>
           <div id="brush-cursor"></div>
+          <div id="zoom-bar">
+            <button class="zoom-btn" id="zoom-out" title="Zoom out">−</button>
+            <span id="zoom-label">100%</span>
+            <button class="zoom-btn" id="zoom-in" title="Zoom in">+</button>
+          </div>
         </div>
         <!-- Pan sliders -->
         <div id="pan-bar">
@@ -875,6 +910,7 @@ function loadEditorImg(url){
     canvas.width=img.width;canvas.height=img.height;
     canvas.style.width=Math.round(img.width*scale)+'px';
     canvas.style.height=Math.round(img.height*scale)+'px';
+    document.getElementById('zoom-label').textContent=Math.round(scale*100)+'%';
     const ctx=canvas.getContext('2d');
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.drawImage(img,0,0);
@@ -1342,7 +1378,6 @@ function initPanSliders(){
   };
   px.addEventListener('input',syncPan);
   py.addEventListener('input',syncPan);
-  // sync sliders when scrolled by other means
   wrap.addEventListener('scroll',()=>{
     const maxSX=Math.max(1,wrap.scrollWidth-wrap.clientWidth);
     const maxSY=Math.max(1,wrap.scrollHeight-wrap.clientHeight);
@@ -1351,6 +1386,48 @@ function initPanSliders(){
   });
 }
 initPanSliders();
+
+// ── ZOOM ──
+const ZOOM_STEPS=[0.1,0.15,0.2,0.25,0.33,0.4,0.5,0.6,0.75,0.9,1,1.25,1.5,1.75,2,2.5,3,4];
+function getZoomIdx(){
+  const cur=ED.scale;
+  let best=0,bestD=999;
+  ZOOM_STEPS.forEach((v,i)=>{const d=Math.abs(v-cur);if(d<bestD){bestD=d;best=i;}});
+  return best;
+}
+function applyZoom(newScale){
+  if(!ED.canvas) return;
+  ED.scale=newScale;
+  const c=ED.canvas;
+  c.style.width=Math.round(c.width*newScale)+'px';
+  c.style.height=Math.round(c.height*newScale)+'px';
+  document.getElementById('zoom-label').textContent=Math.round(newScale*100)+'%';
+  if(ED.crop) updateCropFrame();
+  // re-centre after zoom
+  const wrap=$wrap();
+  setTimeout(()=>{
+    wrap.scrollLeft=(wrap.scrollWidth-wrap.clientWidth)/2;
+    wrap.scrollTop=(wrap.scrollHeight-wrap.clientHeight)/2;
+    document.getElementById('pan-x').value=50;
+    document.getElementById('pan-y').value=50;
+  },0);
+}
+document.getElementById('zoom-in').addEventListener('click',()=>{
+  const idx=getZoomIdx();
+  if(idx<ZOOM_STEPS.length-1) applyZoom(ZOOM_STEPS[idx+1]);
+});
+document.getElementById('zoom-out').addEventListener('click',()=>{
+  const idx=getZoomIdx();
+  if(idx>0) applyZoom(ZOOM_STEPS[idx-1]);
+});
+// Ctrl+scroll zoom
+document.getElementById('ecwrap').addEventListener('wheel',e=>{
+  if(!e.ctrlKey&&!e.metaKey) return;
+  e.preventDefault();
+  const idx=getZoomIdx();
+  if(e.deltaY<0&&idx<ZOOM_STEPS.length-1) applyZoom(ZOOM_STEPS[idx+1]);
+  else if(e.deltaY>0&&idx>0) applyZoom(ZOOM_STEPS[idx-1]);
+},{passive:false});
 
 // ════════════════════════════════════════════════
 // INIT
