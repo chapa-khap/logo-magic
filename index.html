@@ -904,7 +904,7 @@ async function processPlayer(item) {
 
 // ─── GEMINI API ──────────────────────────────────────────────────────────────
 async function callGemini(apiKey, base64Data, mimeType, prompt) {
-  const model = 'gemini-2.5-flash-preview-04-17';
+  const model = 'gemini-2.5-flash-image';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const body = {
     contents: [{ parts: [
