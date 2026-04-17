@@ -886,13 +886,11 @@ async function processLogo(item) {
     if (!key) throw new Error('API key required for Gemini method');
     const b64 = await fileToBase64(item.file);
     const result = await callGemini(key, b64, item.file.type, LOGO_PROMPT);
-    const cleaned = await removeBgBrowser(result);
-    item.result = cleaned;
+    item.result = 'data:image/png;base64,' + result;
   } else {
-    // browser method: upscale then remove bg
+    // browser method: upscale only (no bg removal)
     const upscaled = await upscaleCanvas(item.file, 2);
-    const cleaned = await removeBgBrowserFromBlob(upscaled);
-    item.result = cleaned;
+    item.result = await blobToDataURL(upscaled);
   }
 }
 
@@ -903,8 +901,7 @@ async function processPlayer(item) {
   const prompt = document.getElementById('player-prompt').value;
   const b64 = await fileToBase64(item.file);
   const result = await callGemini(key, b64, item.file.type, prompt);
-  const cleaned = await removeBgBrowser(result);
-  item.result = cleaned;
+  item.result = 'data:image/png;base64,' + result;
 }
 
 // ─── GEMINI API ──────────────────────────────────────────────────────────────
