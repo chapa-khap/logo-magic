@@ -424,21 +424,100 @@ Edges: sharp, pixel-perfect. Clean artifacts.
 Preserve all text, colors, gradients, shadows, glows exactly. Reconstruct details if blurry.
 Output: 1:1 square PNG, transparent background, tight crop — logo fills canvas edge to edge.`;
 
-const PLAYER_GENERAL = `Transform this athlete photo into a standardized professional sports profile image.
-POSE: Face directly toward camera (en face). Calm neutral expression — no smile, no tension.
-CROP: 1:1 square format. Frame from top of head to just above armpits. Perfectly centered.
-BACKGROUND: Pure white #FFFFFF, flat and uniform. No stadium, crowd, field, or environment.
-CLOTHING: Keep exactly as worn. Preserve team colors and logos.
-APPEARANCE: Preserve skin tone, tattoos, scars exactly. Hairstyle — dry and natural. Beard unchanged. Remove injuries.
-OUTPUT: 1:1 square PNG, white background, professional sports profile.`;
+const PLAYER_GENERAL = `You are a professional sports photographer and image retoucher. Transform the provided athlete photo into a standardized professional profile image suitable for a sports website or betting platform.
 
-const PLAYER_COMBAT = `Transform this athlete photo into a standardized professional combat sports profile image.
-POSE: Face directly toward camera (en face). Calm neutral expression.
-CROP: 1:1 square format. Head to just above armpits. Perfectly centered.
-BACKGROUND: Pure white #FFFFFF, flat and uniform.
-CLOTHING: Male athletes — shirtless. Female — keep sports bra. Remove ALL fight equipment: gloves, wraps, bandages, headgear, mouthguard.
-APPEARANCE: Preserve skin tone, tattoos, scars, hairstyle, beard. Remove fight injuries.
-OUTPUT: 1:1 square PNG, white background, professional combat sports profile.`;
+POSE & ORIENTATION
+The athlete must face directly toward the camera — front-facing portrait, en face.
+If the athlete is turned sideways, at an angle, or in motion (running, jumping, hitting) — fully reconstruct and redraw them standing upright, facing the camera directly.
+Expression must be calm, neutral, and relaxed. No smile, no frown, no tension, no strong emotion.
+
+CROP & FRAMING
+Output must be a perfect 1:1 square format.
+Frame from the very top of the head down to just below the armpits — both shoulders must be fully visible and not cut off.
+The athlete must be perfectly centered horizontally and vertically.
+Leave a small amount of space above the head — do not crop tightly to the top of the skull.
+The athlete must not be cut off by any edge of the frame.
+
+BACKGROUND
+Replace the background with pure white #FFFFFF — flat and uniform.
+No gradients, no vignette, no shadows behind the athlete, no glow.
+Remove all environmental elements: stadium, crowd, field, gym, locker room, sky, etc.
+
+CLOTHING
+Keep all clothing exactly as the athlete is wearing it in the original photo.
+If the athlete is wearing a jacket, hoodie, or training gear over their kit — keep it as-is.
+Do not alter, remove, or replace any clothing.
+Preserve all team colors, logos, numbers, and sponsor patches exactly.
+
+APPEARANCE — PRESERVE EXACTLY
+Skin tone and all natural skin texture — preserve with full accuracy. Do not smooth or airbrush.
+All tattoos — preserve exactly as visible in the original photo. Do not invent, add, or remove any tattoos.
+Scars — keep exactly as they appear.
+Hairstyle — preserve the original hairstyle exactly as it appears in the photo, including wet or styled hair. Do not change the hairstyle.
+Beard and facial hair — keep exactly as is. Do not trim, shave, or alter.
+Jewellery (chains, earrings, bracelets) — keep exactly as worn.
+Headwear (cap, headband, helmet) — keep exactly as worn.
+Body shape and physique — preserve exactly as in the original. Do not slim, tone, or alter the athlete's body.
+Eyebrows and facial features — no alterations whatsoever.
+
+RETOUCHING
+Remove only clearly visible acute injuries: fresh bruises, cuts, open wounds, swelling, redness from a recent fight or match.
+Do not retouch healthy skin — no smoothing, no airbrushing, no beautification.
+Retain natural skin texture, pores, normal shadows, and natural fatigue marks — the result must look like a real athlete, not a studio beauty shot.
+
+OUTPUT
+1:1 square PNG, minimum 1024×1024 pixels.
+Pure white background #FFFFFF, flat and uniform.
+Both shoulders visible, athlete fully in frame, small space above head.
+Professional sports profile image quality.`;
+
+const PLAYER_COMBAT = `You are a professional sports photographer and image retoucher. Transform the provided athlete photo into a standardized professional profile image suitable for a combat sports website or betting platform.
+
+POSE & ORIENTATION
+The athlete must face directly toward the camera — front-facing portrait, en face.
+If the athlete is turned sideways, at an angle, or in a fighting stance — fully reconstruct and redraw them standing upright, facing the camera directly.
+Expression must be calm, neutral, and relaxed. No aggression, no tension, no fighting face.
+
+CROP & FRAMING
+Output must be a perfect 1:1 square format.
+Frame from the very top of the head down to just below the armpits — both shoulders must be fully visible and not cut off.
+The athlete must be perfectly centered horizontally and vertically.
+Leave a small amount of space above the head — do not crop tightly to the top of the skull.
+The athlete must not be cut off by any edge of the frame.
+
+BACKGROUND
+Replace the background with pure white #FFFFFF — flat and uniform.
+No gradients, no vignette, no shadows behind the athlete.
+Remove all environmental elements: ring, cage, crowd, gym, etc.
+
+CLOTHING & EQUIPMENT
+Male athletes: remove all upper body clothing — shirt, jersey, rash guard, tank top. The athlete must appear shirtless from the waist up.
+Female athletes: keep sports bra or athletic top exactly as worn. Do not remove it.
+Remove ALL fight equipment from the image: boxing gloves, MMA gloves, hand wraps, bandages on hands, mouthguard, headgear, shin guards, or any other protective equipment.
+Fight shorts and lower body clothing below the crop line — not visible in the final output.
+
+APPEARANCE — PRESERVE EXACTLY
+Skin tone and all natural skin texture — preserve with full accuracy. Do not smooth or airbrush.
+All tattoos — preserve exactly as visible in the original photo. Do not invent, add, or remove any tattoos.
+Scars — keep exactly as they appear.
+Hairstyle — preserve the original hairstyle exactly as it appears in the photo. Do not change it.
+Beard and facial hair — keep exactly as is.
+Jewellery (chains, earrings) — keep exactly as worn.
+Headwear (cap, headband) — keep exactly as worn.
+Body shape and physique — preserve exactly as in the original. Do not slim, tone, or alter the athlete's body regardless of their physique.
+Eyebrows and facial features — no alterations.
+
+RETOUCHING
+Remove only clearly visible acute fight injuries: fresh bruises, cuts, open wounds, swelling, black eyes, blood, redness from a recent fight.
+Do not retouch healthy skin — no smoothing, no airbrushing, no beautification.
+Retain natural skin texture, pores, normal shadows, and natural fatigue marks.
+The result must look like a real combat athlete, not a studio beauty shot.
+
+OUTPUT
+1:1 square PNG, minimum 1024×1024 pixels.
+Pure white background #FFFFFF, flat and uniform.
+Both shoulders visible, athlete fully in frame, small space above head.
+Professional combat sports profile image quality.`;
 
 // ═══════════════════════════════════════════════════════
 // APP STATE
