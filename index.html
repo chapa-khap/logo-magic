@@ -904,7 +904,7 @@ async function processPlayer(item) {
 
 // ─── GEMINI API ──────────────────────────────────────────────────────────────
 async function callGemini(apiKey, base64Data, mimeType, prompt) {
-  const model = 'gemini-2.5-flash-image';
+  const model = 'gemini-2.5-flash-preview-image-generation';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const body = {
     contents: [{ parts: [
@@ -923,13 +923,16 @@ async function callGemini(apiKey, base64Data, mimeType, prompt) {
     throw new Error(err.error?.message || `HTTP ${res.status}`);
   }
   const data = await res.json();
-  const parts = data.candidates?.[0]?.content?.parts || [];
-  const imgPart = parts.find(p => p.inline_data?.mime_type?.startsWith('image'));
-  if (!imgPart) {
-    const text = parts.filter(p => p.text).map(p => p.text).join('').slice(0, 300);
-    throw new Error('No image in response: ' + text);
+  // Search all candidates and parts — API returns either inlineData or inline_data
+  for (const candidate of (data.candidates || [])) {
+    for (const part of (candidate.content?.parts || [])) {
+      if (part.inlineData?.mimeType?.startsWith('image')) return part.inlineData.data;
+      if (part.inline_data?.mime_type?.startsWith('image')) return part.inline_data.data;
+    }
   }
-  return imgPart.inline_data.data; // base64
+  // Nothing found — dump response for debugging
+  const preview = JSON.stringify(data).slice(0, 500);
+  throw new Error('No image in response: ' + preview);
 }
 
 // ─── BACKGROUND REMOVAL ─────────────────────────────────────────────────────
