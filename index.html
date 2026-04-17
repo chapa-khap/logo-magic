@@ -4,450 +4,251 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sports Asset Studio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
-:root {
-  --bg: #0a0a0a;
-  --surface: #111111;
-  --surface-2: #191919;
-  --surface-3: #222222;
-  --border: #2a2a2a;
-  --border-bright: #3d3d3d;
-  --text: #f0f0f0;
-  --text-dim: #888;
-  --text-faint: #444;
-  --accent: #4f8ef7;
-  --accent-glow: rgba(79,142,247,0.15);
-  --success: #34d399;
-  --warning: #fbbf24;
-  --error: #f87171;
-  --radius: 10px;
-  --radius-sm: 6px;
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
-  --font-mono: 'DM Mono', monospace;
+:root{
+  --bg:#0a0a0a;--surface:#111;--surface-2:#191919;--surface-3:#222;
+  --border:#2a2a2a;--border-bright:#3d3d3d;
+  --text:#f0f0f0;--text-dim:#888;--text-faint:#444;
+  --accent:#4f8ef7;--accent-glow:rgba(79,142,247,.15);
+  --success:#34d399;--warning:#fbbf24;--error:#f87171;
+  --radius:10px;--radius-sm:6px;
+  --font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;
 }
-[data-theme="light"] {
-  --bg: #f5f5f4;
-  --surface: #ffffff;
-  --surface-2: #f0efed;
-  --surface-3: #e8e7e4;
-  --border: #d8d6d2;
-  --border-bright: #b8b5b0;
-  --text: #1a1a1a;
-  --text-dim: #666;
-  --text-faint: #aaa;
-  --accent: #2563eb;
-  --accent-glow: rgba(37,99,235,0.1);
+[data-theme="light"]{
+  --bg:#f5f5f4;--surface:#fff;--surface-2:#f0efed;--surface-3:#e8e7e4;
+  --border:#d8d6d2;--border-bright:#b8b5b0;
+  --text:#1a1a1a;--text-dim:#666;--text-faint:#aaa;
+  --accent:#2563eb;--accent-glow:rgba(37,99,235,.1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:var(--font-body);
-  background:var(--bg);
-  color:var(--text);
-  font-size:14px;
-  line-height:1.5;
-  min-height:100vh;
-}
-
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh}
 /* HEADER */
-header{
-  position:sticky;top:0;z-index:100;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;
-  padding:0 24px;
-  height:56px;
-  gap:16px;
-}
-.logo{
-  display:flex;align-items:center;gap:10px;
-  font-family:var(--font-display);
-  font-weight:800;font-size:16px;
-  letter-spacing:-0.02em;
-}
-.logo-icon{
-  width:28px;height:28px;
-  background:linear-gradient(135deg,#4f8ef7,#7c3aed);
-  border-radius:7px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;
-}
+header{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;height:56px;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:16px;letter-spacing:-.02em}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
 .header-spacer{flex:1}
-.theme-btn{
-  width:32px;height:32px;
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;
-  transition:all .15s;
-}
-.theme-btn:hover{background:var(--surface-3);border-color:var(--border-bright)}
-.api-btn{
-  display:flex;align-items:center;gap:6px;
-  padding:0 12px;height:32px;
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  cursor:pointer;
-  font-family:var(--font-mono);
-  font-size:11px;
-  color:var(--text-dim);
-  transition:all .15s;
-  white-space:nowrap;
-}
-.api-btn:hover{border-color:var(--accent);color:var(--text)}
+.hbtn{display:flex;align-items:center;gap:6px;padding:0 12px;height:32px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-mono);font-size:11px;color:var(--text-dim);transition:all .15s;white-space:nowrap}
+.hbtn:hover{border-color:var(--accent);color:var(--text)}
+.hbtn.icon{width:32px;padding:0;justify-content:center;font-size:15px}
+#model-select{padding:0 10px;height:32px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:11px;font-family:var(--font-mono);cursor:pointer}
 .api-dot{width:6px;height:6px;border-radius:50%;background:var(--error)}
 .api-dot.connected{background:var(--success)}
-
 /* TABS */
-.tabs{
-  display:flex;gap:2px;
-  padding:16px 24px 0;
-}
-.tab-btn{
-  padding:8px 20px;
-  font-family:var(--font-display);
-  font-size:13px;font-weight:600;
-  letter-spacing:0.02em;
-  text-transform:uppercase;
-  background:none;
-  border:none;border-bottom:2px solid transparent;
-  color:var(--text-faint);
-  cursor:pointer;
-  transition:all .15s;
-}
+.tabs{display:flex;gap:2px;padding:16px 24px 0}
+.tab-btn{padding:8px 20px;font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;color:var(--text-faint);cursor:pointer;transition:all .15s}
 .tab-btn.active{color:var(--accent);border-color:var(--accent)}
 .tab-btn:hover:not(.active){color:var(--text-dim);border-color:var(--border-bright)}
-
-/* MAIN LAYOUT */
+/* MAIN */
 .main{padding:20px 24px 40px}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-.two-col{
-  display:grid;
-  grid-template-columns:1fr 320px;
-  gap:16px;
-}
-
-/* CARDS */
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:20px;
-}
-.card-title{
-  font-family:var(--font-display);
-  font-size:11px;font-weight:700;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--text-faint);
-  margin-bottom:14px;
-}
-
-/* DROP ZONE */
-.drop-zone{
-  border:2px dashed var(--border);
-  border-radius:var(--radius);
-  padding:32px 20px;
-  text-align:center;
-  cursor:pointer;
-  transition:all .2s;
-  background:var(--surface-2);
-  position:relative;
-  overflow:hidden;
-}
-.drop-zone:hover,.drop-zone.dragover{
-  border-color:var(--accent);
-  background:var(--accent-glow);
-}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.two-col{display:grid;grid-template-columns:1fr 320px;gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.card-title{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:14px}
+/* DROP */
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface-2)}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--accent-glow)}
 .drop-icon{font-size:28px;margin-bottom:10px;opacity:.5}
 .drop-text{color:var(--text-dim);font-size:13px;line-height:1.6}
 .drop-text strong{color:var(--accent)}
 .drop-small{font-size:11px;color:var(--text-faint);margin-top:4px}
 #logo-input,#player-input{display:none}
-
-/* PROCESS BTN */
-.process-btn{
-  width:100%;margin-top:12px;
-  padding:0 20px;height:42px;
-  background:var(--accent);
-  border:none;border-radius:var(--radius-sm);
-  color:#fff;
-  font-family:var(--font-display);
-  font-size:13px;font-weight:700;
-  letter-spacing:0.05em;
-  text-transform:uppercase;
-  cursor:pointer;
-  transition:all .15s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
+/* BTNS */
+.process-btn{width:100%;margin-top:12px;padding:0 20px;height:42px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .process-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.process-btn:active{transform:none}
 .process-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
-
 /* SETTINGS */
 .setting-group{margin-bottom:16px}
-.setting-label{
-  font-size:11px;font-weight:500;
-  letter-spacing:0.05em;
-  text-transform:uppercase;
-  color:var(--text-faint);
-  margin-bottom:8px;
-}
+.setting-label{font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint);margin-bottom:8px}
 .radio-group{display:flex;flex-direction:column;gap:6px}
-.radio-option{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 12px;
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  cursor:pointer;
-  font-size:13px;
-  transition:all .15s;
-}
+.radio-option{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;transition:all .15s}
 .radio-option:hover{border-color:var(--border-bright)}
 .radio-option input{accent-color:var(--accent)}
 .radio-option.selected{border-color:var(--accent);background:var(--accent-glow)}
-select{
-  width:100%;padding:8px 12px;
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text);
-  font-family:var(--font-body);font-size:13px;
-  cursor:pointer;
-  transition:border-color .15s;
-}
+select{width:100%;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-body);font-size:13px;cursor:pointer;transition:border-color .15s}
 select:focus{outline:none;border-color:var(--accent)}
-textarea{
-  width:100%;
-  padding:10px 12px;
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text);
-  font-family:var(--font-mono);font-size:11px;
-  line-height:1.6;
-  resize:vertical;
-  min-height:180px;
-  transition:border-color .15s;
-}
+textarea{width:100%;padding:10px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-mono);font-size:11px;line-height:1.6;resize:vertical;min-height:180px;transition:border-color .15s}
 textarea:focus{outline:none;border-color:var(--accent)}
-
 /* QUEUE */
-.queue-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin:20px 0 12px;
-}
-.queue-title{
-  font-family:var(--font-display);
-  font-size:11px;font-weight:700;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--text-faint);
-}
-.dl-all-btn{
-  display:flex;align-items:center;gap:6px;
-  padding:6px 14px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text-dim);
-  font-size:12px;font-weight:500;
-  cursor:pointer;
-  transition:all .15s;
-}
+.queue-header{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
+.queue-title{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+.dl-all-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
 .dl-all-btn:hover{border-color:var(--accent);color:var(--accent)}
-
-.queue-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:12px;
-}
-.queue-empty{
-  grid-column:1/-1;
-  padding:40px;text-align:center;
-  color:var(--text-faint);font-size:13px;
-}
-
-/* QUEUE CARD */
-.q-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  transition:border-color .2s;
-}
+.queue-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.queue-empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--text-faint);font-size:13px}
+/* Q-CARD */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s}
 .q-card:hover{border-color:var(--border-bright)}
 .q-card.done{border-color:rgba(52,211,153,.25)}
 .q-card.error{border-color:rgba(248,113,113,.25)}
-.q-thumb{
-  width:100%;aspect-ratio:1/1;
-  background:repeating-conic-gradient(#2a2a2a 0% 25%,#1a1a1a 0% 50%) 0 0/20px 20px;
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;position:relative;
-}
-[data-theme="light"] .q-thumb{
-  background:repeating-conic-gradient(#ddd 0% 25%,#f0f0f0 0% 50%) 0 0/20px 20px;
-}
-.q-thumb img{
-  max-width:100%;max-height:100%;
-  object-fit:contain;
-  position:relative;z-index:1;
-}
+.q-thumb{width:100%;aspect-ratio:1/1;background:repeating-conic-gradient(#2a2a2a 0% 25%,#1a1a1a 0% 50%) 0 0/20px 20px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+[data-theme="light"] .q-thumb{background:repeating-conic-gradient(#ddd 0% 25%,#f0f0f0 0% 50%) 0 0/20px 20px}
+.q-thumb img{max-width:100%;max-height:100%;object-fit:contain;position:relative;z-index:1}
 .q-info{padding:10px}
-.q-name{
-  font-size:11px;
-  color:var(--text-dim);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  margin-bottom:6px;
-}
-.q-status{
-  display:flex;align-items:center;gap:6px;
-  font-size:11px;
-  color:var(--text-faint);
-  margin-bottom:8px;
-}
-.status-dot{
-  width:7px;height:7px;border-radius:50%;
-  flex-shrink:0;
-  background:var(--text-faint);
-}
+.q-name{font-size:11px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:6px}
+.q-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-faint);margin-bottom:8px}
+.status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--text-faint)}
 .status-dot.processing{background:var(--warning);animation:pulse .8s ease-in-out infinite}
 .status-dot.done{background:var(--success)}
 .status-dot.error{background:var(--error)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
 .q-actions{display:flex;flex-direction:column;gap:5px}
-.q-btn{
-  width:100%;padding:5px 10px;
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  background:var(--surface-2);
-  color:var(--text-dim);
-  font-size:11px;font-weight:500;
-  cursor:pointer;
-  transition:all .12s;
-}
+.q-btn{width:100%;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text-dim);font-size:11px;font-weight:500;cursor:pointer;transition:all .12s}
 .q-btn:hover{border-color:var(--accent);color:var(--accent)}
 .q-btn.primary{background:var(--accent);border-color:transparent;color:#fff}
 .q-btn.primary:hover{filter:brightness(1.1)}
+.q-btn.danger{border-color:rgba(248,113,113,.4);color:var(--error)}
+.q-btn.danger:hover{background:rgba(248,113,113,.1);border-color:var(--error)}
 .q-btn:disabled{opacity:.35;cursor:not-allowed}
-
 /* MODAL */
-.modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.7);
-  display:flex;align-items:center;justify-content:center;
-  z-index:200;
-  opacity:0;pointer-events:none;
-  transition:opacity .2s;
-}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:28px;
-  width:440px;max-width:90vw;
-  transform:translateY(10px);
-  transition:transform .2s;
-}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:440px;max-width:90vw;transform:translateY(10px);transition:transform .2s}
 .modal-overlay.open .modal{transform:none}
-.modal h2{
-  font-family:var(--font-display);
-  font-size:18px;font-weight:800;
-  margin-bottom:6px;
-}
+.modal h2{font-family:var(--font-display);font-size:18px;font-weight:800;margin-bottom:6px}
 .modal p{color:var(--text-dim);font-size:13px;margin-bottom:20px;line-height:1.6}
-.modal input{
-  width:100%;padding:10px 14px;
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text);
-  font-family:var(--font-mono);font-size:13px;
-  margin-bottom:12px;
-  transition:border-color .15s;
-}
+.modal input{width:100%;padding:10px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-mono);font-size:13px;margin-bottom:12px;transition:border-color .15s}
 .modal input:focus{outline:none;border-color:var(--accent)}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end}
-.modal-cancel{
-  padding:8px 16px;
-  background:none;
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text-dim);
-  font-size:13px;cursor:pointer;
-  transition:all .12s;
-}
-.modal-cancel:hover{border-color:var(--border-bright);color:var(--text)}
-.modal-save{
-  padding:8px 20px;
-  background:var(--accent);border:none;
-  border-radius:var(--radius-sm);
-  color:#fff;font-size:13px;font-weight:600;
-  cursor:pointer;transition:filter .12s;
-}
-.modal-save:hover{filter:brightness(1.1)}
-
+.btn-cancel{padding:8px 16px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:13px;cursor:pointer;transition:all .12s}
+.btn-cancel:hover{border-color:var(--border-bright);color:var(--text)}
+.btn-save{padding:8px 20px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:filter .12s}
+.btn-save:hover{filter:brightness(1.1)}
 /* TOAST */
-.toast-container{
-  position:fixed;bottom:20px;right:20px;
-  display:flex;flex-direction:column;gap:8px;
-  z-index:300;
-}
-.toast{
-  padding:10px 16px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-size:12px;color:var(--text-dim);
-  animation:slideIn .2s ease;
-  max-width:320px;
-}
+.toast-container{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:300}
+.toast{padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text-dim);animation:slideIn .2s ease;max-width:320px}
 .toast.success{border-color:var(--success);color:var(--success)}
 .toast.error{border-color:var(--error);color:var(--error)}
 @keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
+
+/* ═══════════════════════════════════════════════════
+   EDITOR MODAL
+═══════════════════════════════════════════════════ */
+.editor-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.editor-overlay.open{opacity:1;pointer-events:all}
+.editor-shell{
+  width:min(96vw,1100px);height:min(92vh,780px);
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.editor-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.editor-title{font-family:var(--font-display);font-weight:700;font-size:15px}
+.editor-spacer{flex:1}
+.editor-body{display:flex;flex:1;overflow:hidden}
+/* canvas area */
+.editor-canvas-wrap{
+  flex:1;position:relative;overflow:hidden;
+  background:repeating-conic-gradient(#1e1e1e 0% 25%,#151515 0% 50%) 0 0/24px 24px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:crosshair;
+}
+#editor-canvas{
+  position:relative;z-index:1;
+  display:block;
+  image-rendering:pixelated;
+}
+/* crop overlay */
+.crop-overlay{
+  position:absolute;z-index:2;
+  border:2px solid var(--accent);
+  box-shadow:0 0 0 9999px rgba(0,0,0,.55);
+  cursor:move;
+  display:none;
+}
+.crop-overlay.visible{display:block}
+.crop-handle{
+  position:absolute;width:10px;height:10px;
+  background:var(--accent);border:2px solid #fff;border-radius:2px;
+}
+.ch-tl{top:-5px;left:-5px;cursor:nw-resize}
+.ch-tr{top:-5px;right:-5px;cursor:ne-resize}
+.ch-bl{bottom:-5px;left:-5px;cursor:sw-resize}
+.ch-br{bottom:-5px;right:-5px;cursor:se-resize}
+.ch-tc{top:-5px;left:50%;transform:translateX(-50%);cursor:n-resize}
+.ch-bc{bottom:-5px;left:50%;transform:translateX(-50%);cursor:s-resize}
+.ch-lc{left:-5px;top:50%;transform:translateY(-50%);cursor:w-resize}
+.ch-rc{right:-5px;top:50%;transform:translateY(-50%);cursor:e-resize}
+/* sidebar */
+.editor-sidebar{
+  width:240px;flex-shrink:0;
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;gap:0;
+  overflow-y:auto;
+}
+.sidebar-section{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:10px}
+/* tool buttons */
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tool-btn{
+  padding:8px 6px;
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  color:var(--text-dim);font-size:11px;font-weight:500;
+  cursor:pointer;transition:all .12s;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.tool-btn .icon{font-size:16px}
+.tool-btn:hover{border-color:var(--accent);color:var(--accent)}
+.tool-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}
+/* slider */
+.slider-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.slider-row label{font-size:11px;color:var(--text-dim);width:70px;flex-shrink:0}
+.slider-row input[type=range]{flex:1;accent-color:var(--accent)}
+.slider-row span{font-size:11px;color:var(--text-faint);width:28px;text-align:right}
+/* bg remove options */
+.bg-method-tabs{display:flex;gap:4px;margin-bottom:10px}
+.bg-tab{flex:1;padding:5px 0;font-size:11px;font-weight:600;text-align:center;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text-faint);transition:all .12s}
+.bg-tab.active{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
+.bg-remove-btn{
+  width:100%;padding:9px;
+  background:linear-gradient(135deg,#4f8ef7,#7c3aed);
+  border:none;border-radius:var(--radius-sm);
+  color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  cursor:pointer;transition:filter .15s;
+}
+.bg-remove-btn:hover{filter:brightness(1.12)}
+.bg-remove-btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+/* editor footer */
+.editor-footer{display:flex;align-items:center;gap:8px;padding:12px 18px;border-top:1px solid var(--border);flex-shrink:0}
+.editor-footer .spacer{flex:1}
+.efbtn{padding:8px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid var(--border);background:var(--surface-2);color:var(--text-dim)}
+.efbtn:hover{border-color:var(--border-bright);color:var(--text)}
+.efbtn.primary{background:var(--accent);border-color:transparent;color:#fff}
+.efbtn.primary:hover{filter:brightness(1.1)}
+/* progress bar */
+.prog-wrap{padding:0 16px 14px}
+.prog-bar{height:4px;background:var(--surface-3);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7c3aed);width:0%;transition:width .3s;border-radius:2px}
+.prog-label{font-size:10px;color:var(--text-faint);margin-top:5px}
+/* undo stack badge */
+.undo-badge{font-size:10px;color:var(--text-faint);margin-left:auto}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
-  <div class="logo">
-    <div class="logo-icon">⚡</div>
-    Sports Asset Studio
-  </div>
+  <div class="logo"><div class="logo-icon">⚡</div>Sports Asset Studio</div>
   <div class="header-spacer"></div>
-  <select id="model-select" style="padding:0 10px;height:32px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text-dim);font-size:11px;font-family:var(--font-mono);cursor:pointer;">
+  <select id="model-select">
     <option value="gemini-2.5-flash-image">gemini-2.5-flash-image</option>
     <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview-image-generation</option>
     <option value="gemini-2.0-flash-exp">gemini-2.0-flash-exp</option>
   </select>
-  <button class="theme-btn" id="theme-toggle" title="Toggle theme">🌙</button>
-  <button class="api-btn" id="api-btn">
-    <div class="api-dot" id="api-dot"></div>
-    <span id="api-label">Set API Key</span>
-  </button>
+  <button class="hbtn icon" id="theme-toggle" title="Toggle theme">🌙</button>
+  <button class="hbtn" id="api-btn"><div class="api-dot" id="api-dot"></div><span id="api-label">Set API Key</span></button>
 </header>
 
-<!-- TABS -->
 <div class="tabs">
   <button class="tab-btn active" data-tab="logo">🏅 Logo Emblem</button>
   <button class="tab-btn" data-tab="player">👤 Player Photo</button>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
   <!-- LOGO TAB -->
   <div class="tab-panel active" id="tab-logo">
     <div class="two-col">
@@ -455,55 +256,35 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="card-title">Upload Logos</div>
         <div class="drop-zone" id="logo-drop">
           <div class="drop-icon">🖼️</div>
-          <div class="drop-text">
-            <strong>Click to browse</strong> or drag & drop<br>
-            PNG, JPG, WEBP, SVG — multiple files
-          </div>
+          <div class="drop-text"><strong>Click to browse</strong> or drag & drop<br>PNG, JPG, WEBP, SVG — multiple files</div>
           <div class="drop-small">Files processed locally — nothing uploaded to servers</div>
         </div>
         <input type="file" id="logo-input" accept=".png,.jpg,.jpeg,.webp,.svg" multiple>
-        <button class="process-btn" id="logo-process-all">
-          ⚙️ Process All
-        </button>
+        <button class="process-btn" id="logo-process-all">⚙️ Process All</button>
       </div>
       <div class="card">
         <div class="card-title">Settings</div>
         <div class="setting-group">
           <div class="setting-label">Background Removal</div>
           <div class="radio-group">
-            <label class="radio-option selected">
-              <input type="radio" name="logo-method" value="browser" checked>
-              Browser-based <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Free / Offline</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="logo-method" value="gemini">
-              Gemini API <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Better quality</span>
-            </label>
+            <label class="radio-option selected"><input type="radio" name="logo-method" value="browser" checked>Browser-based <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Free / Offline</span></label>
+            <label class="radio-option"><input type="radio" name="logo-method" value="gemini">Gemini API <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Better quality</span></label>
           </div>
         </div>
         <div class="setting-group">
           <div class="setting-label">Output Quality</div>
           <div class="radio-group">
-            <label class="radio-option selected">
-              <input type="radio" name="logo-quality" value="high" checked>
-              High <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Best result</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="logo-quality" value="medium">
-              Medium <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Faster</span>
-            </label>
+            <label class="radio-option selected"><input type="radio" name="logo-quality" value="high" checked>High <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Best result</span></label>
+            <label class="radio-option"><input type="radio" name="logo-quality" value="medium">Medium <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Faster</span></label>
           </div>
         </div>
       </div>
     </div>
-
     <div class="queue-header">
       <div class="queue-title" id="logo-queue-title">Queue — 0 files</div>
       <button class="dl-all-btn" id="logo-dl-all" style="display:none">⬇ Download All ZIP</button>
     </div>
-    <div class="queue-grid" id="logo-queue">
-      <div class="queue-empty">No files added yet. Upload logos above to get started.</div>
-    </div>
+    <div class="queue-grid" id="logo-queue"><div class="queue-empty">No files added yet. Upload logos above to get started.</div></div>
   </div>
 
   <!-- PLAYER TAB -->
@@ -513,16 +294,11 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="card-title">Upload Player Photos</div>
         <div class="drop-zone" id="player-drop">
           <div class="drop-icon">👤</div>
-          <div class="drop-text">
-            <strong>Click to browse</strong> or drag & drop<br>
-            PNG, JPG, WEBP — multiple files
-          </div>
+          <div class="drop-text"><strong>Click to browse</strong> or drag & drop<br>PNG, JPG, WEBP — multiple files</div>
           <div class="drop-small">Gemini AI transforms photos into standardized profile images</div>
         </div>
         <input type="file" id="player-input" accept=".png,.jpg,.jpeg,.webp" multiple>
-        <button class="process-btn" id="player-process-all">
-          ⚙️ Process All
-        </button>
+        <button class="process-btn" id="player-process-all">⚙️ Process All</button>
       </div>
       <div class="card">
         <div class="card-title">Settings</div>
@@ -539,16 +315,12 @@ textarea:focus{outline:none;border-color:var(--accent)}
         </div>
       </div>
     </div>
-
     <div class="queue-header">
       <div class="queue-title" id="player-queue-title">Queue — 0 files</div>
       <button class="dl-all-btn" id="player-dl-all" style="display:none">⬇ Download All ZIP</button>
     </div>
-    <div class="queue-grid" id="player-queue">
-      <div class="queue-empty">No files added yet. Upload player photos above to get started.</div>
-    </div>
+    <div class="queue-grid" id="player-queue"><div class="queue-empty">No files added yet. Upload player photos above to get started.</div></div>
   </div>
-
 </div>
 
 <!-- API MODAL -->
@@ -558,353 +330,342 @@ textarea:focus{outline:none;border-color:var(--accent)}
     <p>Required for Gemini-based processing. Your key is stored locally in your browser and never sent to our servers.</p>
     <input type="password" id="api-key-input" placeholder="AIza..." autocomplete="off">
     <div class="modal-actions">
-      <button class="modal-cancel" id="modal-cancel">Cancel</button>
-      <button class="modal-save" id="modal-save">Save Key</button>
+      <button class="btn-cancel" id="modal-cancel">Cancel</button>
+      <button class="btn-save" id="modal-save">Save Key</button>
     </div>
   </div>
 </div>
 
-<!-- TOASTS -->
+<!-- ═══════════════════════════════════════════════════
+     EDITOR MODAL
+═══════════════════════════════════════════════════ -->
+<div class="editor-overlay" id="editor-overlay">
+  <div class="editor-shell">
+    <div class="editor-header">
+      <span class="editor-title">✏️ Image Editor</span>
+      <span id="editor-filename" style="font-size:12px;color:var(--text-faint);margin-left:6px"></span>
+      <div class="editor-spacer"></div>
+      <span class="undo-badge" id="undo-badge">history: 0</span>
+      <button class="hbtn" id="editor-undo" title="Undo (Ctrl+Z)" style="margin-left:8px">↩ Undo</button>
+      <button class="hbtn icon" id="editor-close" title="Close">✕</button>
+    </div>
+
+    <div class="editor-body">
+      <!-- CANVAS -->
+      <div class="editor-canvas-wrap" id="editor-canvas-wrap">
+        <canvas id="editor-canvas"></canvas>
+        <div class="crop-overlay" id="crop-overlay">
+          <div class="crop-handle ch-tl" data-h="tl"></div>
+          <div class="crop-handle ch-tr" data-h="tr"></div>
+          <div class="crop-handle ch-bl" data-h="bl"></div>
+          <div class="crop-handle ch-br" data-h="br"></div>
+          <div class="crop-handle ch-tc" data-h="tc"></div>
+          <div class="crop-handle ch-bc" data-h="bc"></div>
+          <div class="crop-handle ch-lc" data-h="lc"></div>
+          <div class="crop-handle ch-rc" data-h="rc"></div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="editor-sidebar">
+
+        <!-- BG REMOVAL -->
+        <div class="sidebar-section">
+          <div class="sidebar-label">Remove Background</div>
+          <div class="bg-method-tabs">
+            <div class="bg-tab active" data-bgm="canvas">Canvas</div>
+            <div class="bg-tab" data-bgm="flood">Magic Wand</div>
+          </div>
+          <div id="bg-canvas-opts">
+            <div class="slider-row">
+              <label>Tolerance</label>
+              <input type="range" id="bg-tolerance" min="1" max="120" value="30">
+              <span id="bg-tol-val">30</span>
+            </div>
+            <div class="slider-row">
+              <label>Smooth</label>
+              <input type="range" id="bg-smooth" min="0" max="10" value="2">
+              <span id="bg-smooth-val">2</span>
+            </div>
+          </div>
+          <button class="bg-remove-btn" id="bg-remove-btn">✂ Remove Background</button>
+          <div style="margin-top:8px">
+            <div class="slider-row">
+              <label>BG Color</label>
+              <input type="color" id="bg-color-pick" value="#ffffff" style="width:36px;height:24px;padding:0;border:none;background:none;cursor:pointer">
+              <span style="font-size:11px;color:var(--text-faint);flex:1;margin-left:4px">click bg pixel</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CROP -->
+        <div class="sidebar-section">
+          <div class="sidebar-label">Crop</div>
+          <div class="tool-grid" style="margin-bottom:8px">
+            <button class="tool-btn" id="crop-free-btn"><span class="icon">⬜</span>Free</button>
+            <button class="tool-btn" id="crop-1x1-btn"><span class="icon">◼</span>1:1</button>
+            <button class="tool-btn" id="crop-4x5-btn"><span class="icon">▬</span>4:5</button>
+            <button class="tool-btn" id="crop-16x9-btn"><span class="icon">▭</span>16:9</button>
+          </div>
+          <button class="q-btn primary" id="crop-apply-btn" style="width:100%;padding:7px">✂ Apply Crop</button>
+        </div>
+
+        <!-- TRANSFORM -->
+        <div class="sidebar-section">
+          <div class="sidebar-label">Transform</div>
+          <div class="tool-grid">
+            <button class="tool-btn" onclick="editorRotate(-90)"><span class="icon">↺</span>Rotate L</button>
+            <button class="tool-btn" onclick="editorRotate(90)"><span class="icon">↻</span>Rotate R</button>
+            <button class="tool-btn" onclick="editorFlip('h')"><span class="icon">↔</span>Flip H</button>
+            <button class="tool-btn" onclick="editorFlip('v')"><span class="icon">↕</span>Flip V</button>
+          </div>
+        </div>
+
+        <!-- ADJUSTMENTS -->
+        <div class="sidebar-section">
+          <div class="sidebar-label">Adjustments</div>
+          <div class="slider-row"><label>Brightness</label><input type="range" id="adj-brightness" min="-100" max="100" value="0"><span id="adj-bv">0</span></div>
+          <div class="slider-row"><label>Contrast</label><input type="range" id="adj-contrast" min="-100" max="100" value="0"><span id="adj-cv">0</span></div>
+          <div class="slider-row"><label>Saturation</label><input type="range" id="adj-saturation" min="-100" max="100" value="0"><span id="adj-sv">0</span></div>
+          <button class="q-btn" id="adj-apply-btn" style="width:100%;margin-top:6px;padding:6px">Apply Adjustments</button>
+        </div>
+
+        <!-- PROGRESS -->
+        <div class="prog-wrap" id="prog-wrap" style="display:none">
+          <div class="sidebar-label" id="prog-label-txt">Processing…</div>
+          <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+          <div class="prog-label" id="prog-sub"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="editor-footer">
+      <button class="efbtn" id="editor-reset">↺ Reset</button>
+      <div class="spacer"></div>
+      <button class="efbtn" id="editor-cancel-btn">Cancel</button>
+      <button class="efbtn primary" id="editor-apply-btn">✓ Save to Queue</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toasts"></div>
 
 <script>
-// ─── PROMPTS ───────────────────────────────────────────────────────────────
-const LOGO_PROMPT = `You are a professional image editor. Your task is to process a sports team logo/emblem with maximum precision.
+// ═══════════════════════════════════════════════════════════════════
+// PROMPTS
+// ═══════════════════════════════════════════════════════════════════
+const LOGO_PROMPT = `You are a professional image editor. Process this sports team logo with maximum precision.
+Remove the background completely — make it fully transparent. Preserve exact silhouette. Keep all internal transparent elements. No white matte.
+All edges must be sharp and pixel-perfect. Clean up artifacts and halos.
+Keep all text, colors, shadows, gradients, glows exactly. Reconstruct if blurry or low-res.
+Final size: 512x512 pixels. Format: PNG with full transparency. Crop tightly, no padding.`;
 
-BACKGROUND REMOVAL
-Remove the background completely and make it fully transparent (alpha channel = 0)
-Preserve the exact silhouette shape of the logo — do not simplify, round, or alter the outline
-If the logo has internal transparent elements (holes in letters, gaps in design) — make those transparent as well
-Do not add any white matte or color fill around the edges
+const PLAYER_GENERAL_PROMPT = `You are a professional sports photographer. Transform this athlete photo into a standardized professional profile image.
+POSE: Face directly toward camera. Calm neutral expression.
+CROP: Perfect 1:1 square. Head to just above armpits. Centered.
+BACKGROUND: Pure white #FFFFFF, flat and uniform. No environment.
+CLOTHING: Keep exactly as worn. Don't alter team colors or logos.
+APPEARANCE: Preserve skin tone, tattoos, scars, hairstyle, beard exactly. Remove injuries.
+OUTPUT: 1:1 square PNG, minimum 512x512, white background, professional sports profile.`;
 
-EDGE QUALITY
-All edges must be sharp, crisp, and pixel-perfect — no soft anti-aliasing bleed, no fuzzy borders
-Clean up any compression artifacts, halos, or fringing left from the original background
+const PLAYER_COMBAT_PROMPT = `You are a professional sports photographer. Transform this athlete photo into a standardized professional profile image.
+POSE: Face directly toward camera. Calm neutral expression.
+CROP: Perfect 1:1 square. Head to just above armpits. Centered.
+BACKGROUND: Pure white #FFFFFF, flat and uniform.
+CLOTHING: Male athletes shirtless from waist up. Female athletes keep sports bra. Remove all fight equipment (gloves, wraps, headgear).
+APPEARANCE: Preserve skin tone, tattoos, scars, hairstyle, beard. Remove fight injuries (bruises, cuts, swelling).
+OUTPUT: 1:1 square PNG, minimum 512x512, white background, professional sports profile.`;
 
-LOGO CONTENT — PRESERVE EXACTLY
-Keep all text and team name lettering exactly as-is
-Preserve all internal shadows, gradients, glows, and depth effects within the logo itself
-Preserve all colors with full accuracy — do not alter hue, saturation, or brightness
-Keep every detail: fine lines, small decorative elements, emblems within emblems
+// ═══════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════
+const state = { logo:{items:[]}, player:{items:[]} };
 
-RECONSTRUCTION
-If the original logo is low resolution, pixelated, or blurry — reconstruct and sharpen all details intelligently
-Infer missing details from visible context and redraw them at high quality
-Upscale the result to 512×512 pixels
-
-OUTPUT
-Final size: exactly 512×512 pixels
-Format: PNG with full transparency
-Crop tightly to the logo — no padding, logo fills the canvas edge to edge
-Do not add watermarks, backgrounds, shadows behind the logo, or any new elements`;
-
-const PLAYER_GENERAL_PROMPT = `You are a professional sports photographer and retoucher. Transform this athlete photo into a standardized professional profile image.
-
-ORIENTATION & POSE
-The athlete must face directly toward the camera (front-facing portrait, en face)
-If the athlete is turned sideways or at an angle — rotate and reconstruct them to face forward
-Expression must be calm, neutral, and relaxed (no smile, no frown, no tension, no strong emotions)
-
-CROP & FRAMING
-Crop to a perfect 1:1 square format
-Frame from the very top of the head down to just above the armpits (at collarbone level)
-Center the athlete perfectly within the square
-No excessive empty space above the head
-
-BACKGROUND
-Replace the background with a completely clean, pure white (#FFFFFF) background
-The white background must be flat and uniform — no gradients, no vignette, no shadows behind the athlete
-Remove any environmental elements (stadium, crowd, field, gym, locker room, etc.)
-
-CLOTHING
-Keep all clothing exactly as worn (jersey, t-shirt, sportswear, training gear)
-Do not alter team colors, logos, or numbers on clothing
-
-APPEARANCE — PRESERVE EXACTLY
-Skin tone, complexion, and all natural skin details — preserve with full accuracy
-All tattoos and scars — keep exactly as they appear
-Hairstyle — preserve the original style and shape; if hair is wet/sweaty — make it appear dry and natural
-Beard and facial hair — keep exactly as is, do not trim or alter
-Eyebrows, facial features — no alterations
-
-RETOUCHING
-Remove any visible injuries (bruises, cuts, swelling, redness from recent fights or matches)
-Do not retouch healthy skin (no smoothing, no airbrushing, no beautification)
-
-EDGES & QUALITY
-The athlete must have sharp, precise edges — clean separation from background
-Preserve all fine details (hair strands, fabric texture, skin pores)
-Output at high resolution, professional studio quality
-
-OUTPUT
-1:1 square PNG, minimum 512×512 pixels
-White background #FFFFFF, flat and uniform
-Professional sports profile image suitable for a betting or sports website`;
-
-const PLAYER_COMBAT_PROMPT = `You are a professional sports photographer and retoucher. Transform this athlete photo into a standardized professional profile image.
-
-ORIENTATION & POSE
-The athlete must face directly toward the camera (front-facing portrait, en face)
-If the athlete is turned sideways or at an angle — rotate and reconstruct them to face forward
-Expression must be calm, neutral, and relaxed (no smile, no frown, no tension, no strong emotions)
-
-CROP & FRAMING
-Crop to a perfect 1:1 square format
-Frame from the very top of the head down to just above the armpits (at collarbone level)
-Center the athlete perfectly within the square
-No excessive empty space above the head
-
-BACKGROUND
-Replace the background with a completely clean, pure white (#FFFFFF) background
-The white background must be flat and uniform — no gradients, no vignette, no shadows behind the athlete
-Remove any environmental elements (stadium, crowd, field, gym, locker room, etc.)
-
-CLOTHING & EQUIPMENT
-Male athletes: remove all upper body clothing (no shirt, no jersey, no rash guard, no tank top) — the athlete must be shown shirtless from the waist up
-Female athletes: keep sports bra or athletic top as worn — do not remove it
-Remove all fight equipment: boxing gloves, MMA gloves, hand wraps, bandages on hands, mouthguard/mouthpiece
-Remove any headgear or protective equipment
-
-APPEARANCE — PRESERVE EXACTLY
-Skin tone, complexion, and all natural skin details — preserve with full accuracy
-All tattoos and scars — keep exactly as they appear
-Hairstyle — preserve the original style and shape
-Beard and facial hair — keep exactly as is, do not trim or alter
-Eyebrows, facial features — no alterations
-
-RETOUCHING
-Remove any visible fight injuries (bruises, cuts, swellings, blood, redness, black eyes)
-Do not retouch healthy skin — no smoothing, no airbrushing, no beautification beyond injury removal
-
-EDGES & QUALITY
-The athlete must have sharp, precise edges — clean separation from background
-Preserve all fine details (hair strands, fabric texture, skin pores)
-Output at high resolution, professional studio quality
-
-OUTPUT
-1:1 square PNG, minimum 512×512 pixels
-White background #FFFFFF, flat and uniform
-Professional sports profile image suitable for a betting or sports website`;
-
-// ─── STATE ─────────────────────────────────────────────────────────────────
-const state = {
-  logo: { items: [] },
-  player: { items: [] },
-  bgRemovalLoaded: false,
-  bgRemovalLoading: false,
-};
-
-// ─── API KEY ────────────────────────────────────────────────────────────────
-function getApiKey() { return localStorage.getItem('gemini_api_key') || ''; }
-function setApiKey(k) { localStorage.setItem('gemini_api_key', k); updateApiUI(); }
+// ═══════════════════════════════════════════════════════════════════
+// API KEY
+// ═══════════════════════════════════════════════════════════════════
+const getApiKey = () => localStorage.getItem('gemini_api_key') || '';
+const setApiKey = k => { localStorage.setItem('gemini_api_key', k); updateApiUI(); };
 function updateApiUI() {
   const k = getApiKey();
   document.getElementById('api-dot').className = 'api-dot' + (k ? ' connected' : '');
   document.getElementById('api-label').textContent = k ? 'API Connected' : 'Set API Key';
 }
 
-// ─── THEME ──────────────────────────────────────────────────────────────────
-const themeBtn = document.getElementById('theme-toggle');
-themeBtn.addEventListener('click', () => {
-  const isDark = document.documentElement.dataset.theme === 'dark';
-  document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
-  themeBtn.textContent = isDark ? '☀️' : '🌙';
+// ═══════════════════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════════════════
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const d = document.documentElement;
+  const isDark = d.dataset.theme === 'dark';
+  d.dataset.theme = isDark ? 'light' : 'dark';
+  document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
 });
 
-// ─── TABS ────────────────────────────────────────────────────────────────────
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-  });
-});
+// ═══════════════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+}));
 
-// ─── RADIO VISUAL ─────────────────────────────────────────────────────────
-document.querySelectorAll('.radio-group').forEach(group => {
-  group.querySelectorAll('input[type=radio]').forEach(r => {
-    r.addEventListener('change', () => {
-      group.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
-      r.closest('.radio-option').classList.add('selected');
-    });
-  });
-});
+// ═══════════════════════════════════════════════════════════════════
+// RADIO VISUAL
+// ═══════════════════════════════════════════════════════════════════
+document.querySelectorAll('.radio-group').forEach(g => g.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => {
+  g.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+  r.closest('.radio-option').classList.add('selected');
+})));
 
-// ─── MODAL ───────────────────────────────────────────────────────────────────
-const modal = document.getElementById('api-modal');
-document.getElementById('api-btn').addEventListener('click', () => {
-  document.getElementById('api-key-input').value = getApiKey();
-  modal.classList.add('open');
-});
-document.getElementById('modal-cancel').addEventListener('click', () => modal.classList.remove('open'));
+// ═══════════════════════════════════════════════════════════════════
+// API MODAL
+// ═══════════════════════════════════════════════════════════════════
+const apiModal = document.getElementById('api-modal');
+document.getElementById('api-btn').addEventListener('click', () => { document.getElementById('api-key-input').value = getApiKey(); apiModal.classList.add('open'); });
+document.getElementById('modal-cancel').addEventListener('click', () => apiModal.classList.remove('open'));
 document.getElementById('modal-save').addEventListener('click', () => {
   const v = document.getElementById('api-key-input').value.trim();
   if (v) { setApiKey(v); toast('API key saved', 'success'); }
-  modal.classList.remove('open');
+  apiModal.classList.remove('open');
 });
-modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+apiModal.addEventListener('click', e => { if (e.target === apiModal) apiModal.classList.remove('open'); });
 
-// ─── TOAST ───────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════════
 function toast(msg, type = '') {
   const t = document.createElement('div');
-  t.className = 'toast ' + type;
-  t.textContent = msg;
+  t.className = 'toast ' + type; t.textContent = msg;
   document.getElementById('toasts').appendChild(t);
   setTimeout(() => t.remove(), 3500);
 }
 
-// ─── PLAYER PROMPT SYNC ─────────────────────────────────────────────────────
-const sportSelect = document.getElementById('sport-category');
-const playerPromptTA = document.getElementById('player-prompt');
-function syncPrompt() {
-  playerPromptTA.value = sportSelect.value === 'combat' ? PLAYER_COMBAT_PROMPT : PLAYER_GENERAL_PROMPT;
-}
-sportSelect.addEventListener('change', syncPrompt);
-syncPrompt();
+// ═══════════════════════════════════════════════════════════════════
+// PLAYER PROMPT SYNC
+// ═══════════════════════════════════════════════════════════════════
+const sportSel = document.getElementById('sport-category');
+const promptTA = document.getElementById('player-prompt');
+function syncPrompt() { promptTA.value = sportSel.value === 'combat' ? PLAYER_COMBAT_PROMPT : PLAYER_GENERAL_PROMPT; }
+sportSel.addEventListener('change', syncPrompt); syncPrompt();
 
-// ─── DROP ZONES ──────────────────────────────────────────────────────────────
-function setupDrop(dropEl, inputEl, handler) {
-  dropEl.addEventListener('click', () => inputEl.click());
-  inputEl.addEventListener('change', e => { handler([...e.target.files]); inputEl.value = ''; });
-  dropEl.addEventListener('dragover', e => { e.preventDefault(); dropEl.classList.add('dragover'); });
-  dropEl.addEventListener('dragleave', () => dropEl.classList.remove('dragover'));
-  dropEl.addEventListener('drop', e => {
-    e.preventDefault(); dropEl.classList.remove('dragover');
-    handler([...e.dataTransfer.files]);
-  });
+// ═══════════════════════════════════════════════════════════════════
+// DROP ZONES
+// ═══════════════════════════════════════════════════════════════════
+function setupDrop(drop, input, handler) {
+  drop.addEventListener('click', () => input.click());
+  input.addEventListener('change', e => { handler([...e.target.files]); input.value = ''; });
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('dragover'); handler([...e.dataTransfer.files]); });
 }
-setupDrop(document.getElementById('logo-drop'), document.getElementById('logo-input'), files => addFiles('logo', files));
-setupDrop(document.getElementById('player-drop'), document.getElementById('player-input'), files => addFiles('player', files));
+setupDrop(document.getElementById('logo-drop'), document.getElementById('logo-input'), f => addFiles('logo', f));
+setupDrop(document.getElementById('player-drop'), document.getElementById('player-input'), f => addFiles('player', f));
 
-// ─── ADD FILES ───────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// ADD FILES
+// ═══════════════════════════════════════════════════════════════════
 function addFiles(type, files) {
-  const queue = state[type].items;
   let added = 0;
   files.forEach(f => {
-    if (queue.find(i => i.name === f.name)) return;
-    const item = { id: Date.now() + Math.random(), name: f.name, file: f, status: 'pending', result: null };
-    queue.push(item);
+    if (state[type].items.find(i => i.name === f.name)) return;
+    state[type].items.push({ id: Date.now() + Math.random(), name: f.name, file: f, status: 'pending', result: null });
     added++;
   });
   if (added) renderQueue(type);
-  if (added === 0) toast('Duplicate files skipped', '');
+  else toast('Duplicate files skipped', '');
 }
 
-// ─── RENDER QUEUE ────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// RENDER QUEUE
+// ═══════════════════════════════════════════════════════════════════
 function renderQueue(type) {
   const items = state[type].items;
   const grid = document.getElementById(type + '-queue');
   const title = document.getElementById(type + '-queue-title');
   const dlAll = document.getElementById(type + '-dl-all');
   title.textContent = `Queue — ${items.length} file${items.length !== 1 ? 's' : ''}`;
-  const hasDone = items.some(i => i.status === 'done');
-  dlAll.style.display = hasDone ? '' : 'none';
-  if (!items.length) {
-    grid.innerHTML = `<div class="queue-empty">No files added yet.</div>`;
-    return;
-  }
+  dlAll.style.display = items.some(i => i.status === 'done') ? '' : 'none';
+  if (!items.length) { grid.innerHTML = `<div class="queue-empty">No files added yet.</div>`; return; }
   grid.innerHTML = '';
   items.forEach(item => {
     const card = document.createElement('div');
     card.className = 'q-card ' + (item.status === 'done' ? 'done' : item.status === 'error' ? 'error' : '');
     card.dataset.id = item.id;
-
     const thumb = document.createElement('div');
     thumb.className = 'q-thumb';
     if (item.result) {
-      const img = document.createElement('img');
-      img.src = item.result;
-      thumb.appendChild(img);
-    } else if (item.status === 'pending') {
-      // show original preview
+      const img = document.createElement('img'); img.src = item.result; thumb.appendChild(img);
+    } else {
       const img = document.createElement('img');
       img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;opacity:.4;';
-      const reader = new FileReader();
-      reader.onload = e => img.src = e.target.result;
-      reader.readAsDataURL(item.file);
+      const r = new FileReader(); r.onload = e => img.src = e.target.result; r.readAsDataURL(item.file);
       thumb.appendChild(img);
     }
-
-    const dotClass = { pending: '', processing: 'processing', done: 'done', error: 'error' }[item.status];
-    const statusText = { pending: 'Ready', processing: 'Processing…', done: 'Done', error: 'Error' }[item.status];
-
-    const dlBtn = item.status === 'done'
-      ? `<button class="q-btn primary" onclick="downloadItem('${type}','${item.id}')">⬇ Download PNG</button>` : '';
-    const procBtn = item.status !== 'processing'
-      ? `<button class="q-btn" onclick="processOne('${type}','${item.id}')">Process</button>` : '';
-
-    card.innerHTML = ``;
+    const dotClass = {pending:'',processing:'processing',done:'done',error:'error'}[item.status];
+    const statusText = {pending:'Ready',processing:'Processing…',done:'Done',error:'Error'}[item.status];
+    const editBtn = `<button class="q-btn" onclick="openEditor('${type}','${item.id}')">✏️ Edit</button>`;
+    const dlBtn = item.status === 'done' ? `<button class="q-btn primary" onclick="downloadItem('${type}','${item.id}')">⬇ Download PNG</button>` : '';
+    const procBtn = item.status !== 'processing' ? `<button class="q-btn" onclick="processOne('${type}','${item.id}')">Process</button>` : '';
     card.appendChild(thumb);
     card.insertAdjacentHTML('beforeend', `
       <div class="q-info">
         <div class="q-name" title="${item.name}">${item.name}</div>
         <div class="q-status"><div class="status-dot ${dotClass}"></div>${statusText}</div>
-        <div class="q-actions">${dlBtn}${procBtn}</div>
-      </div>
-    `);
+        <div class="q-actions">${dlBtn}${editBtn}${procBtn}</div>
+      </div>`);
     grid.appendChild(card);
   });
 }
 
-// ─── PROCESS ALL ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// PROCESS
+// ═══════════════════════════════════════════════════════════════════
 document.getElementById('logo-process-all').addEventListener('click', () => processAll('logo'));
 document.getElementById('player-process-all').addEventListener('click', () => processAll('player'));
-
 async function processAll(type) {
   const pending = state[type].items.filter(i => i.status === 'pending');
   if (!pending.length) { toast('No pending files in queue', ''); return; }
   for (const item of pending) await processOne(type, item.id);
 }
-
 async function processOne(type, id) {
   const item = state[type].items.find(i => String(i.id) === String(id));
   if (!item || item.status === 'processing') return;
-  item.status = 'processing';
-  renderQueue(type);
+  item.status = 'processing'; renderQueue(type);
   try {
-    if (type === 'logo') {
-      await processLogo(item);
-    } else {
-      await processPlayer(item);
-    }
+    if (type === 'logo') await processLogo(item);
+    else await processPlayer(item);
     item.status = 'done';
   } catch(e) {
-    item.status = 'error';
-    item.errorMsg = e.message;
-    toast('Error: ' + e.message, 'error');
-    console.error(e);
+    item.status = 'error'; item.errorMsg = e.message;
+    toast('Error: ' + e.message, 'error'); console.error(e);
   }
   renderQueue(type);
 }
-
-// ─── LOGO PROCESSING ────────────────────────────────────────────────────────
 async function processLogo(item) {
   const method = document.querySelector('input[name="logo-method"]:checked').value;
   if (method === 'gemini') {
-    const key = getApiKey();
-    if (!key) throw new Error('API key required for Gemini method');
+    const key = getApiKey(); if (!key) throw new Error('API key required');
     const b64 = await fileToBase64(item.file);
-    const result = await callGemini(key, b64, item.file.type, LOGO_PROMPT);
-    item.result = 'data:image/png;base64,' + result;
+    item.result = 'data:image/png;base64,' + await callGemini(key, b64, item.file.type, LOGO_PROMPT);
   } else {
-    // browser method: upscale only (no bg removal)
     const upscaled = await upscaleCanvas(item.file, 2);
     item.result = await blobToDataURL(upscaled);
   }
 }
-
-// ─── PLAYER PROCESSING ──────────────────────────────────────────────────────
 async function processPlayer(item) {
-  const key = getApiKey();
-  if (!key) throw new Error('API key required for player processing');
+  const key = getApiKey(); if (!key) throw new Error('API key required');
   const prompt = document.getElementById('player-prompt').value;
   const b64 = await fileToBase64(item.file);
-  const result = await callGemini(key, b64, item.file.type, prompt);
-  item.result = 'data:image/png;base64,' + result;
+  item.result = 'data:image/png;base64,' + await callGemini(key, b64, item.file.type, prompt);
 }
 
-// ─── GEMINI API ──────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// GEMINI API
+// ═══════════════════════════════════════════════════════════════════
 async function callGemini(apiKey, base64Data, mimeType, prompt) {
   const model = document.getElementById('model-select')?.value || 'gemini-2.5-flash-image';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -915,137 +676,467 @@ async function callGemini(apiKey, base64Data, mimeType, prompt) {
     ]}],
     generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
   };
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `HTTP ${res.status}`);
-  }
+  const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.error?.message || `HTTP ${res.status}`); }
   const data = await res.json();
-  // Search all candidates and parts — API returns either inlineData or inline_data
-  for (const candidate of (data.candidates || [])) {
-    for (const part of (candidate.content?.parts || [])) {
-      if (part.inlineData?.mimeType?.startsWith('image')) return part.inlineData.data;
-      if (part.inline_data?.mime_type?.startsWith('image')) return part.inline_data.data;
-    }
+  for (const c of (data.candidates||[])) for (const p of (c.content?.parts||[])) {
+    if (p.inlineData?.mimeType?.startsWith('image')) return p.inlineData.data;
+    if (p.inline_data?.mime_type?.startsWith('image')) return p.inline_data.data;
   }
-  // Nothing found — dump response for debugging
-  const preview = JSON.stringify(data).slice(0, 500);
-  throw new Error('No image in response: ' + preview);
+  throw new Error('No image in response: ' + JSON.stringify(data).slice(0,500));
 }
 
-// ─── BACKGROUND REMOVAL ─────────────────────────────────────────────────────
-let imglyModule = null;
-async function ensureImgly() {
-  if (imglyModule) return imglyModule;
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/browser.js';
-    script.onload = () => {
-      imglyModule = window.BackgroundRemoval || window['@imgly/background-removal'];
-      if (!imglyModule) reject(new Error('@imgly not found on window'));
-      else resolve(imglyModule);
-    };
-    script.onerror = () => reject(new Error('Failed to load @imgly'));
-    document.head.appendChild(script);
-    setTimeout(() => reject(new Error('@imgly load timeout')), 30000);
-  });
-}
-
-async function removeBgBrowser(base64Data) {
-  const lib = await ensureImgly();
-  const blob = base64ToBlob(base64Data, 'image/png');
-  const result = await lib.removeBackground(blob, { output: { format: 'image/png' } });
-  return blobToDataURL(result);
-}
-
-async function removeBgBrowserFromBlob(blob) {
-  const lib = await ensureImgly();
-  const result = await lib.removeBackground(blob, { output: { format: 'image/png' } });
-  return blobToDataURL(result);
-}
-
-// ─── CANVAS UPSCALE ──────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// CANVAS UTILS
+// ═══════════════════════════════════════════════════════════════════
 function upscaleCanvas(file, factor) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
+  return new Promise((res, rej) => {
+    const img = new Image(); const url = URL.createObjectURL(file);
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width * factor;
-      canvas.height = img.height * factor;
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      URL.revokeObjectURL(url);
-      canvas.toBlob(b => b ? resolve(b) : reject(new Error('Canvas toBlob failed')), 'image/png');
+      const c = document.createElement('canvas');
+      c.width = img.width*factor; c.height = img.height*factor;
+      const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      c.toBlob(b => b ? res(b) : rej(new Error('toBlob failed')), 'image/png');
     };
-    img.onerror = () => reject(new Error('Image load failed'));
-    img.src = url;
+    img.onerror = () => rej(new Error('Image load failed')); img.src = url;
   });
 }
 
-// ─── DOWNLOAD ────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// DOWNLOAD
+// ═══════════════════════════════════════════════════════════════════
 function downloadItem(type, id) {
   const item = state[type].items.find(i => String(i.id) === String(id));
   if (!item || !item.result) return;
   const a = document.createElement('a');
-  a.href = 'data:image/png;base64,' + (item.result.startsWith('data:') ? item.result.split(',')[1] : item.result);
-  a.download = item.name.replace(/\.[^.]+$/, '') + '_processed.png';
-  a.click();
+  a.href = item.result.startsWith('data:') ? item.result : 'data:image/png;base64,' + item.result;
+  a.download = item.name.replace(/\.[^.]+$/,'') + '_processed.png'; a.click();
 }
-
 document.getElementById('logo-dl-all').addEventListener('click', () => downloadAll('logo'));
 document.getElementById('player-dl-all').addEventListener('click', () => downloadAll('player'));
-
 async function downloadAll(type) {
   const zip = new JSZip();
   const folder = zip.folder(type + 's_processed');
   const items = state[type].items.filter(i => i.status === 'done' && i.result);
-  if (!items.length) { toast('No processed files to download', ''); return; }
+  if (!items.length) { toast('No processed files', ''); return; }
   items.forEach(item => {
     const b64 = item.result.startsWith('data:') ? item.result.split(',')[1] : item.result;
-    folder.file(item.name.replace(/\.[^.]+$/, '') + '_processed.png', b64, { base64: true });
+    folder.file(item.name.replace(/\.[^.]+$/,'') + '_processed.png', b64, {base64:true});
   });
-  const blob = await zip.generateAsync({ type: 'blob' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = type + 's_processed.zip';
-  a.click();
-  toast(`Downloaded ${items.length} file${items.length > 1 ? 's' : ''}`, 'success');
+  const blob = await zip.generateAsync({type:'blob'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = type + 's_processed.zip'; a.click();
+  toast(`Downloaded ${items.length} files`, 'success');
 }
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════
 function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = e => resolve(e.target.result.split(',')[1]);
-    r.onerror = () => reject(new Error('File read failed'));
-    r.readAsDataURL(file);
-  });
-}
-function base64ToBlob(b64, mime = 'image/png') {
-  const byteChars = atob(b64);
-  const arr = new Uint8Array(byteChars.length);
-  for (let i = 0; i < byteChars.length; i++) arr[i] = byteChars.charCodeAt(i);
-  return new Blob([arr], { type: mime });
+  return new Promise((res,rej) => { const r = new FileReader(); r.onload = e => res(e.target.result.split(',')[1]); r.onerror = ()=>rej(new Error('Read failed')); r.readAsDataURL(file); });
 }
 function blobToDataURL(blob) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = e => res(e.target.result);
-    r.onerror = () => rej(new Error('Blob read failed'));
-    r.readAsDataURL(blob);
+  return new Promise((res,rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = ()=>rej(new Error('Blob read failed')); r.readAsDataURL(blob); });
+}
+function dataURLtoImageData(dataURL) {
+  return new Promise(res => {
+    const img = new Image(); img.onload = () => {
+      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+      c.getContext('2d').drawImage(img, 0, 0); res(c.getContext('2d').getImageData(0,0,c.width,c.height));
+    }; img.src = dataURL;
   });
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// ░░░░░░░░░░░░░ IMAGE EDITOR ░░░░░░░░░░░░░
+// ═══════════════════════════════════════════════════════════════════
+const editorState = {
+  type: null, itemId: null,
+  canvas: null, ctx: null,
+  history: [],          // stack of ImageData
+  cropMode: null,       // null | 'free' | '1:1' | '4:5' | '16:9'
+  crop: null,           // {x,y,w,h} in canvas coords
+  drag: null,           // drag state
+  scale: 1,             // display scale (canvas px -> screen px)
+  originDataURL: null,  // original for reset
+  bgPickMode: false,
+};
+const EC = () => document.getElementById('editor-canvas');
+const EW = () => document.getElementById('editor-canvas-wrap');
+const CO = () => document.getElementById('crop-overlay');
+
+function openEditor(type, id) {
+  const item = state[type].items.find(i => String(i.id) === String(id));
+  if (!item) return;
+  editorState.type = type; editorState.itemId = id;
+  editorState.history = [];
+  const src = item.result || null;
+  document.getElementById('editor-filename').textContent = item.name;
+  document.getElementById('editor-overlay').classList.add('open');
+  if (src) {
+    loadEditorImage(src);
+  } else {
+    // load original file
+    const r = new FileReader();
+    r.onload = e => loadEditorImage(e.target.result);
+    r.readAsDataURL(item.file);
+  }
+}
+
+function loadEditorImage(dataURL) {
+  editorState.originDataURL = dataURL;
+  const img = new Image();
+  img.onload = () => {
+    const canvas = EC();
+    const wrap = EW();
+    const maxW = wrap.clientWidth - 40;
+    const maxH = wrap.clientHeight - 40;
+    const scale = Math.min(1, maxW / img.width, maxH / img.height);
+    editorState.scale = scale;
+    canvas.width = img.width; canvas.height = img.height;
+    canvas.style.width = Math.round(img.width * scale) + 'px';
+    canvas.style.height = Math.round(img.height * scale) + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0);
+    editorState.canvas = canvas; editorState.ctx = ctx;
+    pushHistory();
+    resetCropOverlay();
+    updateUndoBadge();
+  };
+  img.src = dataURL;
+}
+
+function pushHistory() {
+  const ctx = editorState.ctx; const c = editorState.canvas;
+  editorState.history.push(ctx.getImageData(0,0,c.width,c.height));
+  if (editorState.history.length > 30) editorState.history.shift();
+  updateUndoBadge();
+}
+function updateUndoBadge() {
+  document.getElementById('undo-badge').textContent = `history: ${Math.max(0,editorState.history.length-1)}`;
+}
+function editorUndo() {
+  if (editorState.history.length <= 1) { toast('Nothing to undo',''); return; }
+  editorState.history.pop();
+  const snap = editorState.history[editorState.history.length-1];
+  editorState.ctx.putImageData(snap,0,0);
+  updateUndoBadge();
+}
+document.getElementById('editor-undo').addEventListener('click', editorUndo);
+document.addEventListener('keydown', e => { if ((e.ctrlKey||e.metaKey) && e.key==='z' && document.getElementById('editor-overlay').classList.contains('open')) { e.preventDefault(); editorUndo(); } });
+
+// Reset
+document.getElementById('editor-reset').addEventListener('click', () => {
+  if (!editorState.originDataURL) return;
+  editorState.history = [];
+  loadEditorImage(editorState.originDataURL);
+});
+
+// Close
+document.getElementById('editor-close').addEventListener('click', closeEditor);
+document.getElementById('editor-cancel-btn').addEventListener('click', closeEditor);
+function closeEditor() {
+  document.getElementById('editor-overlay').classList.remove('open');
+  resetCropUI();
+}
+
+// Apply / Save
+document.getElementById('editor-apply-btn').addEventListener('click', () => {
+  const canvas = editorState.canvas;
+  if (!canvas) return;
+  const dataURL = canvas.toDataURL('image/png');
+  const item = state[editorState.type].items.find(i => String(i.id) === String(editorState.itemId));
+  if (item) { item.result = dataURL; item.status = 'done'; renderQueue(editorState.type); }
+  closeEditor();
+  toast('Saved to queue ✓', 'success');
+});
+
+// ──────────────────────────────────────────────
+// BACKGROUND REMOVAL (Canvas flood fill)
+// ──────────────────────────────────────────────
+const bgMethodTabs = document.querySelectorAll('.bg-tab');
+bgMethodTabs.forEach(t => t.addEventListener('click', () => { bgMethodTabs.forEach(x=>x.classList.remove('active')); t.classList.add('active'); }));
+
+// BG color picker eyedropper — click on canvas
+const bgColorPick = document.getElementById('bg-color-pick');
+EC().addEventListener && (() => {})(); // deferred
+document.getElementById('editor-canvas-wrap').addEventListener('click', e => {
+  if (!editorState.canvas || !editorState.bgPickMode) return;
+  const rect = editorState.canvas.getBoundingClientRect();
+  const scale = editorState.scale;
+  const x = Math.round((e.clientX - rect.left) / scale);
+  const y = Math.round((e.clientY - rect.top) / scale);
+  const px = editorState.ctx.getImageData(x,y,1,1).data;
+  const hex = '#' + [px[0],px[1],px[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
+  bgColorPick.value = hex;
+  editorState.bgPickMode = false;
+  document.getElementById('editor-canvas-wrap').style.cursor = '';
+  toast(`BG color picked: ${hex}`, '');
+});
+
+bgColorPick.addEventListener('dblclick', () => {
+  editorState.bgPickMode = true;
+  document.getElementById('editor-canvas-wrap').style.cursor = 'crosshair';
+  toast('Click a pixel to pick BG color', '');
+});
+
+// Sliders
+['bg-tolerance','bg-smooth','adj-brightness','adj-contrast','adj-saturation'].forEach(id => {
+  const el = document.getElementById(id);
+  const valEl = document.getElementById(id.replace('bg-tolerance','bg-tol-val').replace('bg-smooth','bg-smooth-val')
+    .replace('adj-brightness','adj-bv').replace('adj-contrast','adj-cv').replace('adj-saturation','adj-sv'));
+  if (el && valEl) el.addEventListener('input', () => valEl.textContent = el.value);
+});
+
+document.getElementById('bg-remove-btn').addEventListener('click', async () => {
+  const canvas = editorState.canvas; if (!canvas) return;
+  const btn = document.getElementById('bg-remove-btn');
+  btn.disabled = true; btn.textContent = '⏳ Processing…';
+  showProgress('Removing background…', 0);
+
+  await new Promise(r => setTimeout(r, 30)); // yield for repaint
+
+  try {
+    const ctx = editorState.ctx;
+    const w = canvas.width; const h = canvas.height;
+    const imageData = ctx.getImageData(0,0,w,h);
+    const data = imageData.data;
+    const tol = parseInt(document.getElementById('bg-tolerance').value) || 30;
+    const smooth = parseInt(document.getElementById('bg-smooth').value) || 2;
+
+    // Pick seed color: use selected bg-color-pick value OR auto-sample corners
+    const bgHex = bgColorPick.value;
+    let seedR, seedG, seedB;
+    if (bgHex && bgHex !== '#ffffff') {
+      const r = parseInt(bgHex.slice(1,3),16);
+      const g = parseInt(bgHex.slice(3,5),16);
+      const b = parseInt(bgHex.slice(5,7),16);
+      seedR=r; seedG=g; seedB=b;
+    } else {
+      // average of 4 corners
+      const corners = [[0,0],[w-1,0],[0,h-1],[w-1,h-1]];
+      let sr=0,sg=0,sb=0;
+      corners.forEach(([cx,cy]) => { const i=(cy*w+cx)*4; sr+=data[i]; sg+=data[i+1]; sb+=data[i+2]; });
+      seedR=sr/4|0; seedG=sg/4|0; seedB=sb/4|0;
+    }
+
+    showProgress('Flood filling…', 20);
+    await new Promise(r => setTimeout(r, 10));
+
+    // Create alpha mask via multi-seed flood fill from all 4 corners
+    const mask = new Uint8Array(w * h); // 1 = background
+    const colorDist = (i) => {
+      const r=data[i]-seedR, g=data[i+1]-seedG, b=data[i+2]-seedB;
+      return Math.sqrt(r*r+g*g+b*b);
+    };
+
+    const queue = [];
+    [[0,0],[w-1,0],[0,h-1],[w-1,h-1],[Math.floor(w/2),0],[Math.floor(w/2),h-1],[0,Math.floor(h/2)],[w-1,Math.floor(h/2)]].forEach(([cx,cy]) => {
+      const idx = cy*w+cx;
+      if (!mask[idx] && colorDist(idx*4) <= tol) { mask[idx]=1; queue.push(idx); }
+    });
+
+    let qi=0;
+    while (qi < queue.length) {
+      const idx = queue[qi++];
+      const x0 = idx % w; const y0 = idx / w | 0;
+      const neighbors = [];
+      if (x0>0) neighbors.push(idx-1);
+      if (x0<w-1) neighbors.push(idx+1);
+      if (y0>0) neighbors.push(idx-w);
+      if (y0<h-1) neighbors.push(idx+w);
+      for (const n of neighbors) {
+        if (!mask[n] && colorDist(n*4) <= tol) { mask[n]=1; queue.push(n); }
+      }
+      if (qi % 50000 === 0) showProgress('Flood filling…', 20 + (qi/queue.length)*30);
+    }
+
+    showProgress('Smoothing edges…', 55);
+    await new Promise(r => setTimeout(r, 10));
+
+    // Smooth mask edges with box blur
+    if (smooth > 0) {
+      const blurred = new Float32Array(w * h);
+      const r2 = smooth;
+      for (let y=0;y<h;y++) for (let x=0;x<w;x++) {
+        let sum=0,cnt=0;
+        for (let dy=-r2;dy<=r2;dy++) for (let dx=-r2;dx<=r2;dx++) {
+          const nx=x+dx; const ny=y+dy;
+          if (nx>=0&&nx<w&&ny>=0&&ny<h) { sum+=mask[ny*w+nx]; cnt++; }
+        }
+        blurred[y*w+x] = sum/cnt;
+      }
+      showProgress('Applying transparency…', 75);
+      await new Promise(r => setTimeout(r, 10));
+      for (let i=0;i<w*h;i++) { if (blurred[i]>0.05) data[i*4+3] = Math.round(data[i*4+3]*(1-blurred[i])); }
+    } else {
+      for (let i=0;i<w*h;i++) { if (mask[i]) data[i*4+3]=0; }
+    }
+
+    showProgress('Done!', 100);
+    ctx.putImageData(imageData,0,0);
+    pushHistory();
+    await new Promise(r => setTimeout(r, 400));
+    hideProgress();
+  } catch(e) {
+    toast('BG removal error: ' + e.message, 'error');
+    hideProgress();
+  }
+  btn.disabled = false; btn.textContent = '✂ Remove Background';
+});
+
+function showProgress(label, pct) {
+  document.getElementById('prog-wrap').style.display = 'block';
+  document.getElementById('prog-label-txt').textContent = label;
+  document.getElementById('prog-fill').style.width = pct + '%';
+}
+function hideProgress() { document.getElementById('prog-wrap').style.display = 'none'; }
+
+// ──────────────────────────────────────────────
+// ADJUSTMENTS
+// ──────────────────────────────────────────────
+document.getElementById('adj-apply-btn').addEventListener('click', () => {
+  const canvas = editorState.canvas; if (!canvas) return;
+  const ctx = editorState.ctx;
+  const bright = parseInt(document.getElementById('adj-brightness').value);
+  const contrast = parseInt(document.getElementById('adj-contrast').value);
+  const sat = parseInt(document.getElementById('adj-saturation').value);
+  const id = ctx.getImageData(0,0,canvas.width,canvas.height);
+  const d = id.data;
+  const cf = (contrast/100)+1; const co = 128*(1-cf);
+  for (let i=0;i<d.length;i+=4) {
+    // brightness
+    let r=d[i]+bright, g=d[i+1]+bright, b=d[i+2]+bright;
+    // contrast
+    r=cf*r+co; g=cf*g+co; b=cf*b+co;
+    // saturation (simple)
+    const gray = 0.299*r+0.587*g+0.114*b;
+    const sf = (sat/100)+1;
+    r = gray + sf*(r-gray); g = gray + sf*(g-gray); b = gray + sf*(b-gray);
+    d[i]=Math.max(0,Math.min(255,r)); d[i+1]=Math.max(0,Math.min(255,g)); d[i+2]=Math.max(0,Math.min(255,b));
+  }
+  ctx.putImageData(id,0,0); pushHistory();
+  toast('Adjustments applied', 'success');
+});
+
+// ──────────────────────────────────────────────
+// ROTATE / FLIP
+// ──────────────────────────────────────────────
+function editorRotate(deg) {
+  const canvas = editorState.canvas; if (!canvas) return;
+  const ctx = editorState.ctx;
+  const snap = ctx.getImageData(0,0,canvas.width,canvas.height);
+  const tmp = document.createElement('canvas');
+  tmp.width = canvas.height; tmp.height = canvas.width;
+  const tc = tmp.getContext('2d');
+  tc.translate(tmp.width/2, tmp.height/2);
+  tc.rotate(deg * Math.PI/180);
+  tc.drawImage(canvas, -canvas.width/2, -canvas.height/2);
+  canvas.width = tmp.width; canvas.height = tmp.height;
+  // resize display
+  const wrap = EW();
+  const maxW = wrap.clientWidth-40; const maxH = wrap.clientHeight-40;
+  const scale = Math.min(1, maxW/canvas.width, maxH/canvas.height);
+  editorState.scale = scale;
+  canvas.style.width = Math.round(canvas.width*scale)+'px';
+  canvas.style.height = Math.round(canvas.height*scale)+'px';
+  ctx.drawImage(tmp,0,0); pushHistory(); resetCropOverlay();
+}
+function editorFlip(dir) {
+  const canvas = editorState.canvas; if (!canvas) return;
+  const ctx = editorState.ctx;
+  const tmp = document.createElement('canvas'); tmp.width=canvas.width; tmp.height=canvas.height;
+  const tc = tmp.getContext('2d');
+  if (dir==='h') { tc.translate(canvas.width,0); tc.scale(-1,1); }
+  else { tc.translate(0,canvas.height); tc.scale(1,-1); }
+  tc.drawImage(canvas,0,0);
+  ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(tmp,0,0);
+  pushHistory();
+}
+
+// ──────────────────────────────────────────────
+// CROP
+// ──────────────────────────────────────────────
+let cropAspect = null;
+function resetCropOverlay() { CO().classList.remove('visible'); editorState.crop = null; editorState.cropMode = null; cropAspect = null; }
+function resetCropUI() { document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active')); resetCropOverlay(); }
+
+function startCrop(aspect) {
+  cropAspect = aspect; editorState.cropMode = 'crop';
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+  const canvas = editorState.canvas; if (!canvas) return;
+  const s = editorState.scale;
+  // Default crop = center 80%
+  let cw = canvas.width*0.8, ch = canvas.height*0.8;
+  if (aspect) { const a=aspect; if (cw/ch > a) cw=ch*a; else ch=cw/a; }
+  const cx = (canvas.width-cw)/2; const cy = (canvas.height-ch)/2;
+  editorState.crop = {x:cx,y:cy,w:cw,h:ch};
+  updateCropOverlay();
+  CO().classList.add('visible');
+}
+function updateCropOverlay() {
+  const {x,y,w,h} = editorState.crop; const s = editorState.scale;
+  const canvas = EC(); const rect = canvas.getBoundingClientRect();
+  const wrap = EW(); const wrect = wrap.getBoundingClientRect();
+  const ox = rect.left - wrect.left; const oy = rect.top - wrect.top;
+  const co = CO();
+  co.style.left = (ox + x*s)+'px'; co.style.top = (oy + y*s)+'px';
+  co.style.width = (w*s)+'px'; co.style.height = (h*s)+'px';
+}
+
+document.getElementById('crop-free-btn').addEventListener('click', () => { startCrop(null); document.getElementById('crop-free-btn').classList.add('active'); });
+document.getElementById('crop-1x1-btn').addEventListener('click', () => { startCrop(1); document.getElementById('crop-1x1-btn').classList.add('active'); });
+document.getElementById('crop-4x5-btn').addEventListener('click', () => { startCrop(4/5); document.getElementById('crop-4x5-btn').classList.add('active'); });
+document.getElementById('crop-16x9-btn').addEventListener('click', () => { startCrop(16/9); document.getElementById('crop-16x9-btn').classList.add('active'); });
+
+document.getElementById('crop-apply-btn').addEventListener('click', () => {
+  if (!editorState.crop) { toast('Select a crop mode first',''); return; }
+  const {x,y,w,h} = editorState.crop;
+  const canvas = editorState.canvas; const ctx = editorState.ctx;
+  const id = ctx.getImageData(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+  canvas.width = Math.round(w); canvas.height = Math.round(h);
+  ctx.putImageData(id,0,0);
+  // rescale display
+  const wrap = EW(); const maxW=wrap.clientWidth-40; const maxH=wrap.clientHeight-40;
+  const scale = Math.min(1,maxW/canvas.width,maxH/canvas.height); editorState.scale=scale;
+  canvas.style.width=Math.round(canvas.width*scale)+'px'; canvas.style.height=Math.round(canvas.height*scale)+'px';
+  resetCropUI(); pushHistory(); toast('Crop applied','success');
+});
+
+// Drag crop overlay
+let dragStart=null, cropStart=null, handleDragging=null;
+CO().addEventListener('mousedown', e => {
+  e.preventDefault(); e.stopPropagation();
+  const h = e.target.dataset.h;
+  handleDragging = h || 'move';
+  dragStart = {x:e.clientX, y:e.clientY};
+  cropStart = {...editorState.crop};
+});
+document.addEventListener('mousemove', e => {
+  if (!dragStart || !editorState.crop) return;
+  const s = editorState.scale;
+  const dx = (e.clientX - dragStart.x)/s; const dy = (e.clientY - dragStart.y)/s;
+  let {x,y,w,h} = cropStart; const cw=editorState.canvas.width; const ch=editorState.canvas.height;
+  if (handleDragging==='move') {
+    x = Math.max(0,Math.min(cw-w, x+dx)); y = Math.max(0,Math.min(ch-h, y+dy));
+  } else {
+    if (handleDragging.includes('r')) { w=Math.max(20,cropStart.w+dx); if (cropAspect) h=w/cropAspect; }
+    if (handleDragging.includes('l')) { const nw=Math.max(20,cropStart.w-dx); x=cropStart.x+(cropStart.w-nw); w=nw; if (cropAspect) h=w/cropAspect; }
+    if (handleDragging.includes('b') && !cropAspect) h=Math.max(20,cropStart.h+dy);
+    if (handleDragging.includes('t') && !cropAspect) { const nh=Math.max(20,cropStart.h-dy); y=cropStart.y+(cropStart.h-nh); h=nh; }
+    x=Math.max(0,x); y=Math.max(0,y); w=Math.min(cw-x,w); h=Math.min(ch-y,h);
+  }
+  editorState.crop = {x,y,w,h}; updateCropOverlay();
+});
+document.addEventListener('mouseup', () => { dragStart=null; handleDragging=null; });
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
 updateApiUI();
-if (!getApiKey()) setTimeout(() => modal.classList.add('open'), 800);
+if (!getApiKey()) setTimeout(() => apiModal.classList.add('open'), 800);
 </script>
 </body>
 </html>
