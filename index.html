@@ -427,6 +427,11 @@ textarea:focus{outline:none;border-color:var(--accent)}
     Sports Asset Studio
   </div>
   <div class="header-spacer"></div>
+  <select id="model-select" style="padding:0 10px;height:32px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text-dim);font-size:11px;font-family:var(--font-mono);cursor:pointer;">
+    <option value="gemini-2.5-flash-image">gemini-2.5-flash-image</option>
+    <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview-image-generation</option>
+    <option value="gemini-2.0-flash-exp">gemini-2.0-flash-exp</option>
+  </select>
   <button class="theme-btn" id="theme-toggle" title="Toggle theme">🌙</button>
   <button class="api-btn" id="api-btn">
     <div class="api-dot" id="api-dot"></div>
@@ -904,7 +909,7 @@ async function processPlayer(item) {
 
 // ─── GEMINI API ──────────────────────────────────────────────────────────────
 async function callGemini(apiKey, base64Data, mimeType, prompt) {
-  const model = 'gemini-2.5-flash-preview-image-generation';
+  const model = document.getElementById('model-select')?.value || 'gemini-2.5-flash-image';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const body = {
     contents: [{ parts: [
