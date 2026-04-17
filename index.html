@@ -14,7 +14,7 @@
   --accent:#4f8ef7;--accent-glow:rgba(79,142,247,.15);
   --success:#34d399;--warning:#fbbf24;--error:#f87171;
   --radius:10px;--radius-sm:6px;
-  --font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;
+  --fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
 }
 [data-theme="light"]{
   --bg:#f5f5f4;--surface:#fff;--surface-2:#f0efed;--surface-3:#e8e7e4;
@@ -23,30 +23,34 @@
   --accent:#2563eb;--accent-glow:rgba(37,99,235,.1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh}
-/* HEADER */
+body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh}
+
+/* ── HEADER ── */
 header{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;height:56px;gap:12px}
-.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:16px;letter-spacing:-.02em}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:16px;letter-spacing:-.02em}
 .logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
-.header-spacer{flex:1}
-.hbtn{display:flex;align-items:center;gap:6px;padding:0 12px;height:32px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-mono);font-size:11px;color:var(--text-dim);transition:all .15s;white-space:nowrap}
+.hspc{flex:1}
+.hbtn{display:flex;align-items:center;gap:6px;padding:0 12px;height:32px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-family:var(--fm);font-size:11px;color:var(--text-dim);transition:all .15s;white-space:nowrap}
 .hbtn:hover{border-color:var(--accent);color:var(--text)}
-.hbtn.icon{width:32px;padding:0;justify-content:center;font-size:15px}
-#model-select{padding:0 10px;height:32px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:11px;font-family:var(--font-mono);cursor:pointer}
+.hbtn.ico{width:32px;padding:0;justify-content:center;font-size:15px}
+#model-select{padding:0 10px;height:32px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:11px;font-family:var(--fm);cursor:pointer}
 .api-dot{width:6px;height:6px;border-radius:50%;background:var(--error)}
-.api-dot.connected{background:var(--success)}
-/* TABS */
+.api-dot.on{background:var(--success)}
+
+/* ── TABS ── */
 .tabs{display:flex;gap:2px;padding:16px 24px 0}
-.tab-btn{padding:8px 20px;font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;color:var(--text-faint);cursor:pointer;transition:all .15s}
+.tab-btn{padding:8px 20px;font-family:var(--fd);font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;color:var(--text-faint);cursor:pointer;transition:all .15s}
 .tab-btn.active{color:var(--accent);border-color:var(--accent)}
 .tab-btn:hover:not(.active){color:var(--text-dim);border-color:var(--border-bright)}
-/* MAIN */
+
+/* ── LAYOUT ── */
 .main{padding:20px 24px 40px}
 .tab-panel{display:none}.tab-panel.active{display:block}
 .two-col{display:grid;grid-template-columns:1fr 320px;gap:16px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.card-title{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:14px}
-/* DROP */
+.card-title{font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:14px}
+
+/* ── DROP ── */
 .drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface-2)}
 .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--accent-glow)}
 .drop-icon{font-size:28px;margin-bottom:10px;opacity:.5}
@@ -54,202 +58,190 @@ header{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom
 .drop-text strong{color:var(--accent)}
 .drop-small{font-size:11px;color:var(--text-faint);margin-top:4px}
 #logo-input,#player-input{display:none}
-/* BTNS */
-.process-btn{width:100%;margin-top:12px;padding:0 20px;height:42px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.process-btn{width:100%;margin-top:12px;padding:0 20px;height:42px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .process-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .process-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
-/* SETTINGS */
-.setting-group{margin-bottom:16px}
-.setting-label{font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint);margin-bottom:8px}
-.radio-group{display:flex;flex-direction:column;gap:6px}
-.radio-option{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;transition:all .15s}
-.radio-option:hover{border-color:var(--border-bright)}
-.radio-option input{accent-color:var(--accent)}
-.radio-option.selected{border-color:var(--accent);background:var(--accent-glow)}
-select{width:100%;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-body);font-size:13px;cursor:pointer;transition:border-color .15s}
+
+/* ── SETTINGS ── */
+.sg{margin-bottom:16px}
+.sl{font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint);margin-bottom:8px}
+.rg{display:flex;flex-direction:column;gap:6px}
+.ro{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;transition:all .15s}
+.ro:hover{border-color:var(--border-bright)}
+.ro input{accent-color:var(--accent)}
+.ro.sel{border-color:var(--accent);background:var(--accent-glow)}
+select{width:100%;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--fb);font-size:13px;cursor:pointer;transition:border-color .15s}
 select:focus{outline:none;border-color:var(--accent)}
-textarea{width:100%;padding:10px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-mono);font-size:11px;line-height:1.6;resize:vertical;min-height:180px;transition:border-color .15s}
+textarea{width:100%;padding:10px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:11px;line-height:1.6;resize:vertical;min-height:180px;transition:border-color .15s}
 textarea:focus{outline:none;border-color:var(--accent)}
-/* QUEUE */
+
+/* ── QUEUE ── */
 .queue-header{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
-.queue-title{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-.dl-all-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.queue-title{font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+.dl-all-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:12px;cursor:pointer;transition:all .15s}
 .dl-all-btn:hover{border-color:var(--accent);color:var(--accent)}
 .queue-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
 .queue-empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--text-faint);font-size:13px}
-/* Q-CARD */
 .q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s}
 .q-card:hover{border-color:var(--border-bright)}
 .q-card.done{border-color:rgba(52,211,153,.25)}
 .q-card.error{border-color:rgba(248,113,113,.25)}
-.q-thumb{width:100%;aspect-ratio:1/1;background:repeating-conic-gradient(#2a2a2a 0% 25%,#1a1a1a 0% 50%) 0 0/20px 20px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.q-thumb{width:100%;aspect-ratio:1/1;background:repeating-conic-gradient(#2a2a2a 0% 25%,#1a1a1a 0% 50%) 0 0/20px 20px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 [data-theme="light"] .q-thumb{background:repeating-conic-gradient(#ddd 0% 25%,#f0f0f0 0% 50%) 0 0/20px 20px}
-.q-thumb img{max-width:100%;max-height:100%;object-fit:contain;position:relative;z-index:1}
+.q-thumb img{max-width:100%;max-height:100%;object-fit:contain}
 .q-info{padding:10px}
 .q-name{font-size:11px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:6px}
 .q-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-faint);margin-bottom:8px}
-.status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--text-faint)}
-.status-dot.processing{background:var(--warning);animation:pulse .8s ease-in-out infinite}
-.status-dot.done{background:var(--success)}
-.status-dot.error{background:var(--error)}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--text-faint)}
+.sdot.proc{background:var(--warning);animation:pulse .8s ease-in-out infinite}
+.sdot.done{background:var(--success)}
+.sdot.err{background:var(--error)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .q-actions{display:flex;flex-direction:column;gap:5px}
-.q-btn{width:100%;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text-dim);font-size:11px;font-weight:500;cursor:pointer;transition:all .12s}
-.q-btn:hover{border-color:var(--accent);color:var(--accent)}
-.q-btn.primary{background:var(--accent);border-color:transparent;color:#fff}
-.q-btn.primary:hover{filter:brightness(1.1)}
-.q-btn.danger{border-color:rgba(248,113,113,.4);color:var(--error)}
-.q-btn.danger:hover{background:rgba(248,113,113,.1);border-color:var(--error)}
-.q-btn:disabled{opacity:.35;cursor:not-allowed}
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
-.modal-overlay.open{opacity:1;pointer-events:all}
+.qb{width:100%;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text-dim);font-size:11px;font-weight:500;cursor:pointer;transition:all .12s}
+.qb:hover{border-color:var(--accent);color:var(--accent)}
+.qb.pri{background:var(--accent);border-color:transparent;color:#fff}
+.qb.pri:hover{filter:brightness(1.1)}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:all}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:440px;max-width:90vw;transform:translateY(10px);transition:transform .2s}
-.modal-overlay.open .modal{transform:none}
-.modal h2{font-family:var(--font-display);font-size:18px;font-weight:800;margin-bottom:6px}
+.overlay.open .modal{transform:none}
+.modal h2{font-family:var(--fd);font-size:18px;font-weight:800;margin-bottom:6px}
 .modal p{color:var(--text-dim);font-size:13px;margin-bottom:20px;line-height:1.6}
-.modal input{width:100%;padding:10px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-mono);font-size:13px;margin-bottom:12px;transition:border-color .15s}
+.modal input{width:100%;padding:10px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--fm);font-size:13px;margin-bottom:12px}
 .modal input:focus{outline:none;border-color:var(--accent)}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end}
-.btn-cancel{padding:8px 16px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:13px;cursor:pointer;transition:all .12s}
-.btn-cancel:hover{border-color:var(--border-bright);color:var(--text)}
-.btn-save{padding:8px 20px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:filter .12s}
-.btn-save:hover{filter:brightness(1.1)}
-/* TOAST */
-.toast-container{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:300}
+.mact{display:flex;gap:8px;justify-content:flex-end}
+.btn-c{padding:8px 16px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:13px;cursor:pointer}
+.btn-c:hover{border-color:var(--border-bright);color:var(--text)}
+.btn-s{padding:8px 20px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.btn-s:hover{filter:brightness(1.1)}
+
+/* ── TOAST ── */
+.toasts{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:400}
 .toast{padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text-dim);animation:slideIn .2s ease;max-width:320px}
-.toast.success{border-color:var(--success);color:var(--success)}
-.toast.error{border-color:var(--error);color:var(--error)}
+.toast.ok{border-color:var(--success);color:var(--success)}
+.toast.err{border-color:var(--error);color:var(--error)}
 @keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
 
-/* ═══════════════════════════════════════════════════
-   EDITOR MODAL
-═══════════════════════════════════════════════════ */
-.editor-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
-.editor-overlay.open{opacity:1;pointer-events:all}
-.editor-shell{
-  width:min(96vw,1100px);height:min(92vh,780px);
-  background:var(--surface);border:1px solid var(--border);border-radius:14px;
-  display:flex;flex-direction:column;overflow:hidden;
-}
-.editor-header{
-  display:flex;align-items:center;gap:12px;
-  padding:14px 18px;border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
-.editor-title{font-family:var(--font-display);font-weight:700;font-size:15px}
-.editor-spacer{flex:1}
-.editor-body{display:flex;flex:1;overflow:hidden}
-/* canvas area */
-.editor-canvas-wrap{
+/* ══════════════════════════════════════════
+   EDITOR
+══════════════════════════════════════════ */
+#editor-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#editor-ov.open{opacity:1;pointer-events:all}
+.eshell{width:min(96vw,1060px);height:min(92vh,760px);background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
+
+/* header */
+.ehdr{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
+.etitle{font-family:var(--fd);font-weight:700;font-size:15px}
+.efname{font-size:11px;color:var(--text-faint);margin-left:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}
+.ehspc{flex:1}
+.ehist{font-size:10px;color:var(--text-faint)}
+
+/* body */
+.ebody{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* canvas wrap */
+.ecwrap{
   flex:1;position:relative;overflow:hidden;
-  background:repeating-conic-gradient(#1e1e1e 0% 25%,#151515 0% 50%) 0 0/24px 24px;
+  background:repeating-conic-gradient(#1e1e1e 0% 25%,#141414 0% 50%) 0 0/24px 24px;
   display:flex;align-items:center;justify-content:center;
-  cursor:crosshair;
 }
-#editor-canvas{
-  position:relative;z-index:1;
-  display:block;
-  image-rendering:pixelated;
-}
-/* crop overlay */
-.crop-overlay{
-  position:absolute;z-index:2;
+#ec{display:block;max-width:100%;max-height:100%;image-rendering:auto}
+
+/* crop frame */
+#crop-frame{
+  position:absolute;display:none;
   border:2px solid var(--accent);
-  box-shadow:0 0 0 9999px rgba(0,0,0,.55);
-  cursor:move;
-  display:none;
+  box-shadow:0 0 0 9999px rgba(0,0,0,.5);
+  cursor:move;z-index:2;
 }
-.crop-overlay.visible{display:block}
-.crop-handle{
-  position:absolute;width:10px;height:10px;
-  background:var(--accent);border:2px solid #fff;border-radius:2px;
-}
+#crop-frame.vis{display:block}
+.ch{position:absolute;width:10px;height:10px;background:var(--accent);border:2px solid #fff;border-radius:2px}
 .ch-tl{top:-5px;left:-5px;cursor:nw-resize}
 .ch-tr{top:-5px;right:-5px;cursor:ne-resize}
 .ch-bl{bottom:-5px;left:-5px;cursor:sw-resize}
 .ch-br{bottom:-5px;right:-5px;cursor:se-resize}
-.ch-tc{top:-5px;left:50%;transform:translateX(-50%);cursor:n-resize}
-.ch-bc{bottom:-5px;left:50%;transform:translateX(-50%);cursor:s-resize}
-.ch-lc{left:-5px;top:50%;transform:translateY(-50%);cursor:w-resize}
-.ch-rc{right:-5px;top:50%;transform:translateY(-50%);cursor:e-resize}
+.ch-tc{top:-5px;left:calc(50% - 5px);cursor:n-resize}
+.ch-bc{bottom:-5px;left:calc(50% - 5px);cursor:s-resize}
+.ch-lc{left:-5px;top:calc(50% - 5px);cursor:w-resize}
+.ch-rc{right:-5px;top:calc(50% - 5px);cursor:e-resize}
+
 /* sidebar */
-.editor-sidebar{
-  width:240px;flex-shrink:0;
-  border-left:1px solid var(--border);
-  display:flex;flex-direction:column;gap:0;
-  overflow-y:auto;
-}
-.sidebar-section{padding:16px;border-bottom:1px solid var(--border)}
-.sidebar-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:10px}
-/* tool buttons */
-.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.tool-btn{
-  padding:8px 6px;
-  background:var(--surface-2);border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text-dim);font-size:11px;font-weight:500;
-  cursor:pointer;transition:all .12s;
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-}
-.tool-btn .icon{font-size:16px}
-.tool-btn:hover{border-color:var(--accent);color:var(--accent)}
-.tool-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}
-/* slider */
-.slider-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.slider-row label{font-size:11px;color:var(--text-dim);width:70px;flex-shrink:0}
-.slider-row input[type=range]{flex:1;accent-color:var(--accent)}
-.slider-row span{font-size:11px;color:var(--text-faint);width:28px;text-align:right}
-/* bg remove options */
-.bg-method-tabs{display:flex;gap:4px;margin-bottom:10px}
-.bg-tab{flex:1;padding:5px 0;font-size:11px;font-weight:600;text-align:center;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text-faint);transition:all .12s}
-.bg-tab.active{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
-.bg-remove-btn{
-  width:100%;padding:9px;
+.esidebar{width:220px;flex-shrink:0;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.esec{padding:14px 16px;border-bottom:1px solid var(--border)}
+.esec-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:10px}
+
+/* BG removal big button */
+.bg-btn{
+  width:100%;padding:11px;
   background:linear-gradient(135deg,#4f8ef7,#7c3aed);
   border:none;border-radius:var(--radius-sm);
   color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
   cursor:pointer;transition:filter .15s;
 }
-.bg-remove-btn:hover{filter:brightness(1.12)}
-.bg-remove-btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
-/* editor footer */
-.editor-footer{display:flex;align-items:center;gap:8px;padding:12px 18px;border-top:1px solid var(--border);flex-shrink:0}
-.editor-footer .spacer{flex:1}
+.bg-btn:hover{filter:brightness(1.12)}
+.bg-btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+
+/* slider rows */
+.srow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.srow label{font-size:11px;color:var(--text-dim);width:68px;flex-shrink:0}
+.srow input[type=range]{flex:1;accent-color:var(--accent);height:3px}
+.srow span{font-size:11px;color:var(--text-faint);width:26px;text-align:right}
+
+/* color row */
+.crow{display:flex;align-items:center;gap:8px;margin-top:10px;margin-bottom:4px}
+.crow label{font-size:11px;color:var(--text-dim)}
+.crow input[type=color]{width:32px;height:22px;padding:0;border:1px solid var(--border);border-radius:4px;background:none;cursor:pointer}
+.pick-hint{font-size:10px;color:var(--text-faint);margin-top:3px}
+
+/* crop buttons */
+.crop-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.cbtn{padding:7px 4px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .12s;text-align:center}
+.cbtn:hover{border-color:var(--accent);color:var(--accent)}
+.cbtn.act{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}
+.apply-btn{width:100%;padding:8px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:filter .12s}
+.apply-btn:hover{filter:brightness(1.1)}
+
+/* progress */
+.prog-sec{padding:10px 16px 14px;border-bottom:1px solid var(--border);display:none}
+.prog-bar{height:3px;background:var(--surface-3);border-radius:2px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7c3aed);width:0%;transition:width .25s;border-radius:2px}
+.prog-txt{font-size:10px;color:var(--text-faint);margin-top:5px}
+
+/* footer */
+.eftr{display:flex;align-items:center;gap:8px;padding:12px 18px;border-top:1px solid var(--border);flex-shrink:0}
+.eftr .spc{flex:1}
 .efbtn{padding:8px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid var(--border);background:var(--surface-2);color:var(--text-dim)}
 .efbtn:hover{border-color:var(--border-bright);color:var(--text)}
-.efbtn.primary{background:var(--accent);border-color:transparent;color:#fff}
-.efbtn.primary:hover{filter:brightness(1.1)}
-/* progress bar */
-.prog-wrap{padding:0 16px 14px}
-.prog-bar{height:4px;background:var(--surface-3);border-radius:2px;overflow:hidden}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7c3aed);width:0%;transition:width .3s;border-radius:2px}
-.prog-label{font-size:10px;color:var(--text-faint);margin-top:5px}
-/* undo stack badge */
-.undo-badge{font-size:10px;color:var(--text-faint);margin-left:auto}
+.efbtn.pri{background:var(--accent);border-color:transparent;color:#fff}
+.efbtn.pri:hover{filter:brightness(1.1)}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="logo"><div class="logo-icon">⚡</div>Sports Asset Studio</div>
-  <div class="header-spacer"></div>
+  <div class="hspc"></div>
   <select id="model-select">
     <option value="gemini-2.5-flash-image">gemini-2.5-flash-image</option>
     <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview-image-generation</option>
     <option value="gemini-2.0-flash-exp">gemini-2.0-flash-exp</option>
   </select>
-  <button class="hbtn icon" id="theme-toggle" title="Toggle theme">🌙</button>
+  <button class="hbtn ico" id="theme-toggle">🌙</button>
   <button class="hbtn" id="api-btn"><div class="api-dot" id="api-dot"></div><span id="api-label">Set API Key</span></button>
 </header>
 
+<!-- TABS -->
 <div class="tabs">
   <button class="tab-btn active" data-tab="logo">🏅 Logo Emblem</button>
   <button class="tab-btn" data-tab="player">👤 Player Photo</button>
 </div>
 
 <div class="main">
-  <!-- LOGO TAB -->
+  <!-- LOGO -->
   <div class="tab-panel active" id="tab-logo">
     <div class="two-col">
       <div class="card">
@@ -257,37 +249,30 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="drop-zone" id="logo-drop">
           <div class="drop-icon">🖼️</div>
           <div class="drop-text"><strong>Click to browse</strong> or drag & drop<br>PNG, JPG, WEBP, SVG — multiple files</div>
-          <div class="drop-small">Files processed locally — nothing uploaded to servers</div>
+          <div class="drop-small">Processed locally — nothing uploaded to servers</div>
         </div>
         <input type="file" id="logo-input" accept=".png,.jpg,.jpeg,.webp,.svg" multiple>
         <button class="process-btn" id="logo-process-all">⚙️ Process All</button>
       </div>
       <div class="card">
         <div class="card-title">Settings</div>
-        <div class="setting-group">
-          <div class="setting-label">Background Removal</div>
-          <div class="radio-group">
-            <label class="radio-option selected"><input type="radio" name="logo-method" value="browser" checked>Browser-based <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Free / Offline</span></label>
-            <label class="radio-option"><input type="radio" name="logo-method" value="gemini">Gemini API <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Better quality</span></label>
-          </div>
-        </div>
-        <div class="setting-group">
-          <div class="setting-label">Output Quality</div>
-          <div class="radio-group">
-            <label class="radio-option selected"><input type="radio" name="logo-quality" value="high" checked>High <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Best result</span></label>
-            <label class="radio-option"><input type="radio" name="logo-quality" value="medium">Medium <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Faster</span></label>
+        <div class="sg">
+          <div class="sl">Background Removal</div>
+          <div class="rg">
+            <label class="ro sel"><input type="radio" name="logo-method" value="browser" checked>Browser-based <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Free</span></label>
+            <label class="ro"><input type="radio" name="logo-method" value="gemini">Gemini API <span style="margin-left:auto;font-size:11px;color:var(--text-faint)">Better quality</span></label>
           </div>
         </div>
       </div>
     </div>
     <div class="queue-header">
-      <div class="queue-title" id="logo-queue-title">Queue — 0 files</div>
+      <div class="queue-title" id="logo-qt">Queue — 0 files</div>
       <button class="dl-all-btn" id="logo-dl-all" style="display:none">⬇ Download All ZIP</button>
     </div>
-    <div class="queue-grid" id="logo-queue"><div class="queue-empty">No files added yet. Upload logos above to get started.</div></div>
+    <div class="queue-grid" id="logo-queue"><div class="queue-empty">No files added yet.</div></div>
   </div>
 
-  <!-- PLAYER TAB -->
+  <!-- PLAYER -->
   <div class="tab-panel" id="tab-player">
     <div class="two-col">
       <div class="card">
@@ -295,248 +280,226 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="drop-zone" id="player-drop">
           <div class="drop-icon">👤</div>
           <div class="drop-text"><strong>Click to browse</strong> or drag & drop<br>PNG, JPG, WEBP — multiple files</div>
-          <div class="drop-small">Gemini AI transforms photos into standardized profile images</div>
+          <div class="drop-small">Gemini AI transforms photos — auto-cropped to subject</div>
         </div>
         <input type="file" id="player-input" accept=".png,.jpg,.jpeg,.webp" multiple>
         <button class="process-btn" id="player-process-all">⚙️ Process All</button>
       </div>
       <div class="card">
         <div class="card-title">Settings</div>
-        <div class="setting-group">
-          <div class="setting-label">Sport Category</div>
+        <div class="sg">
+          <div class="sl">Sport Category</div>
           <select id="sport-category">
             <option value="general">General Sports</option>
             <option value="combat">Combat Sports (Boxing / MMA)</option>
           </select>
         </div>
-        <div class="setting-group">
-          <div class="setting-label">AI Prompt <span style="color:var(--text-faint)">(editable)</span></div>
+        <div class="sg">
+          <div class="sl">AI Prompt <span style="color:var(--text-faint)">(editable)</span></div>
           <textarea id="player-prompt"></textarea>
         </div>
       </div>
     </div>
     <div class="queue-header">
-      <div class="queue-title" id="player-queue-title">Queue — 0 files</div>
+      <div class="queue-title" id="player-qt">Queue — 0 files</div>
       <button class="dl-all-btn" id="player-dl-all" style="display:none">⬇ Download All ZIP</button>
     </div>
-    <div class="queue-grid" id="player-queue"><div class="queue-empty">No files added yet. Upload player photos above to get started.</div></div>
+    <div class="queue-grid" id="player-queue"><div class="queue-empty">No files added yet.</div></div>
   </div>
 </div>
 
 <!-- API MODAL -->
-<div class="modal-overlay" id="api-modal">
+<div class="overlay" id="api-modal">
   <div class="modal">
     <h2>Gemini API Key</h2>
-    <p>Required for Gemini-based processing. Your key is stored locally in your browser and never sent to our servers.</p>
+    <p>Required for Gemini-based processing. Stored locally in your browser only.</p>
     <input type="password" id="api-key-input" placeholder="AIza..." autocomplete="off">
-    <div class="modal-actions">
-      <button class="btn-cancel" id="modal-cancel">Cancel</button>
-      <button class="btn-save" id="modal-save">Save Key</button>
+    <div class="mact">
+      <button class="btn-c" id="modal-cancel">Cancel</button>
+      <button class="btn-s" id="modal-save">Save Key</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     EDITOR MODAL
-═══════════════════════════════════════════════════ -->
-<div class="editor-overlay" id="editor-overlay">
-  <div class="editor-shell">
-    <div class="editor-header">
-      <span class="editor-title">✏️ Image Editor</span>
-      <span id="editor-filename" style="font-size:12px;color:var(--text-faint);margin-left:6px"></span>
-      <div class="editor-spacer"></div>
-      <span class="undo-badge" id="undo-badge">history: 0</span>
-      <button class="hbtn" id="editor-undo" title="Undo (Ctrl+Z)" style="margin-left:8px">↩ Undo</button>
-      <button class="hbtn icon" id="editor-close" title="Close">✕</button>
+<!-- ══════════════════════════════════════════
+     EDITOR OVERLAY
+══════════════════════════════════════════ -->
+<div id="editor-ov">
+  <div class="eshell">
+    <!-- header -->
+    <div class="ehdr">
+      <span class="etitle">✏️ Editor</span>
+      <span class="efname" id="ed-fname"></span>
+      <div class="ehspc"></div>
+      <span class="ehist" id="ed-hist">history: 0</span>
+      <button class="hbtn" id="ed-undo" style="margin-left:8px">↩ Undo</button>
+      <button class="hbtn ico" id="ed-close" style="margin-left:4px">✕</button>
     </div>
 
-    <div class="editor-body">
-      <!-- CANVAS -->
-      <div class="editor-canvas-wrap" id="editor-canvas-wrap">
-        <canvas id="editor-canvas"></canvas>
-        <div class="crop-overlay" id="crop-overlay">
-          <div class="crop-handle ch-tl" data-h="tl"></div>
-          <div class="crop-handle ch-tr" data-h="tr"></div>
-          <div class="crop-handle ch-bl" data-h="bl"></div>
-          <div class="crop-handle ch-br" data-h="br"></div>
-          <div class="crop-handle ch-tc" data-h="tc"></div>
-          <div class="crop-handle ch-bc" data-h="bc"></div>
-          <div class="crop-handle ch-lc" data-h="lc"></div>
-          <div class="crop-handle ch-rc" data-h="rc"></div>
+    <!-- body -->
+    <div class="ebody">
+      <!-- canvas -->
+      <div class="ecwrap" id="ecwrap">
+        <canvas id="ec"></canvas>
+        <div id="crop-frame">
+          <div class="ch ch-tl" data-h="tl"></div><div class="ch ch-tr" data-h="tr"></div>
+          <div class="ch ch-bl" data-h="bl"></div><div class="ch ch-br" data-h="br"></div>
+          <div class="ch ch-tc" data-h="tc"></div><div class="ch ch-bc" data-h="bc"></div>
+          <div class="ch ch-lc" data-h="lc"></div><div class="ch ch-rc" data-h="rc"></div>
         </div>
       </div>
 
-      <!-- SIDEBAR -->
-      <div class="editor-sidebar">
+      <!-- sidebar -->
+      <div class="esidebar">
 
         <!-- BG REMOVAL -->
-        <div class="sidebar-section">
-          <div class="sidebar-label">Remove Background</div>
-          <div class="bg-method-tabs">
-            <div class="bg-tab active" data-bgm="canvas">Canvas</div>
-            <div class="bg-tab" data-bgm="flood">Magic Wand</div>
+        <div class="esec">
+          <div class="esec-title">Remove Background</div>
+          <div class="srow">
+            <label>Tolerance</label>
+            <input type="range" id="bg-tol" min="1" max="120" value="30">
+            <span id="bg-tol-v">30</span>
           </div>
-          <div id="bg-canvas-opts">
-            <div class="slider-row">
-              <label>Tolerance</label>
-              <input type="range" id="bg-tolerance" min="1" max="120" value="30">
-              <span id="bg-tol-val">30</span>
-            </div>
-            <div class="slider-row">
-              <label>Smooth</label>
-              <input type="range" id="bg-smooth" min="0" max="10" value="2">
-              <span id="bg-smooth-val">2</span>
-            </div>
+          <div class="srow">
+            <label>Smooth</label>
+            <input type="range" id="bg-smooth" min="0" max="8" value="2">
+            <span id="bg-smooth-v">2</span>
           </div>
-          <button class="bg-remove-btn" id="bg-remove-btn">✂ Remove Background</button>
-          <div style="margin-top:8px">
-            <div class="slider-row">
-              <label>BG Color</label>
-              <input type="color" id="bg-color-pick" value="#ffffff" style="width:36px;height:24px;padding:0;border:none;background:none;cursor:pointer">
-              <span style="font-size:11px;color:var(--text-faint);flex:1;margin-left:4px">click bg pixel</span>
-            </div>
+          <div class="crow">
+            <label>BG Color</label>
+            <input type="color" id="bg-color" value="#ffffff">
+            <span id="pick-status" style="font-size:10px;color:var(--text-faint);flex:1"></span>
           </div>
-        </div>
-
-        <!-- CROP -->
-        <div class="sidebar-section">
-          <div class="sidebar-label">Crop</div>
-          <div class="tool-grid" style="margin-bottom:8px">
-            <button class="tool-btn" id="crop-free-btn"><span class="icon">⬜</span>Free</button>
-            <button class="tool-btn" id="crop-1x1-btn"><span class="icon">◼</span>1:1</button>
-            <button class="tool-btn" id="crop-4x5-btn"><span class="icon">▬</span>4:5</button>
-            <button class="tool-btn" id="crop-16x9-btn"><span class="icon">▭</span>16:9</button>
-          </div>
-          <button class="q-btn primary" id="crop-apply-btn" style="width:100%;padding:7px">✂ Apply Crop</button>
-        </div>
-
-        <!-- TRANSFORM -->
-        <div class="sidebar-section">
-          <div class="sidebar-label">Transform</div>
-          <div class="tool-grid">
-            <button class="tool-btn" onclick="editorRotate(-90)"><span class="icon">↺</span>Rotate L</button>
-            <button class="tool-btn" onclick="editorRotate(90)"><span class="icon">↻</span>Rotate R</button>
-            <button class="tool-btn" onclick="editorFlip('h')"><span class="icon">↔</span>Flip H</button>
-            <button class="tool-btn" onclick="editorFlip('v')"><span class="icon">↕</span>Flip V</button>
-          </div>
-        </div>
-
-        <!-- ADJUSTMENTS -->
-        <div class="sidebar-section">
-          <div class="sidebar-label">Adjustments</div>
-          <div class="slider-row"><label>Brightness</label><input type="range" id="adj-brightness" min="-100" max="100" value="0"><span id="adj-bv">0</span></div>
-          <div class="slider-row"><label>Contrast</label><input type="range" id="adj-contrast" min="-100" max="100" value="0"><span id="adj-cv">0</span></div>
-          <div class="slider-row"><label>Saturation</label><input type="range" id="adj-saturation" min="-100" max="100" value="0"><span id="adj-sv">0</span></div>
-          <button class="q-btn" id="adj-apply-btn" style="width:100%;margin-top:6px;padding:6px">Apply Adjustments</button>
+          <div class="pick-hint">Double-click color → click pixel to sample</div>
+          <button class="bg-btn" id="bg-btn" style="margin-top:10px">✂ Remove Background</button>
         </div>
 
         <!-- PROGRESS -->
-        <div class="prog-wrap" id="prog-wrap" style="display:none">
-          <div class="sidebar-label" id="prog-label-txt">Processing…</div>
+        <div class="prog-sec" id="prog-sec">
+          <div class="esec-title" id="prog-lbl">Processing…</div>
           <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
-          <div class="prog-label" id="prog-sub"></div>
+          <div class="prog-txt" id="prog-sub"></div>
+        </div>
+
+        <!-- CROP -->
+        <div class="esec">
+          <div class="esec-title">Crop</div>
+          <div class="crop-btns">
+            <button class="cbtn" id="c-free">⬜ Free</button>
+            <button class="cbtn" id="c-1x1">◼ 1:1</button>
+            <button class="cbtn" id="c-4x5">▬ 4:5</button>
+            <button class="cbtn" id="c-169">▭ 16:9</button>
+          </div>
+          <button class="apply-btn" id="c-apply">✂ Apply Crop</button>
+        </div>
+
+        <!-- AUTO TRIM -->
+        <div class="esec">
+          <div class="esec-title">Auto Trim</div>
+          <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.5">Remove transparent / white borders and fit tightly to subject</p>
+          <button class="apply-btn" id="trim-btn" style="background:var(--surface-3);border:1px solid var(--border);color:var(--text-dim)">✂ Trim Edges</button>
         </div>
 
       </div>
     </div>
 
-    <div class="editor-footer">
-      <button class="efbtn" id="editor-reset">↺ Reset</button>
-      <div class="spacer"></div>
-      <button class="efbtn" id="editor-cancel-btn">Cancel</button>
-      <button class="efbtn primary" id="editor-apply-btn">✓ Save to Queue</button>
+    <!-- footer -->
+    <div class="eftr">
+      <button class="efbtn" id="ed-reset">↺ Reset</button>
+      <div class="spc"></div>
+      <button class="efbtn" id="ed-cancel">Cancel</button>
+      <button class="efbtn pri" id="ed-save">✓ Save to Queue</button>
     </div>
   </div>
 </div>
 
-<div class="toast-container" id="toasts"></div>
+<div class="toasts" id="toasts"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // PROMPTS
-// ═══════════════════════════════════════════════════════════════════
-const LOGO_PROMPT = `You are a professional image editor. Process this sports team logo with maximum precision.
-Remove the background completely — make it fully transparent. Preserve exact silhouette. Keep all internal transparent elements. No white matte.
-All edges must be sharp and pixel-perfect. Clean up artifacts and halos.
-Keep all text, colors, shadows, gradients, glows exactly. Reconstruct if blurry or low-res.
-Final size: 512x512 pixels. Format: PNG with full transparency. Crop tightly, no padding.`;
+// ══════════════════════════════════════════════════════
+const LOGO_PROMPT = `Professional image editor task: process this sports team logo.
+Remove background completely — full transparency, alpha=0. Preserve exact silhouette. Keep internal transparent holes. No white matte or fringe.
+Edges: sharp, pixel-perfect, no anti-aliasing bleed. Clean artifacts.
+Preserve all text, colors, gradients, shadows, glows exactly. Reconstruct details if blurry.
+Output: 512x512 PNG, transparent background, tight crop — logo fills canvas edge to edge.`;
 
-const PLAYER_GENERAL_PROMPT = `You are a professional sports photographer. Transform this athlete photo into a standardized professional profile image.
-POSE: Face directly toward camera. Calm neutral expression.
-CROP: Perfect 1:1 square. Head to just above armpits. Centered.
-BACKGROUND: Pure white #FFFFFF, flat and uniform. No environment.
-CLOTHING: Keep exactly as worn. Don't alter team colors or logos.
-APPEARANCE: Preserve skin tone, tattoos, scars, hairstyle, beard exactly. Remove injuries.
-OUTPUT: 1:1 square PNG, minimum 512x512, white background, professional sports profile.`;
+const PLAYER_GENERAL = `Transform this athlete photo into a standardized professional sports profile image.
+POSE: Face directly toward camera (en face). Calm neutral expression — no smile, no tension.
+CROP: 1:1 square format. Frame from top of head to just above armpits. Perfectly centered.
+BACKGROUND: Pure white #FFFFFF, flat and uniform. No stadium, crowd, field, or environment.
+CLOTHING: Keep exactly as worn. Preserve team colors and logos.
+APPEARANCE: Preserve skin tone, tattoos, scars exactly. Hairstyle — show dry and natural. Beard unchanged. Remove any injuries (bruises, cuts).
+OUTPUT: 512x512 PNG minimum, white background, professional sports profile.`;
 
-const PLAYER_COMBAT_PROMPT = `You are a professional sports photographer. Transform this athlete photo into a standardized professional profile image.
-POSE: Face directly toward camera. Calm neutral expression.
-CROP: Perfect 1:1 square. Head to just above armpits. Centered.
+const PLAYER_COMBAT = `Transform this athlete photo into a standardized professional combat sports profile image.
+POSE: Face directly toward camera (en face). Calm neutral expression.
+CROP: 1:1 square format. Head to just above armpits. Perfectly centered.
 BACKGROUND: Pure white #FFFFFF, flat and uniform.
-CLOTHING: Male athletes shirtless from waist up. Female athletes keep sports bra. Remove all fight equipment (gloves, wraps, headgear).
-APPEARANCE: Preserve skin tone, tattoos, scars, hairstyle, beard. Remove fight injuries (bruises, cuts, swelling).
-OUTPUT: 1:1 square PNG, minimum 512x512, white background, professional sports profile.`;
+CLOTHING: Male athletes — shirtless from waist up (remove shirt/jersey/rash guard). Female — keep sports bra. Remove ALL fight equipment: gloves, hand wraps, bandages, headgear, mouthguard.
+APPEARANCE: Preserve skin tone, tattoos, scars, hairstyle, beard. Remove fight injuries (bruises, cuts, swelling, black eyes).
+OUTPUT: 512x512 PNG minimum, white background, professional combat sports profile.`;
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════════════════
-const state = { logo:{items:[]}, player:{items:[]} };
+// ══════════════════════════════════════════════════════
+const S = { logo:{items:[]}, player:{items:[]} };
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // API KEY
-// ═══════════════════════════════════════════════════════════════════
-const getApiKey = () => localStorage.getItem('gemini_api_key') || '';
-const setApiKey = k => { localStorage.setItem('gemini_api_key', k); updateApiUI(); };
+// ══════════════════════════════════════════════════════
+const getKey = () => localStorage.getItem('gemini_api_key') || '';
+const saveKey = k => { localStorage.setItem('gemini_api_key', k); updateApiUI(); };
 function updateApiUI() {
-  const k = getApiKey();
-  document.getElementById('api-dot').className = 'api-dot' + (k ? ' connected' : '');
+  const k = getKey();
+  document.getElementById('api-dot').className = 'api-dot' + (k ? ' on' : '');
   document.getElementById('api-label').textContent = k ? 'API Connected' : 'Set API Key';
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // THEME
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 document.getElementById('theme-toggle').addEventListener('click', () => {
   const d = document.documentElement;
-  const isDark = d.dataset.theme === 'dark';
-  d.dataset.theme = isDark ? 'light' : 'dark';
-  document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
+  const dark = d.dataset.theme === 'dark';
+  d.dataset.theme = dark ? 'light' : 'dark';
+  document.getElementById('theme-toggle').textContent = dark ? '☀️' : '🌙';
 });
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // TABS
-// ═══════════════════════════════════════════════════════════════════
-document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+// ══════════════════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('tab-' + b.dataset.tab).classList.add('active');
 }));
 
-// ═══════════════════════════════════════════════════════════════════
-// RADIO VISUAL
-// ═══════════════════════════════════════════════════════════════════
-document.querySelectorAll('.radio-group').forEach(g => g.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => {
-  g.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
-  r.closest('.radio-option').classList.add('selected');
-})));
+// ══════════════════════════════════════════════════════
+// RADIO
+// ══════════════════════════════════════════════════════
+document.querySelectorAll('.rg').forEach(g => g.querySelectorAll('input[type=radio]').forEach(r =>
+  r.addEventListener('change', () => { g.querySelectorAll('.ro').forEach(o => o.classList.remove('sel')); r.closest('.ro').classList.add('sel'); })
+));
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // API MODAL
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 const apiModal = document.getElementById('api-modal');
-document.getElementById('api-btn').addEventListener('click', () => { document.getElementById('api-key-input').value = getApiKey(); apiModal.classList.add('open'); });
+document.getElementById('api-btn').addEventListener('click', () => { document.getElementById('api-key-input').value = getKey(); apiModal.classList.add('open'); });
 document.getElementById('modal-cancel').addEventListener('click', () => apiModal.classList.remove('open'));
 document.getElementById('modal-save').addEventListener('click', () => {
   const v = document.getElementById('api-key-input').value.trim();
-  if (v) { setApiKey(v); toast('API key saved', 'success'); }
+  if (v) { saveKey(v); toast('API key saved', 'ok'); }
   apiModal.classList.remove('open');
 });
 apiModal.addEventListener('click', e => { if (e.target === apiModal) apiModal.classList.remove('open'); });
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // TOAST
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 function toast(msg, type = '') {
   const t = document.createElement('div');
   t.className = 'toast ' + type; t.textContent = msg;
@@ -544,95 +507,85 @@ function toast(msg, type = '') {
   setTimeout(() => t.remove(), 3500);
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// PLAYER PROMPT SYNC
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// PROMPT SYNC
+// ══════════════════════════════════════════════════════
 const sportSel = document.getElementById('sport-category');
 const promptTA = document.getElementById('player-prompt');
-function syncPrompt() { promptTA.value = sportSel.value === 'combat' ? PLAYER_COMBAT_PROMPT : PLAYER_GENERAL_PROMPT; }
-sportSel.addEventListener('change', syncPrompt); syncPrompt();
+sportSel.addEventListener('change', () => promptTA.value = sportSel.value === 'combat' ? PLAYER_COMBAT : PLAYER_GENERAL);
+promptTA.value = PLAYER_GENERAL;
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // DROP ZONES
-// ═══════════════════════════════════════════════════════════════════
-function setupDrop(drop, input, handler) {
+// ══════════════════════════════════════════════════════
+function setupDrop(drop, input, cb) {
   drop.addEventListener('click', () => input.click());
-  input.addEventListener('change', e => { handler([...e.target.files]); input.value = ''; });
+  input.addEventListener('change', e => { cb([...e.target.files]); input.value = ''; });
   drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
   drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
-  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('dragover'); handler([...e.dataTransfer.files]); });
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('dragover'); cb([...e.dataTransfer.files]); });
 }
 setupDrop(document.getElementById('logo-drop'), document.getElementById('logo-input'), f => addFiles('logo', f));
 setupDrop(document.getElementById('player-drop'), document.getElementById('player-input'), f => addFiles('player', f));
 
-// ═══════════════════════════════════════════════════════════════════
-// ADD FILES
-// ═══════════════════════════════════════════════════════════════════
 function addFiles(type, files) {
-  let added = 0;
+  let n = 0;
   files.forEach(f => {
-    if (state[type].items.find(i => i.name === f.name)) return;
-    state[type].items.push({ id: Date.now() + Math.random(), name: f.name, file: f, status: 'pending', result: null });
-    added++;
+    if (S[type].items.find(i => i.name === f.name)) return;
+    S[type].items.push({ id: Date.now() + Math.random(), name: f.name, file: f, status: 'pending', result: null });
+    n++;
   });
-  if (added) renderQueue(type);
-  else toast('Duplicate files skipped', '');
+  if (n) renderQueue(type); else toast('Duplicates skipped', '');
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // RENDER QUEUE
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 function renderQueue(type) {
-  const items = state[type].items;
+  const items = S[type].items;
   const grid = document.getElementById(type + '-queue');
-  const title = document.getElementById(type + '-queue-title');
-  const dlAll = document.getElementById(type + '-dl-all');
-  title.textContent = `Queue — ${items.length} file${items.length !== 1 ? 's' : ''}`;
-  dlAll.style.display = items.some(i => i.status === 'done') ? '' : 'none';
-  if (!items.length) { grid.innerHTML = `<div class="queue-empty">No files added yet.</div>`; return; }
+  document.getElementById(type + '-qt').textContent = `Queue — ${items.length} file${items.length !== 1 ? 's' : ''}`;
+  document.getElementById(type + '-dl-all').style.display = items.some(i => i.status === 'done') ? '' : 'none';
+  if (!items.length) { grid.innerHTML = `<div class="queue-empty">No files yet.</div>`; return; }
   grid.innerHTML = '';
   items.forEach(item => {
     const card = document.createElement('div');
-    card.className = 'q-card ' + (item.status === 'done' ? 'done' : item.status === 'error' ? 'error' : '');
-    card.dataset.id = item.id;
-    const thumb = document.createElement('div');
-    thumb.className = 'q-thumb';
-    if (item.result) {
-      const img = document.createElement('img'); img.src = item.result; thumb.appendChild(img);
-    } else {
-      const img = document.createElement('img');
-      img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;opacity:.4;';
-      const r = new FileReader(); r.onload = e => img.src = e.target.result; r.readAsDataURL(item.file);
-      thumb.appendChild(img);
-    }
-    const dotClass = {pending:'',processing:'processing',done:'done',error:'error'}[item.status];
-    const statusText = {pending:'Ready',processing:'Processing…',done:'Done',error:'Error'}[item.status];
-    const editBtn = `<button class="q-btn" onclick="openEditor('${type}','${item.id}')">✏️ Edit</button>`;
-    const dlBtn = item.status === 'done' ? `<button class="q-btn primary" onclick="downloadItem('${type}','${item.id}')">⬇ Download PNG</button>` : '';
-    const procBtn = item.status !== 'processing' ? `<button class="q-btn" onclick="processOne('${type}','${item.id}')">Process</button>` : '';
-    card.appendChild(thumb);
+    card.className = 'q-card' + (item.status === 'done' ? ' done' : item.status === 'error' ? ' error' : '');
+    const thumb = document.createElement('div'); thumb.className = 'q-thumb';
+    const img = document.createElement('img');
+    if (item.result) { img.src = item.result; }
+    else { const r = new FileReader(); r.onload = e => img.src = e.target.result; r.readAsDataURL(item.file); img.style.opacity = '.35'; }
+    thumb.appendChild(img); card.appendChild(thumb);
+    const dc = {pending:'',processing:'proc',done:'done',error:'err'}[item.status];
+    const ds = {pending:'Ready',processing:'Processing…',done:'Done',error:'Error'}[item.status];
     card.insertAdjacentHTML('beforeend', `
       <div class="q-info">
         <div class="q-name" title="${item.name}">${item.name}</div>
-        <div class="q-status"><div class="status-dot ${dotClass}"></div>${statusText}</div>
-        <div class="q-actions">${dlBtn}${editBtn}${procBtn}</div>
+        <div class="q-status"><div class="sdot ${dc}"></div>${ds}</div>
+        <div class="q-actions">
+          ${item.status === 'done' ? `<button class="qb pri" onclick="dlItem('${type}','${item.id}')">⬇ Download PNG</button>` : ''}
+          <button class="qb" onclick="openEditor('${type}','${item.id}')">✏️ Edit</button>
+          ${item.status !== 'processing' ? `<button class="qb" onclick="processOne('${type}','${item.id}')">▶ Process</button>` : ''}
+        </div>
       </div>`);
     grid.appendChild(card);
   });
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // PROCESS
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 document.getElementById('logo-process-all').addEventListener('click', () => processAll('logo'));
 document.getElementById('player-process-all').addEventListener('click', () => processAll('player'));
+
 async function processAll(type) {
-  const pending = state[type].items.filter(i => i.status === 'pending');
-  if (!pending.length) { toast('No pending files in queue', ''); return; }
+  const pending = S[type].items.filter(i => i.status === 'pending');
+  if (!pending.length) { toast('No pending files', ''); return; }
   for (const item of pending) await processOne(type, item.id);
 }
+
 async function processOne(type, id) {
-  const item = state[type].items.find(i => String(i.id) === String(id));
+  const item = S[type].items.find(i => String(i.id) === String(id));
   if (!item || item.status === 'processing') return;
   item.status = 'processing'; renderQueue(type);
   try {
@@ -640,503 +593,426 @@ async function processOne(type, id) {
     else await processPlayer(item);
     item.status = 'done';
   } catch(e) {
-    item.status = 'error'; item.errorMsg = e.message;
-    toast('Error: ' + e.message, 'error'); console.error(e);
+    item.status = 'error'; toast('Error: ' + e.message, 'err'); console.error(e);
   }
   renderQueue(type);
 }
+
 async function processLogo(item) {
   const method = document.querySelector('input[name="logo-method"]:checked').value;
   if (method === 'gemini') {
-    const key = getApiKey(); if (!key) throw new Error('API key required');
-    const b64 = await fileToBase64(item.file);
-    item.result = 'data:image/png;base64,' + await callGemini(key, b64, item.file.type, LOGO_PROMPT);
+    const key = getKey(); if (!key) throw new Error('API key required');
+    const b64 = await fileToB64(item.file);
+    const result = await callGemini(key, b64, item.file.type, LOGO_PROMPT);
+    // Auto-trim transparent edges
+    item.result = await autoTrimDataURL('data:image/png;base64,' + result, 'transparent');
   } else {
     const upscaled = await upscaleCanvas(item.file, 2);
-    item.result = await blobToDataURL(upscaled);
+    item.result = await blobToURL(upscaled);
   }
 }
+
 async function processPlayer(item) {
-  const key = getApiKey(); if (!key) throw new Error('API key required');
+  const key = getKey(); if (!key) throw new Error('API key required');
   const prompt = document.getElementById('player-prompt').value;
-  const b64 = await fileToBase64(item.file);
-  item.result = 'data:image/png;base64,' + await callGemini(key, b64, item.file.type, prompt);
+  const b64 = await fileToB64(item.file);
+  const result = await callGemini(key, b64, item.file.type, prompt);
+  // Auto-trim white/transparent edges after Gemini
+  item.result = await autoTrimDataURL('data:image/png;base64,' + result, 'white');
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// AUTO TRIM — removes uniform border (white or transparent)
+// ══════════════════════════════════════════════════════
+function autoTrimDataURL(dataURL, mode) {
+  // mode: 'white' | 'transparent'
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = img.width; c.height = img.height;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const id = ctx.getImageData(0, 0, c.width, c.height);
+      const d = id.data; const w = c.width; const h = c.height;
+
+      const isBG = (x, y) => {
+        const i = (y * w + x) * 4;
+        if (mode === 'transparent') return d[i+3] < 10;
+        // white: all channels > 240 and alpha > 200
+        return d[i] > 240 && d[i+1] > 240 && d[i+2] > 240 && d[i+3] > 200;
+      };
+
+      let minX = w, maxX = 0, minY = h, maxY = 0;
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        if (!isBG(x, y)) {
+          if (x < minX) minX = x; if (x > maxX) maxX = x;
+          if (y < minY) minY = y; if (y > maxY) maxY = y;
+        }
+      }
+
+      // If nothing found or very small diff — return original
+      if (maxX <= minX || maxY <= minY || (maxX - minX < 10) || (maxY - minY < 10)) {
+        resolve(dataURL); return;
+      }
+
+      // Add small padding
+      const pad = 4;
+      const tx = Math.max(0, minX - pad); const ty = Math.max(0, minY - pad);
+      const tw = Math.min(w, maxX - minX + 1 + pad*2);
+      const th = Math.min(h, maxY - minY + 1 + pad*2);
+
+      const out = document.createElement('canvas');
+      out.width = tw; out.height = th;
+      out.getContext('2d').drawImage(c, tx, ty, tw, th, 0, 0, tw, th);
+      resolve(out.toDataURL('image/png'));
+    };
+    img.src = dataURL;
+  });
+}
+
+// ══════════════════════════════════════════════════════
 // GEMINI API
-// ═══════════════════════════════════════════════════════════════════
-async function callGemini(apiKey, base64Data, mimeType, prompt) {
-  const model = document.getElementById('model-select')?.value || 'gemini-2.5-flash-image';
+// ══════════════════════════════════════════════════════
+async function callGemini(apiKey, b64, mimeType, prompt) {
+  const model = document.getElementById('model-select').value || 'gemini-2.5-flash-image';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const body = {
     contents: [{ parts: [
-      { inline_data: { mime_type: mimeType.includes('svg') ? 'image/png' : mimeType, data: base64Data } },
+      { inline_data: { mime_type: mimeType.includes('svg') ? 'image/png' : mimeType, data: b64 } },
       { text: prompt }
     ]}],
-    generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
+    generationConfig: { responseModalities: ['IMAGE', 'TEXT'], imageConfig: { imageSize: "512" } }
   };
   const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-  if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.error?.message || `HTTP ${res.status}`); }
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `HTTP ${res.status}`); }
   const data = await res.json();
   for (const c of (data.candidates||[])) for (const p of (c.content?.parts||[])) {
     if (p.inlineData?.mimeType?.startsWith('image')) return p.inlineData.data;
     if (p.inline_data?.mime_type?.startsWith('image')) return p.inline_data.data;
   }
-  throw new Error('No image in response: ' + JSON.stringify(data).slice(0,500));
+  throw new Error('No image in response: ' + JSON.stringify(data).slice(0,400));
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// CANVAS UTILS
-// ═══════════════════════════════════════════════════════════════════
-function upscaleCanvas(file, factor) {
-  return new Promise((res, rej) => {
-    const img = new Image(); const url = URL.createObjectURL(file);
-    img.onload = () => {
-      const c = document.createElement('canvas');
-      c.width = img.width*factor; c.height = img.height*factor;
-      const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
-      c.toBlob(b => b ? res(b) : rej(new Error('toBlob failed')), 'image/png');
-    };
-    img.onerror = () => rej(new Error('Image load failed')); img.src = url;
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // DOWNLOAD
-// ═══════════════════════════════════════════════════════════════════
-function downloadItem(type, id) {
-  const item = state[type].items.find(i => String(i.id) === String(id));
-  if (!item || !item.result) return;
+// ══════════════════════════════════════════════════════
+function dlItem(type, id) {
+  const item = S[type].items.find(i => String(i.id) === String(id));
+  if (!item?.result) return;
   const a = document.createElement('a');
   a.href = item.result.startsWith('data:') ? item.result : 'data:image/png;base64,' + item.result;
-  a.download = item.name.replace(/\.[^.]+$/,'') + '_processed.png'; a.click();
+  a.download = item.name.replace(/\.[^.]+$/, '') + '_processed.png'; a.click();
 }
-document.getElementById('logo-dl-all').addEventListener('click', () => downloadAll('logo'));
-document.getElementById('player-dl-all').addEventListener('click', () => downloadAll('player'));
-async function downloadAll(type) {
+document.getElementById('logo-dl-all').addEventListener('click', () => dlAll('logo'));
+document.getElementById('player-dl-all').addEventListener('click', () => dlAll('player'));
+async function dlAll(type) {
   const zip = new JSZip();
   const folder = zip.folder(type + 's_processed');
-  const items = state[type].items.filter(i => i.status === 'done' && i.result);
+  const items = S[type].items.filter(i => i.status === 'done' && i.result);
   if (!items.length) { toast('No processed files', ''); return; }
   items.forEach(item => {
-    const b64 = item.result.startsWith('data:') ? item.result.split(',')[1] : item.result;
-    folder.file(item.name.replace(/\.[^.]+$/,'') + '_processed.png', b64, {base64:true});
+    const b = item.result.startsWith('data:') ? item.result.split(',')[1] : item.result;
+    folder.file(item.name.replace(/\.[^.]+$/, '') + '_processed.png', b, {base64:true});
   });
   const blob = await zip.generateAsync({type:'blob'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = type + 's_processed.zip'; a.click();
-  toast(`Downloaded ${items.length} files`, 'success');
+  toast(`Downloaded ${items.length} files`, 'ok');
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // HELPERS
-// ═══════════════════════════════════════════════════════════════════
-function fileToBase64(file) {
-  return new Promise((res,rej) => { const r = new FileReader(); r.onload = e => res(e.target.result.split(',')[1]); r.onerror = ()=>rej(new Error('Read failed')); r.readAsDataURL(file); });
-}
-function blobToDataURL(blob) {
-  return new Promise((res,rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = ()=>rej(new Error('Blob read failed')); r.readAsDataURL(blob); });
-}
-function dataURLtoImageData(dataURL) {
-  return new Promise(res => {
-    const img = new Image(); img.onload = () => {
-      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
-      c.getContext('2d').drawImage(img, 0, 0); res(c.getContext('2d').getImageData(0,0,c.width,c.height));
-    }; img.src = dataURL;
+// ══════════════════════════════════════════════════════
+const fileToB64 = f => new Promise((res,rej) => { const r = new FileReader(); r.onload = e => res(e.target.result.split(',')[1]); r.onerror = ()=>rej(new Error('read fail')); r.readAsDataURL(f); });
+const blobToURL = b => new Promise((res,rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = ()=>rej(new Error('blob fail')); r.readAsDataURL(b); });
+function upscaleCanvas(file, factor) {
+  return new Promise((res,rej) => {
+    const img = new Image(); const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const c = document.createElement('canvas'); c.width = img.width*factor; c.height = img.height*factor;
+      const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
+      c.toBlob(b => b ? res(b) : rej(new Error('toBlob')), 'image/png');
+    };
+    img.onerror = ()=>rej(new Error('img fail')); img.src = url;
   });
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// ░░░░░░░░░░░░░ IMAGE EDITOR ░░░░░░░░░░░░░
-// ═══════════════════════════════════════════════════════════════════
-const editorState = {
-  type: null, itemId: null,
-  canvas: null, ctx: null,
-  history: [],          // stack of ImageData
-  cropMode: null,       // null | 'free' | '1:1' | '4:5' | '16:9'
-  crop: null,           // {x,y,w,h} in canvas coords
-  drag: null,           // drag state
-  scale: 1,             // display scale (canvas px -> screen px)
-  originDataURL: null,  // original for reset
-  bgPickMode: false,
+// ══════════════════════════════════════════════════════
+// ░░░░░░░░░░░  EDITOR  ░░░░░░░░░░░
+// ══════════════════════════════════════════════════════
+const ED = {
+  type:null, id:null, canvas:null, ctx:null,
+  scale:1, history:[], originURL:null,
+  crop:null, cropAspect:null, cropActive:false,
+  pickMode:false
 };
-const EC = () => document.getElementById('editor-canvas');
-const EW = () => document.getElementById('editor-canvas-wrap');
-const CO = () => document.getElementById('crop-overlay');
+
+const ec = () => document.getElementById('ec');
+const ecwrap = () => document.getElementById('ecwrap');
+const cropFrame = () => document.getElementById('crop-frame');
+
+// sliders live update
+[['bg-tol','bg-tol-v'],['bg-smooth','bg-smooth-v']].forEach(([id,vid]) => {
+  const el = document.getElementById(id); const vel = document.getElementById(vid);
+  el.addEventListener('input', () => vel.textContent = el.value);
+});
 
 function openEditor(type, id) {
-  const item = state[type].items.find(i => String(i.id) === String(id));
+  const item = S[type].items.find(i => String(i.id) === String(id));
   if (!item) return;
-  editorState.type = type; editorState.itemId = id;
-  editorState.history = [];
-  const src = item.result || null;
-  document.getElementById('editor-filename').textContent = item.name;
-  document.getElementById('editor-overlay').classList.add('open');
-  if (src) {
-    loadEditorImage(src);
-  } else {
-    // load original file
-    const r = new FileReader();
-    r.onload = e => loadEditorImage(e.target.result);
-    r.readAsDataURL(item.file);
-  }
+  ED.type = type; ED.id = id; ED.history = []; ED.cropActive = false;
+  document.getElementById('ed-fname').textContent = item.name;
+  document.getElementById('editor-ov').classList.add('open');
+  const src = item.result;
+  if (src) { loadEditorImg(src); }
+  else { const r = new FileReader(); r.onload = e => loadEditorImg(e.target.result); r.readAsDataURL(item.file); }
 }
 
-function loadEditorImage(dataURL) {
-  editorState.originDataURL = dataURL;
+function loadEditorImg(url) {
+  ED.originURL = url;
   const img = new Image();
   img.onload = () => {
-    const canvas = EC();
-    const wrap = EW();
-    const maxW = wrap.clientWidth - 40;
-    const maxH = wrap.clientHeight - 40;
+    const wrap = ecwrap(); const canvas = ec();
+    const maxW = wrap.clientWidth - 32; const maxH = wrap.clientHeight - 32;
     const scale = Math.min(1, maxW / img.width, maxH / img.height);
-    editorState.scale = scale;
+    ED.scale = scale;
     canvas.width = img.width; canvas.height = img.height;
     canvas.style.width = Math.round(img.width * scale) + 'px';
     canvas.style.height = Math.round(img.height * scale) + 'px';
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.drawImage(img,0,0);
-    editorState.canvas = canvas; editorState.ctx = ctx;
-    pushHistory();
-    resetCropOverlay();
-    updateUndoBadge();
+    ED.canvas = canvas; ED.ctx = ctx;
+    pushH(); resetCrop(); updateHistBadge();
   };
-  img.src = dataURL;
+  img.src = url;
 }
 
-function pushHistory() {
-  const ctx = editorState.ctx; const c = editorState.canvas;
-  editorState.history.push(ctx.getImageData(0,0,c.width,c.height));
-  if (editorState.history.length > 30) editorState.history.shift();
-  updateUndoBadge();
+function pushH() {
+  ED.history.push(ED.ctx.getImageData(0,0,ED.canvas.width,ED.canvas.height));
+  if (ED.history.length > 30) ED.history.shift();
+  updateHistBadge();
 }
-function updateUndoBadge() {
-  document.getElementById('undo-badge').textContent = `history: ${Math.max(0,editorState.history.length-1)}`;
-}
-function editorUndo() {
-  if (editorState.history.length <= 1) { toast('Nothing to undo',''); return; }
-  editorState.history.pop();
-  const snap = editorState.history[editorState.history.length-1];
-  editorState.ctx.putImageData(snap,0,0);
-  updateUndoBadge();
-}
-document.getElementById('editor-undo').addEventListener('click', editorUndo);
-document.addEventListener('keydown', e => { if ((e.ctrlKey||e.metaKey) && e.key==='z' && document.getElementById('editor-overlay').classList.contains('open')) { e.preventDefault(); editorUndo(); } });
+function updateHistBadge() { document.getElementById('ed-hist').textContent = `history: ${Math.max(0,ED.history.length-1)}`; }
 
-// Reset
-document.getElementById('editor-reset').addEventListener('click', () => {
-  if (!editorState.originDataURL) return;
-  editorState.history = [];
-  loadEditorImage(editorState.originDataURL);
+document.getElementById('ed-undo').addEventListener('click', doUndo);
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key==='z' && document.getElementById('editor-ov').classList.contains('open')) { e.preventDefault(); doUndo(); }
 });
-
-// Close
-document.getElementById('editor-close').addEventListener('click', closeEditor);
-document.getElementById('editor-cancel-btn').addEventListener('click', closeEditor);
-function closeEditor() {
-  document.getElementById('editor-overlay').classList.remove('open');
-  resetCropUI();
+function doUndo() {
+  if (ED.history.length <= 1) { toast('Nothing to undo',''); return; }
+  ED.history.pop(); ED.ctx.putImageData(ED.history[ED.history.length-1],0,0); updateHistBadge();
 }
 
-// Apply / Save
-document.getElementById('editor-apply-btn').addEventListener('click', () => {
-  const canvas = editorState.canvas;
-  if (!canvas) return;
-  const dataURL = canvas.toDataURL('image/png');
-  const item = state[editorState.type].items.find(i => String(i.id) === String(editorState.itemId));
-  if (item) { item.result = dataURL; item.status = 'done'; renderQueue(editorState.type); }
-  closeEditor();
-  toast('Saved to queue ✓', 'success');
+document.getElementById('ed-reset').addEventListener('click', () => { if (!ED.originURL) return; ED.history=[]; loadEditorImg(ED.originURL); });
+document.getElementById('ed-close').addEventListener('click', closeEditor);
+document.getElementById('ed-cancel').addEventListener('click', closeEditor);
+function closeEditor() { document.getElementById('editor-ov').classList.remove('open'); resetCrop(); }
+
+document.getElementById('ed-save').addEventListener('click', () => {
+  if (!ED.canvas) return;
+  const item = S[ED.type].items.find(i => String(i.id) === String(ED.id));
+  if (item) { item.result = ED.canvas.toDataURL('image/png'); item.status = 'done'; renderQueue(ED.type); }
+  closeEditor(); toast('Saved ✓', 'ok');
 });
 
-// ──────────────────────────────────────────────
-// BACKGROUND REMOVAL (Canvas flood fill)
-// ──────────────────────────────────────────────
-const bgMethodTabs = document.querySelectorAll('.bg-tab');
-bgMethodTabs.forEach(t => t.addEventListener('click', () => { bgMethodTabs.forEach(x=>x.classList.remove('active')); t.classList.add('active'); }));
-
-// BG color picker eyedropper — click on canvas
-const bgColorPick = document.getElementById('bg-color-pick');
-EC().addEventListener && (() => {})(); // deferred
-document.getElementById('editor-canvas-wrap').addEventListener('click', e => {
-  if (!editorState.canvas || !editorState.bgPickMode) return;
-  const rect = editorState.canvas.getBoundingClientRect();
-  const scale = editorState.scale;
-  const x = Math.round((e.clientX - rect.left) / scale);
-  const y = Math.round((e.clientY - rect.top) / scale);
-  const px = editorState.ctx.getImageData(x,y,1,1).data;
-  const hex = '#' + [px[0],px[1],px[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
-  bgColorPick.value = hex;
-  editorState.bgPickMode = false;
-  document.getElementById('editor-canvas-wrap').style.cursor = '';
-  toast(`BG color picked: ${hex}`, '');
+// ── BG REMOVAL ──
+const bgColor = document.getElementById('bg-color');
+// double-click to enter pick mode
+bgColor.addEventListener('dblclick', () => {
+  ED.pickMode = true;
+  document.getElementById('pick-status').textContent = '← click pixel';
+  ecwrap().style.cursor = 'crosshair';
+});
+ecwrap().addEventListener('click', e => {
+  if (!ED.pickMode || !ED.canvas) return;
+  const rect = ec().getBoundingClientRect();
+  const x = Math.round((e.clientX - rect.left) / ED.scale);
+  const y = Math.round((e.clientY - rect.top) / ED.scale);
+  const px = ED.ctx.getImageData(x,y,1,1).data;
+  bgColor.value = '#' + [px[0],px[1],px[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
+  ED.pickMode = false;
+  document.getElementById('pick-status').textContent = bgColor.value;
+  ecwrap().style.cursor = '';
 });
 
-bgColorPick.addEventListener('dblclick', () => {
-  editorState.bgPickMode = true;
-  document.getElementById('editor-canvas-wrap').style.cursor = 'crosshair';
-  toast('Click a pixel to pick BG color', '');
-});
-
-// Sliders
-['bg-tolerance','bg-smooth','adj-brightness','adj-contrast','adj-saturation'].forEach(id => {
-  const el = document.getElementById(id);
-  const valEl = document.getElementById(id.replace('bg-tolerance','bg-tol-val').replace('bg-smooth','bg-smooth-val')
-    .replace('adj-brightness','adj-bv').replace('adj-contrast','adj-cv').replace('adj-saturation','adj-sv'));
-  if (el && valEl) el.addEventListener('input', () => valEl.textContent = el.value);
-});
-
-document.getElementById('bg-remove-btn').addEventListener('click', async () => {
-  const canvas = editorState.canvas; if (!canvas) return;
-  const btn = document.getElementById('bg-remove-btn');
-  btn.disabled = true; btn.textContent = '⏳ Processing…';
-  showProgress('Removing background…', 0);
-
-  await new Promise(r => setTimeout(r, 30)); // yield for repaint
+document.getElementById('bg-btn').addEventListener('click', async () => {
+  if (!ED.canvas) return;
+  const btn = document.getElementById('bg-btn');
+  btn.disabled = true; btn.textContent = '⏳ Working…';
+  showProg('Analysing image…', 0);
+  await tick();
 
   try {
-    const ctx = editorState.ctx;
-    const w = canvas.width; const h = canvas.height;
-    const imageData = ctx.getImageData(0,0,w,h);
-    const data = imageData.data;
-    const tol = parseInt(document.getElementById('bg-tolerance').value) || 30;
-    const smooth = parseInt(document.getElementById('bg-smooth').value) || 2;
+    const ctx = ED.ctx; const c = ED.canvas; const w = c.width; const h = c.height;
+    const id = ctx.getImageData(0,0,w,h); const d = id.data;
+    const tol = parseInt(document.getElementById('bg-tol').value);
+    const smooth = parseInt(document.getElementById('bg-smooth').value);
 
-    // Pick seed color: use selected bg-color-pick value OR auto-sample corners
-    const bgHex = bgColorPick.value;
-    let seedR, seedG, seedB;
-    if (bgHex && bgHex !== '#ffffff') {
-      const r = parseInt(bgHex.slice(1,3),16);
-      const g = parseInt(bgHex.slice(3,5),16);
-      const b = parseInt(bgHex.slice(5,7),16);
-      seedR=r; seedG=g; seedB=b;
+    // Seed color from picker or auto-corner
+    const hex = bgColor.value;
+    let sr, sg, sb;
+    if (hex !== '#ffffff') {
+      sr = parseInt(hex.slice(1,3),16); sg = parseInt(hex.slice(3,5),16); sb = parseInt(hex.slice(5,7),16);
     } else {
-      // average of 4 corners
-      const corners = [[0,0],[w-1,0],[0,h-1],[w-1,h-1]];
-      let sr=0,sg=0,sb=0;
-      corners.forEach(([cx,cy]) => { const i=(cy*w+cx)*4; sr+=data[i]; sg+=data[i+1]; sb+=data[i+2]; });
-      seedR=sr/4|0; seedG=sg/4|0; seedB=sb/4|0;
+      // Average 4 corners
+      let ar=0,ag=0,ab=0;
+      [[0,0],[w-1,0],[0,h-1],[w-1,h-1]].forEach(([cx,cy]) => { const i=(cy*w+cx)*4; ar+=d[i]; ag+=d[i+1]; ab+=d[i+2]; });
+      sr=ar/4|0; sg=ag/4|0; sb=ab/4|0;
     }
 
-    showProgress('Flood filling…', 20);
-    await new Promise(r => setTimeout(r, 10));
+    showProg('Flood filling…', 15); await tick();
 
-    // Create alpha mask via multi-seed flood fill from all 4 corners
-    const mask = new Uint8Array(w * h); // 1 = background
-    const colorDist = (i) => {
-      const r=data[i]-seedR, g=data[i+1]-seedG, b=data[i+2]-seedB;
-      return Math.sqrt(r*r+g*g+b*b);
-    };
-
+    // Multi-seed flood fill
+    const mask = new Uint8Array(w * h);
+    const dist = idx => { const r=d[idx]-sr,g=d[idx+1]-sg,b=d[idx+2]-sb; return Math.sqrt(r*r+g*g+b*b); };
     const queue = [];
-    [[0,0],[w-1,0],[0,h-1],[w-1,h-1],[Math.floor(w/2),0],[Math.floor(w/2),h-1],[0,Math.floor(h/2)],[w-1,Math.floor(h/2)]].forEach(([cx,cy]) => {
-      const idx = cy*w+cx;
-      if (!mask[idx] && colorDist(idx*4) <= tol) { mask[idx]=1; queue.push(idx); }
-    });
+    const seeds = [[0,0],[w-1,0],[0,h-1],[w-1,h-1],[w>>1,0],[w>>1,h-1],[0,h>>1],[w-1,h>>1]];
+    seeds.forEach(([cx,cy]) => { const idx=cy*w+cx; if (!mask[idx] && dist(idx*4)<=tol) { mask[idx]=1; queue.push(idx); } });
 
-    let qi=0;
+    let qi = 0;
     while (qi < queue.length) {
       const idx = queue[qi++];
-      const x0 = idx % w; const y0 = idx / w | 0;
-      const neighbors = [];
-      if (x0>0) neighbors.push(idx-1);
-      if (x0<w-1) neighbors.push(idx+1);
-      if (y0>0) neighbors.push(idx-w);
-      if (y0<h-1) neighbors.push(idx+w);
-      for (const n of neighbors) {
-        if (!mask[n] && colorDist(n*4) <= tol) { mask[n]=1; queue.push(n); }
+      const x0=idx%w, y0=idx/w|0;
+      for (const n of [idx-1,idx+1,idx-w,idx+w]) {
+        const nx=n%w; const ny=n/w|0;
+        if (n<0||n>=w*h) continue;
+        if (Math.abs(nx-x0)>1) continue; // prevent horizontal wrap
+        if (!mask[n] && dist(n*4)<=tol) { mask[n]=1; queue.push(n); }
       }
-      if (qi % 50000 === 0) showProgress('Flood filling…', 20 + (qi/queue.length)*30);
+      if (qi%80000===0) { showProg('Flood filling…', 15+qi/Math.max(queue.length,1)*40); await tick(); }
     }
 
-    showProgress('Smoothing edges…', 55);
-    await new Promise(r => setTimeout(r, 10));
+    showProg('Smoothing edges…', 60); await tick();
 
-    // Smooth mask edges with box blur
     if (smooth > 0) {
-      const blurred = new Float32Array(w * h);
-      const r2 = smooth;
+      const blur = new Float32Array(w*h);
       for (let y=0;y<h;y++) for (let x=0;x<w;x++) {
-        let sum=0,cnt=0;
-        for (let dy=-r2;dy<=r2;dy++) for (let dx=-r2;dx<=r2;dx++) {
-          const nx=x+dx; const ny=y+dy;
-          if (nx>=0&&nx<w&&ny>=0&&ny<h) { sum+=mask[ny*w+nx]; cnt++; }
+        let s=0,c=0;
+        for (let dy=-smooth;dy<=smooth;dy++) for (let dx=-smooth;dx<=smooth;dx++) {
+          const nx=x+dx,ny=y+dy;
+          if (nx>=0&&nx<w&&ny>=0&&ny<h) { s+=mask[ny*w+nx]; c++; }
         }
-        blurred[y*w+x] = sum/cnt;
+        blur[y*w+x]=s/c;
       }
-      showProgress('Applying transparency…', 75);
-      await new Promise(r => setTimeout(r, 10));
-      for (let i=0;i<w*h;i++) { if (blurred[i]>0.05) data[i*4+3] = Math.round(data[i*4+3]*(1-blurred[i])); }
+      showProg('Applying alpha…', 80); await tick();
+      for (let i=0;i<w*h;i++) { if (blur[i]>0.05) d[i*4+3]=Math.round(d[i*4+3]*(1-blur[i])); }
     } else {
-      for (let i=0;i<w*h;i++) { if (mask[i]) data[i*4+3]=0; }
+      for (let i=0;i<w*h;i++) if (mask[i]) d[i*4+3]=0;
     }
 
-    showProgress('Done!', 100);
-    ctx.putImageData(imageData,0,0);
-    pushHistory();
-    await new Promise(r => setTimeout(r, 400));
-    hideProgress();
-  } catch(e) {
-    toast('BG removal error: ' + e.message, 'error');
-    hideProgress();
-  }
+    showProg('Done!', 100); ctx.putImageData(id,0,0); pushH();
+    await new Promise(r=>setTimeout(r,400)); hideProg();
+  } catch(e) { toast('BG error: '+e.message,'err'); hideProg(); }
+
   btn.disabled = false; btn.textContent = '✂ Remove Background';
 });
 
-function showProgress(label, pct) {
-  document.getElementById('prog-wrap').style.display = 'block';
-  document.getElementById('prog-label-txt').textContent = label;
+function showProg(lbl, pct) {
+  document.getElementById('prog-sec').style.display = 'block';
+  document.getElementById('prog-lbl').textContent = lbl;
   document.getElementById('prog-fill').style.width = pct + '%';
 }
-function hideProgress() { document.getElementById('prog-wrap').style.display = 'none'; }
+function hideProg() { document.getElementById('prog-sec').style.display = 'none'; }
+const tick = () => new Promise(r => setTimeout(r, 10));
 
-// ──────────────────────────────────────────────
-// ADJUSTMENTS
-// ──────────────────────────────────────────────
-document.getElementById('adj-apply-btn').addEventListener('click', () => {
-  const canvas = editorState.canvas; if (!canvas) return;
-  const ctx = editorState.ctx;
-  const bright = parseInt(document.getElementById('adj-brightness').value);
-  const contrast = parseInt(document.getElementById('adj-contrast').value);
-  const sat = parseInt(document.getElementById('adj-saturation').value);
-  const id = ctx.getImageData(0,0,canvas.width,canvas.height);
-  const d = id.data;
-  const cf = (contrast/100)+1; const co = 128*(1-cf);
-  for (let i=0;i<d.length;i+=4) {
-    // brightness
-    let r=d[i]+bright, g=d[i+1]+bright, b=d[i+2]+bright;
-    // contrast
-    r=cf*r+co; g=cf*g+co; b=cf*b+co;
-    // saturation (simple)
-    const gray = 0.299*r+0.587*g+0.114*b;
-    const sf = (sat/100)+1;
-    r = gray + sf*(r-gray); g = gray + sf*(g-gray); b = gray + sf*(b-gray);
-    d[i]=Math.max(0,Math.min(255,r)); d[i+1]=Math.max(0,Math.min(255,g)); d[i+2]=Math.max(0,Math.min(255,b));
-  }
-  ctx.putImageData(id,0,0); pushHistory();
-  toast('Adjustments applied', 'success');
+// ── AUTO TRIM in editor ──
+document.getElementById('trim-btn').addEventListener('click', async () => {
+  if (!ED.canvas) return;
+  const dataURL = ED.canvas.toDataURL('image/png');
+  const trimmed = await autoTrimDataURL(dataURL, 'transparent');
+  if (trimmed === dataURL) { toast('No edges to trim',''); return; }
+  const img = new Image();
+  img.onload = () => {
+    const c = ED.canvas; const ctx = ED.ctx;
+    c.width = img.width; c.height = img.height;
+    // recalc scale
+    const wrap = ecwrap(); const maxW=wrap.clientWidth-32; const maxH=wrap.clientHeight-32;
+    const scale = Math.min(1,maxW/c.width,maxH/c.height); ED.scale=scale;
+    c.style.width = Math.round(c.width*scale)+'px'; c.style.height = Math.round(c.height*scale)+'px';
+    ctx.clearRect(0,0,c.width,c.height); ctx.drawImage(img,0,0);
+    pushH(); toast('Edges trimmed','ok');
+  };
+  img.src = trimmed;
 });
 
-// ──────────────────────────────────────────────
-// ROTATE / FLIP
-// ──────────────────────────────────────────────
-function editorRotate(deg) {
-  const canvas = editorState.canvas; if (!canvas) return;
-  const ctx = editorState.ctx;
-  const snap = ctx.getImageData(0,0,canvas.width,canvas.height);
-  const tmp = document.createElement('canvas');
-  tmp.width = canvas.height; tmp.height = canvas.width;
-  const tc = tmp.getContext('2d');
-  tc.translate(tmp.width/2, tmp.height/2);
-  tc.rotate(deg * Math.PI/180);
-  tc.drawImage(canvas, -canvas.width/2, -canvas.height/2);
-  canvas.width = tmp.width; canvas.height = tmp.height;
-  // resize display
-  const wrap = EW();
-  const maxW = wrap.clientWidth-40; const maxH = wrap.clientHeight-40;
-  const scale = Math.min(1, maxW/canvas.width, maxH/canvas.height);
-  editorState.scale = scale;
-  canvas.style.width = Math.round(canvas.width*scale)+'px';
-  canvas.style.height = Math.round(canvas.height*scale)+'px';
-  ctx.drawImage(tmp,0,0); pushHistory(); resetCropOverlay();
-}
-function editorFlip(dir) {
-  const canvas = editorState.canvas; if (!canvas) return;
-  const ctx = editorState.ctx;
-  const tmp = document.createElement('canvas'); tmp.width=canvas.width; tmp.height=canvas.height;
-  const tc = tmp.getContext('2d');
-  if (dir==='h') { tc.translate(canvas.width,0); tc.scale(-1,1); }
-  else { tc.translate(0,canvas.height); tc.scale(1,-1); }
-  tc.drawImage(canvas,0,0);
-  ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(tmp,0,0);
-  pushHistory();
-}
-
-// ──────────────────────────────────────────────
-// CROP
-// ──────────────────────────────────────────────
+// ── CROP ──
 let cropAspect = null;
-function resetCropOverlay() { CO().classList.remove('visible'); editorState.crop = null; editorState.cropMode = null; cropAspect = null; }
-function resetCropUI() { document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active')); resetCropOverlay(); }
-
-function startCrop(aspect) {
-  cropAspect = aspect; editorState.cropMode = 'crop';
-  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
-  const canvas = editorState.canvas; if (!canvas) return;
-  const s = editorState.scale;
-  // Default crop = center 80%
-  let cw = canvas.width*0.8, ch = canvas.height*0.8;
-  if (aspect) { const a=aspect; if (cw/ch > a) cw=ch*a; else ch=cw/a; }
-  const cx = (canvas.width-cw)/2; const cy = (canvas.height-ch)/2;
-  editorState.crop = {x:cx,y:cy,w:cw,h:ch};
-  updateCropOverlay();
-  CO().classList.add('visible');
-}
-function updateCropOverlay() {
-  const {x,y,w,h} = editorState.crop; const s = editorState.scale;
-  const canvas = EC(); const rect = canvas.getBoundingClientRect();
-  const wrap = EW(); const wrect = wrap.getBoundingClientRect();
-  const ox = rect.left - wrect.left; const oy = rect.top - wrect.top;
-  const co = CO();
-  co.style.left = (ox + x*s)+'px'; co.style.top = (oy + y*s)+'px';
-  co.style.width = (w*s)+'px'; co.style.height = (h*s)+'px';
+function resetCrop() {
+  cropFrame().classList.remove('vis');
+  ED.crop = null; ED.cropActive = false; cropAspect = null;
+  document.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('act'));
 }
 
-document.getElementById('crop-free-btn').addEventListener('click', () => { startCrop(null); document.getElementById('crop-free-btn').classList.add('active'); });
-document.getElementById('crop-1x1-btn').addEventListener('click', () => { startCrop(1); document.getElementById('crop-1x1-btn').classList.add('active'); });
-document.getElementById('crop-4x5-btn').addEventListener('click', () => { startCrop(4/5); document.getElementById('crop-4x5-btn').classList.add('active'); });
-document.getElementById('crop-16x9-btn').addEventListener('click', () => { startCrop(16/9); document.getElementById('crop-16x9-btn').classList.add('active'); });
+function startCrop(aspect, btnId) {
+  cropAspect = aspect; ED.cropActive = true;
+  document.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('act'));
+  document.getElementById(btnId).classList.add('act');
+  const c = ED.canvas; if (!c) return;
+  let cw = c.width * 0.82, ch = c.height * 0.82;
+  if (aspect) { if (cw/ch > aspect) cw=ch*aspect; else ch=cw/aspect; }
+  ED.crop = { x:(c.width-cw)/2, y:(c.height-ch)/2, w:cw, h:ch };
+  updateCropFrame();
+  cropFrame().classList.add('vis');
+}
 
-document.getElementById('crop-apply-btn').addEventListener('click', () => {
-  if (!editorState.crop) { toast('Select a crop mode first',''); return; }
-  const {x,y,w,h} = editorState.crop;
-  const canvas = editorState.canvas; const ctx = editorState.ctx;
+document.getElementById('c-free').addEventListener('click', () => startCrop(null,'c-free'));
+document.getElementById('c-1x1').addEventListener('click', () => startCrop(1,'c-1x1'));
+document.getElementById('c-4x5').addEventListener('click', () => startCrop(4/5,'c-4x5'));
+document.getElementById('c-169').addEventListener('click', () => startCrop(16/9,'c-169'));
+
+function updateCropFrame() {
+  const {x,y,w,h} = ED.crop; const s=ED.scale;
+  const cr = ec().getBoundingClientRect(); const wr = ecwrap().getBoundingClientRect();
+  const cf = cropFrame();
+  cf.style.left = (cr.left-wr.left + x*s)+'px';
+  cf.style.top  = (cr.top -wr.top  + y*s)+'px';
+  cf.style.width  = (w*s)+'px';
+  cf.style.height = (h*s)+'px';
+}
+
+document.getElementById('c-apply').addEventListener('click', () => {
+  if (!ED.crop) { toast('Select crop mode first',''); return; }
+  const {x,y,w,h} = ED.crop; const c=ED.canvas; const ctx=ED.ctx;
   const id = ctx.getImageData(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
-  canvas.width = Math.round(w); canvas.height = Math.round(h);
-  ctx.putImageData(id,0,0);
-  // rescale display
-  const wrap = EW(); const maxW=wrap.clientWidth-40; const maxH=wrap.clientHeight-40;
-  const scale = Math.min(1,maxW/canvas.width,maxH/canvas.height); editorState.scale=scale;
-  canvas.style.width=Math.round(canvas.width*scale)+'px'; canvas.style.height=Math.round(canvas.height*scale)+'px';
-  resetCropUI(); pushHistory(); toast('Crop applied','success');
+  c.width=Math.round(w); c.height=Math.round(h); ctx.putImageData(id,0,0);
+  const wrap=ecwrap(); const maxW=wrap.clientWidth-32; const maxH=wrap.clientHeight-32;
+  const scale=Math.min(1,maxW/c.width,maxH/c.height); ED.scale=scale;
+  c.style.width=Math.round(c.width*scale)+'px'; c.style.height=Math.round(c.height*scale)+'px';
+  resetCrop(); pushH(); toast('Crop applied','ok');
 });
 
-// Drag crop overlay
-let dragStart=null, cropStart=null, handleDragging=null;
-CO().addEventListener('mousedown', e => {
+// drag crop frame
+let dragS=null, cropS=null, hdrag=null;
+cropFrame().addEventListener('mousedown', e => {
   e.preventDefault(); e.stopPropagation();
-  const h = e.target.dataset.h;
-  handleDragging = h || 'move';
-  dragStart = {x:e.clientX, y:e.clientY};
-  cropStart = {...editorState.crop};
+  hdrag = e.target.dataset.h || 'move';
+  dragS = {x:e.clientX,y:e.clientY};
+  cropS = {...ED.crop};
 });
 document.addEventListener('mousemove', e => {
-  if (!dragStart || !editorState.crop) return;
-  const s = editorState.scale;
-  const dx = (e.clientX - dragStart.x)/s; const dy = (e.clientY - dragStart.y)/s;
-  let {x,y,w,h} = cropStart; const cw=editorState.canvas.width; const ch=editorState.canvas.height;
-  if (handleDragging==='move') {
-    x = Math.max(0,Math.min(cw-w, x+dx)); y = Math.max(0,Math.min(ch-h, y+dy));
-  } else {
-    if (handleDragging.includes('r')) { w=Math.max(20,cropStart.w+dx); if (cropAspect) h=w/cropAspect; }
-    if (handleDragging.includes('l')) { const nw=Math.max(20,cropStart.w-dx); x=cropStart.x+(cropStart.w-nw); w=nw; if (cropAspect) h=w/cropAspect; }
-    if (handleDragging.includes('b') && !cropAspect) h=Math.max(20,cropStart.h+dy);
-    if (handleDragging.includes('t') && !cropAspect) { const nh=Math.max(20,cropStart.h-dy); y=cropStart.y+(cropStart.h-nh); h=nh; }
-    x=Math.max(0,x); y=Math.max(0,y); w=Math.min(cw-x,w); h=Math.min(ch-y,h);
+  if (!dragS || !ED.crop) return;
+  const s=ED.scale; const dx=(e.clientX-dragS.x)/s; const dy=(e.clientY-dragS.y)/s;
+  let {x,y,w,h}=cropS; const cW=ED.canvas.width, cH=ED.canvas.height;
+  if (hdrag==='move') { x=Math.max(0,Math.min(cW-w,x+dx)); y=Math.max(0,Math.min(cH-h,y+dy)); }
+  else {
+    if (hdrag.includes('r')) { w=Math.max(20,cropS.w+dx); if (cropAspect) h=w/cropAspect; }
+    if (hdrag.includes('l')) { const nw=Math.max(20,cropS.w-dx); x=cropS.x+(cropS.w-nw); w=nw; if (cropAspect) h=w/cropAspect; }
+    if (hdrag.includes('b')&&!cropAspect) h=Math.max(20,cropS.h+dy);
+    if (hdrag.includes('t')&&!cropAspect) { const nh=Math.max(20,cropS.h-dy); y=cropS.y+(cropS.h-nh); h=nh; }
+    x=Math.max(0,x); y=Math.max(0,y); w=Math.min(cW-x,w); h=Math.min(cH-y,h);
   }
-  editorState.crop = {x,y,w,h}; updateCropOverlay();
+  ED.crop={x,y,w,h}; updateCropFrame();
 });
-document.addEventListener('mouseup', () => { dragStart=null; handleDragging=null; });
+document.addEventListener('mouseup', () => { dragS=null; hdrag=null; });
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 updateApiUI();
-if (!getApiKey()) setTimeout(() => apiModal.classList.add('open'), 800);
+if (!getKey()) setTimeout(() => apiModal.classList.add('open'), 800);
 </script>
 </body>
 </html>
