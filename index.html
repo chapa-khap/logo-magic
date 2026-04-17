@@ -682,7 +682,7 @@ async function callGemini(apiKey, b64, mimeType, prompt) {
       { inline_data: { mime_type: mimeType.includes('svg') ? 'image/png' : mimeType, data: b64 } },
       { text: prompt }
     ]}],
-    generationConfig: { responseModalities: ['IMAGE', 'TEXT'], imageConfig: { imageSize: "512" } }
+    generationConfig: { responseModalities: ['IMAGE', 'TEXT'], imageConfig: { aspectRatio: '1:1' } }
   };
   const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
   if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `HTTP ${res.status}`); }
