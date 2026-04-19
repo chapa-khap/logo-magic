@@ -192,7 +192,16 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .eshell{width:min(96vw,1100px);height:min(92vh,780px);background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
 .ehdr{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
 .etitle{font-family:var(--fd);font-weight:700;font-size:15px}
-.efname{font-size:11px;color:var(--text-faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}
+.efname-input{
+  font-size:12px;color:var(--text-dim);
+  background:none;border:none;border-bottom:1px solid transparent;
+  outline:none;font-family:var(--fm);
+  width:200px;max-width:240px;
+  padding:2px 4px;border-radius:3px;
+  transition:all .15s;
+}
+.efname-input:hover{border-bottom-color:var(--border-hi)}
+.efname-input:focus{color:var(--text);border-bottom-color:var(--accent);background:var(--surface-2)}
 .ehspc{flex:1}
 .ehist{font-size:10px;color:var(--text-faint)}
 .ebody{display:flex;flex:1;min-height:0;position:relative}
@@ -238,7 +247,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
 
 /* Tool buttons — active tool highlight */
 .tool-row{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
-.tbtn{flex:1;min-width:0;padding:7px 4px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rs);color:var(--text-dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .12s;text-align:center;white-space:nowrap}
+.tbtn{flex:1;min-width:0;padding:7px 2px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rs);color:var(--text-dim);font-size:10.5px;font-weight:600;cursor:pointer;transition:all .12s;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tbtn:hover{border-color:var(--border-hi);color:var(--text)}
 .tbtn.act{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}
 
@@ -483,7 +492,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
   <div class="eshell">
     <div class="ehdr">
       <span class="etitle"><span class="iconify" data-icon="bx:edit" data-width="16" data-height="16"></span> Editor</span>
-      <span class="efname" id="ed-fname"></span>
+      <input class="efname-input" id="ed-fname" type="text" spellcheck="false" placeholder="filename">
       <div class="ehspc"></div>
       <span class="ehist" id="ed-hist">history: 0</span>
       <button class="hbtn" id="ed-undo" style="margin-left:8px"><span class="iconify" data-icon="bx:undo" data-width="14" data-height="14"></span> Undo</button>
@@ -540,9 +549,9 @@ textarea:focus{outline:none;border-color:var(--accent)}
           <div class="crow">
             <label>BG Color</label>
             <input type="color" id="bg-color" value="#ffffff">
-            <button class="eye-btn" id="bg-eye" title="Pick color from canvas"><span class="iconify" data-icon="bx:eyedropper" data-width="13" data-height="13"></span></button>
+            <button class="eye-btn" id="bg-eye" title="Pick color from canvas">Pick</button>
           </div>
-          <div class="hint">Click <span class="iconify" data-icon="bx:eyedropper" data-width="11" data-height="11"></span> then click a pixel to sample color</div>
+          <div class="hint">Click <b>Pick</b> then click a pixel to sample color</div>
           <button class="bg-btn" id="bg-btn"><span class="iconify" data-icon="bx:scissors" data-width="15" data-height="15"></span> Remove Background</button>
         </div>
 
@@ -557,9 +566,9 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="esec">
           <div class="esec-title">Drawing Tools</div>
           <div class="tool-row">
-            <button class="tbtn" id="tool-wand" title="Magic Wand — click to select + erase similar color region"><span class="iconify" data-icon="bx:wand" data-width="14" data-height="14"></span> Wand</button>
+            <button class="tbtn" id="tool-wand" title="Magic Wand — click to select + erase similar color region">Wand</button>
             <button class="tbtn" id="tool-eraser" title="Eraser — paint to erase pixels"><span class="iconify" data-icon="bx:eraser" data-width="14" data-height="14"></span> Eraser</button>
-            <button class="tbtn" id="tool-bgeraser" title="BG Eraser — erases only the selected color under brush"><span class="iconify" data-icon="bx:brush" data-width="14" data-height="14"></span> BG Erase</button>
+            <button class="tbtn" id="tool-bgeraser" title="BG Eraser — erases only the selected color under brush">BG&nbsp;Erase</button>
           </div>
           <div class="srow"><label>Size</label><input type="range" id="brush-size" min="2" max="120" value="20"><span id="brush-size-v">20</span></div>
           <!-- BG eraser color -->
@@ -567,7 +576,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
             <div class="crow">
               <label>Target</label>
               <input type="color" id="bge-color" value="#ffffff">
-              <button class="eye-btn" id="bge-eye" title="Sample target color"><span class="iconify" data-icon="bx:eyedropper" data-width="13" data-height="13"></span></button>
+              <button class="eye-btn" id="bge-eye" title="Sample target color">Pick</button>
             </div>
             <div class="srow"><label>Tolerance</label><input type="range" id="bge-tol" min="1" max="120" value="30"><span id="bge-tol-v">30</span></div>
             <div class="hint">Erases only pixels matching the target color</div>
@@ -980,7 +989,10 @@ function openEditor(type,id){
   const item=S[type].items.find(i=>String(i.id)===String(id));if(!item) return;
   ED.type=type;ED.id=id;ED.history=[];ED.activeTool=null;ED.painting=false;ED.crop=null;
   deactivateAllTools();
-  document.getElementById('ed-fname').textContent=item.name;
+  const fnInput=document.getElementById('ed-fname');
+  // strip extension for editing
+  fnInput.value=item.name.replace(/\.[^.]+$/,'');
+  fnInput.dataset.ext=item.name.match(/\.[^.]+$/)?.[0]||'.png';
   document.getElementById('editor-ov').classList.add('open');
   const src=item.result;
   if(src) loadEditorImg(src);
@@ -1036,7 +1048,14 @@ function closeEditor(){
 document.getElementById('ed-save').addEventListener('click',()=>{
   if(!ED.canvas) return;
   const item=S[ED.type].items.find(i=>String(i.id)===String(ED.id));
-  if(item){item.result=ED.canvas.toDataURL('image/png');item.status='done';renderQueue(ED.type);}
+  if(item){
+    item.result=ED.canvas.toDataURL('image/png');item.status='done';
+    const fnInput=document.getElementById('ed-fname');
+    const ext=fnInput.dataset.ext||'.png';
+    const newName=(fnInput.value.trim()||item.name.replace(/\.[^.]+$/,''))+ext;
+    item.name=newName;
+    renderQueue(ED.type);
+  }
   closeEditor();toast('Saved ✓','ok');
 });
 
