@@ -329,8 +329,8 @@ textarea:focus{outline:none;border-color:var(--accent)}
 /* Zoom controls */
 #zoom-bar{
   position:absolute;bottom:10px;left:10px;
-  display:flex;align-items:center;gap:6px;
-  background:rgba(0,0,0,.55);
+  display:flex;align-items:center;gap:4px;
+  background:rgba(0,0,0,.6);
   border:1px solid rgba(255,255,255,.12);
   border-radius:20px;
   padding:4px 10px;
@@ -347,6 +347,16 @@ textarea:focus{outline:none;border-color:var(--accent)}
 }
 .zoom-btn:hover{background:rgba(255,255,255,.15)}
 #zoom-label{font-size:11px;color:rgba(255,255,255,.7);font-family:var(--fm);min-width:36px;text-align:center}
+.bg-sw-btn{
+  width:22px;height:22px;
+  background:none;border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.5);
+  font-size:13px;cursor:pointer;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .12s;line-height:1;padding:0;
+}
+.bg-sw-btn:hover{border-color:rgba(255,255,255,.4);color:#fff}
+.bg-sw-btn.act{border-color:var(--accent);color:var(--accent)}
 
 /* c-apply glow when crop active */
 #c-apply.crop-active{
@@ -486,6 +496,10 @@ textarea:focus{outline:none;border-color:var(--accent)}
             <button class="zoom-btn" id="zoom-out" title="Zoom out">−</button>
             <span id="zoom-label">100%</span>
             <button class="zoom-btn" id="zoom-in" title="Zoom in">+</button>
+            <div style="width:1px;height:14px;background:rgba(255,255,255,.15);margin:0 2px;flex-shrink:0"></div>
+            <button class="bg-sw-btn act" id="bg-sw-checker" title="Transparent (checkerboard)">▨</button>
+            <button class="bg-sw-btn" id="bg-sw-white" title="White background">□</button>
+            <button class="bg-sw-btn" id="bg-sw-black" title="Black background" style="color:rgba(255,255,255,.4)">■</button>
           </div>
         </div>
         <!-- Pan sliders -->
@@ -1501,6 +1515,28 @@ function initPanSliders(){
   });
 }
 initPanSliders();
+
+// ── CANVAS BACKGROUND SWITCHER ──
+const BG_STYLES = {
+  checker: 'repeating-conic-gradient(#1e1e1e 0% 25%,#141414 0% 50%) 0 0/24px 24px',
+  white:   '#ffffff',
+  black:   '#111111'
+};
+function setCanvasBg(mode){
+  const wrap = $wrap();
+  wrap.style.background = BG_STYLES[mode];
+  ['checker','white','black'].forEach(m =>
+    document.getElementById('bg-sw-'+m).classList.toggle('act', m===mode)
+  );
+  // update preview checkerboard hint too
+  const pc = document.getElementById('crop-preview-canvas');
+  if(mode==='white') pc.style.background = '#ffffff';
+  else if(mode==='black') pc.style.background = '#111111';
+  else pc.style.background = 'repeating-conic-gradient(#2a2a2a 0% 25%,#1a1a1a 0% 50%) 0 0/12px 12px';
+}
+document.getElementById('bg-sw-checker').addEventListener('click',()=>setCanvasBg('checker'));
+document.getElementById('bg-sw-white').addEventListener('click',()=>setCanvasBg('white'));
+document.getElementById('bg-sw-black').addEventListener('click',()=>setCanvasBg('black'));
 
 // ── ZOOM ──
 const ZOOM_STEPS=[0.1,0.15,0.2,0.25,0.33,0.4,0.5,0.6,0.75,0.9,1,1.25,1.5,1.75,2,2.5,3,4];
