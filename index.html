@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 <style>
 :root{
   --bg:#08090a;--surface:#0e1012;--surface-2:#141618;--surface-3:#1c1f22;
@@ -25,6 +26,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+.iconify{vertical-align:middle;flex-shrink:0}
 
 /* HEADER */
 header{
@@ -182,6 +184,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .toast.ok{border-color:var(--success);color:var(--success)}
 .toast.err{border-color:var(--error);color:var(--error)}
 @keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
 /* ══════════════════════ EDITOR ══════════════════════ */
 #editor-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -387,13 +390,13 @@ textarea:focus{outline:none;border-color:var(--accent)}
     <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview</option>
     <option value="gemini-2.0-flash-exp">gemini-2.0-flash-exp</option>
   </select>
-  <button class="hbtn ico" id="theme-toggle">🌙</button>
+  <button class="hbtn ico" id="theme-toggle" title="Toggle theme"><span class="iconify" data-icon="bx:moon" data-width="16" data-height="16"></span></button>
   <button class="hbtn" id="api-btn"><div class="api-dot" id="api-dot"></div><span id="api-label">Set API Key</span></button>
 </header>
 
 <div class="tabs">
-  <button class="tab-btn active" data-tab="logo">🏅 Logo Emblem</button>
-  <button class="tab-btn" data-tab="player">👤 Player Photo</button>
+  <button class="tab-btn active" data-tab="logo"><span class="iconify" data-icon="bx:shield-quarter" data-width="14" data-height="14"></span> Logo Emblem</button>
+  <button class="tab-btn" data-tab="player"><span class="iconify" data-icon="bx:user" data-width="14" data-height="14"></span> Player Photo</button>
 </div>
 
 <div class="main">
@@ -402,12 +405,12 @@ textarea:focus{outline:none;border-color:var(--accent)}
       <div class="card">
         <div class="card-title">Upload Logos</div>
         <div class="drop-zone" id="logo-drop">
-          <div class="drop-icon">🖼️</div>
+          <div class="drop-icon"><span class="iconify" data-icon="bx:image" data-width="32" data-height="32"></span></div>
           <div class="drop-text"><strong>Click to browse</strong> or drag & drop<br>PNG, JPG, WEBP, SVG — multiple files</div>
           <div class="drop-small">Processed locally — nothing uploaded</div>
         </div>
         <input type="file" id="logo-input" accept=".png,.jpg,.jpeg,.webp,.svg" multiple>
-        <button class="process-btn" id="logo-process-all">⚙️ Process All</button>
+        <button class="process-btn" id="logo-process-all"><span class="iconify" data-icon="bx:cog" data-width="16" data-height="16"></span> Process All</button>
       </div>
       <div class="card">
         <div class="card-title">Settings</div>
@@ -422,7 +425,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
     </div>
     <div class="queue-header">
       <div class="queue-title" id="logo-qt">Queue — 0 files</div>
-      <button class="dl-all-btn" id="logo-dl-all" style="display:none">⬇ Download All ZIP</button>
+      <button class="dl-all-btn" id="logo-dl-all" style="display:none"><span class="iconify" data-icon="bx:download" data-width="14" data-height="14"></span> Download All ZIP</button>
     </div>
     <div class="queue-grid" id="logo-queue"><div class="queue-empty">No files added yet.</div></div>
   </div>
@@ -432,12 +435,12 @@ textarea:focus{outline:none;border-color:var(--accent)}
       <div class="card">
         <div class="card-title">Upload Player Photos</div>
         <div class="drop-zone" id="player-drop">
-          <div class="drop-icon">👤</div>
+          <div class="drop-icon"><span class="iconify" data-icon="bx:user" data-width="32" data-height="32"></span></div>
           <div class="drop-text"><strong>Click to browse</strong> or drag & drop<br>PNG, JPG, WEBP — multiple files</div>
           <div class="drop-small">Gemini AI transforms photos — auto-cropped 1:1</div>
         </div>
         <input type="file" id="player-input" accept=".png,.jpg,.jpeg,.webp" multiple>
-        <button class="process-btn" id="player-process-all">⚙️ Process All</button>
+        <button class="process-btn" id="player-process-all"><span class="iconify" data-icon="bx:cog" data-width="16" data-height="16"></span> Process All</button>
       </div>
       <div class="card">
         <div class="card-title">Settings</div>
@@ -456,7 +459,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
     </div>
     <div class="queue-header">
       <div class="queue-title" id="player-qt">Queue — 0 files</div>
-      <button class="dl-all-btn" id="player-dl-all" style="display:none">⬇ Download All ZIP</button>
+      <button class="dl-all-btn" id="player-dl-all" style="display:none"><span class="iconify" data-icon="bx:download" data-width="14" data-height="14"></span> Download All ZIP</button>
     </div>
     <div class="queue-grid" id="player-queue"><div class="queue-empty">No files added yet.</div></div>
   </div>
@@ -479,12 +482,12 @@ textarea:focus{outline:none;border-color:var(--accent)}
 <div id="editor-ov">
   <div class="eshell">
     <div class="ehdr">
-      <span class="etitle">✏️ Editor</span>
+      <span class="etitle"><span class="iconify" data-icon="bx:edit" data-width="16" data-height="16"></span> Editor</span>
       <span class="efname" id="ed-fname"></span>
       <div class="ehspc"></div>
       <span class="ehist" id="ed-hist">history: 0</span>
-      <button class="hbtn" id="ed-undo" style="margin-left:8px">↩ Undo</button>
-      <button class="hbtn ico" id="ed-close" style="margin-left:4px">✕</button>
+      <button class="hbtn" id="ed-undo" style="margin-left:8px"><span class="iconify" data-icon="bx:undo" data-width="14" data-height="14"></span> Undo</button>
+      <button class="hbtn ico" id="ed-close" style="margin-left:4px"><span class="iconify" data-icon="bx:x" data-width="16" data-height="16"></span></button>
     </div>
     <div class="ebody" id="ebody-ref">
       <!-- Canvas column -->
@@ -493,13 +496,13 @@ textarea:focus{outline:none;border-color:var(--accent)}
           <canvas id="ec"></canvas>
           <div id="brush-cursor"></div>
           <div id="zoom-bar">
-            <button class="zoom-btn" id="zoom-out" title="Zoom out">−</button>
+            <button class="zoom-btn" id="zoom-out" title="Zoom out"><span class="iconify" data-icon="bx:minus" data-width="14" data-height="14"></span></button>
             <span id="zoom-label">100%</span>
-            <button class="zoom-btn" id="zoom-in" title="Zoom in">+</button>
+            <button class="zoom-btn" id="zoom-in" title="Zoom in"><span class="iconify" data-icon="bx:plus" data-width="14" data-height="14"></span></button>
             <div style="width:1px;height:14px;background:rgba(255,255,255,.15);margin:0 2px;flex-shrink:0"></div>
-            <button class="bg-sw-btn act" id="bg-sw-checker" title="Transparent (checkerboard)">▨</button>
-            <button class="bg-sw-btn" id="bg-sw-white" title="White background">□</button>
-            <button class="bg-sw-btn" id="bg-sw-black" title="Black background" style="color:rgba(255,255,255,.4)">■</button>
+            <button class="bg-sw-btn act" id="bg-sw-checker" title="Transparent (checkerboard)"><span class="iconify" data-icon="bx:grid" data-width="13" data-height="13"></span></button>
+            <button class="bg-sw-btn" id="bg-sw-white" title="White background"><span class="iconify" data-icon="bx:square" data-width="13" data-height="13"></span></button>
+            <button class="bg-sw-btn" id="bg-sw-black" title="Black background"><span class="iconify" data-icon="bx:square-rounded" data-width="13" data-height="13"></span></button>
           </div>
         </div>
         <!-- Pan sliders -->
@@ -537,10 +540,10 @@ textarea:focus{outline:none;border-color:var(--accent)}
           <div class="crow">
             <label>BG Color</label>
             <input type="color" id="bg-color" value="#ffffff">
-            <button class="eye-btn" id="bg-eye" title="Pick color from canvas">💉</button>
+            <button class="eye-btn" id="bg-eye" title="Pick color from canvas"><span class="iconify" data-icon="bx:eyedropper" data-width="13" data-height="13"></span></button>
           </div>
-          <div class="hint">Click 💉 then click a pixel to sample color</div>
-          <button class="bg-btn" id="bg-btn">✂ Remove Background</button>
+          <div class="hint">Click <span class="iconify" data-icon="bx:eyedropper" data-width="11" data-height="11"></span> then click a pixel to sample color</div>
+          <button class="bg-btn" id="bg-btn"><span class="iconify" data-icon="bx:scissors" data-width="15" data-height="15"></span> Remove Background</button>
         </div>
 
         <!-- PROGRESS -->
@@ -554,9 +557,9 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="esec">
           <div class="esec-title">Drawing Tools</div>
           <div class="tool-row">
-            <button class="tbtn" id="tool-wand" title="Magic Wand — click to select + erase similar color region">🪄 Wand</button>
-            <button class="tbtn" id="tool-eraser" title="Eraser — paint to erase pixels">⬜ Eraser</button>
-            <button class="tbtn" id="tool-bgeraser" title="BG Eraser — erases only the selected color under brush">🎨 BG Erase</button>
+            <button class="tbtn" id="tool-wand" title="Magic Wand — click to select + erase similar color region"><span class="iconify" data-icon="bx:wand" data-width="14" data-height="14"></span> Wand</button>
+            <button class="tbtn" id="tool-eraser" title="Eraser — paint to erase pixels"><span class="iconify" data-icon="bx:eraser" data-width="14" data-height="14"></span> Eraser</button>
+            <button class="tbtn" id="tool-bgeraser" title="BG Eraser — erases only the selected color under brush"><span class="iconify" data-icon="bx:brush" data-width="14" data-height="14"></span> BG Erase</button>
           </div>
           <div class="srow"><label>Size</label><input type="range" id="brush-size" min="2" max="120" value="20"><span id="brush-size-v">20</span></div>
           <!-- BG eraser color -->
@@ -564,7 +567,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
             <div class="crow">
               <label>Target</label>
               <input type="color" id="bge-color" value="#ffffff">
-              <button class="eye-btn" id="bge-eye" title="Sample target color">💉</button>
+              <button class="eye-btn" id="bge-eye" title="Sample target color"><span class="iconify" data-icon="bx:eyedropper" data-width="13" data-height="13"></span></button>
             </div>
             <div class="srow"><label>Tolerance</label><input type="range" id="bge-tol" min="1" max="120" value="30"><span id="bge-tol-v">30</span></div>
             <div class="hint">Erases only pixels matching the target color</div>
@@ -576,29 +579,29 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="esec">
           <div class="esec-title">Crop</div>
           <div class="crop-grid">
-            <button class="cbtn" id="c-free">⬜ Free</button>
-            <button class="cbtn" id="c-1x1">◼ 1 : 1</button>
-            <button class="cbtn" id="c-4x5">▬ 4 : 5</button>
-            <button class="cbtn" id="c-169">▭ 16 : 9</button>
+            <button class="cbtn" id="c-free"><span class="iconify" data-icon="bx:crop" data-width="13" data-height="13"></span> Free</button>
+            <button class="cbtn" id="c-1x1"><span class="iconify" data-icon="bx:square" data-width="13" data-height="13"></span> 1 : 1</button>
+            <button class="cbtn" id="c-4x5"><span class="iconify" data-icon="bx:rectangle" data-width="13" data-height="13"></span> 4 : 5</button>
+            <button class="cbtn" id="c-169"><span class="iconify" data-icon="bx:landscape" data-width="13" data-height="13"></span> 16 : 9</button>
           </div>
-          <button class="full-btn accent" id="c-apply">✂ Apply Crop</button>
-          <button class="full-btn dim" id="c-cancel" style="margin-top:5px">✕ Cancel Crop</button>
+          <button class="full-btn accent" id="c-apply"><span class="iconify" data-icon="bx:scissors" data-width="14" data-height="14"></span> Apply Crop</button>
+          <button class="full-btn dim" id="c-cancel" style="margin-top:5px"><span class="iconify" data-icon="bx:x" data-width="14" data-height="14"></span> Cancel Crop</button>
         </div>
 
         <!-- AUTO TRIM -->
         <div class="esec">
           <div class="esec-title">Auto Trim</div>
           <div class="hint">Remove transparent / white borders and fit tightly to subject</div>
-          <button class="full-btn dim" id="trim-btn" style="margin-top:6px">✂ Trim Edges</button>
+          <button class="full-btn dim" id="trim-btn" style="margin-top:6px"><span class="iconify" data-icon="bx:crop" data-width="14" data-height="14"></span> Trim Edges</button>
         </div>
 
       </div>
     </div>
     <div class="eftr">
-      <button class="efbtn" id="ed-reset">↺ Reset</button>
+      <button class="efbtn" id="ed-reset"><span class="iconify" data-icon="bx:reset" data-width="15" data-height="15"></span> Reset</button>
       <div class="spc"></div>
       <button class="efbtn" id="ed-cancel">Cancel</button>
-      <button class="efbtn pri" id="ed-save">✓ Save to Queue</button>
+      <button class="efbtn pri" id="ed-save"><span class="iconify" data-icon="bx:check" data-width="15" data-height="15"></span> Save to Queue</button>
     </div>
   </div>
 </div>
@@ -732,7 +735,7 @@ function updateApiUI() {
 document.getElementById('theme-toggle').addEventListener('click', () => {
   const d = document.documentElement, dark = d.dataset.theme === 'dark';
   d.dataset.theme = dark ? 'light' : 'dark';
-  document.getElementById('theme-toggle').textContent = dark ? '☀️' : '🌙';
+  document.getElementById('theme-toggle').innerHTML = dark ? '<span class="iconify" data-icon="bx:sun" data-width="16" data-height="16"></span>' : '<span class="iconify" data-icon="bx:moon" data-width="16" data-height="16"></span>';
 });
 document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
@@ -804,9 +807,9 @@ function renderQueue(type) {
         <div class="q-name" title="${item.name}">${item.name}</div>
         <div class="q-status"><div class="sdot ${dc}"></div>${ds}</div>
         <div class="q-actions">
-          ${item.status==='done'?`<button class="qb pri" onclick="dlItem('${type}','${item.id}')">⬇ Download PNG</button>`:''}
-          <button class="qb" onclick="openEditor('${type}','${item.id}')">✏️ Edit</button>
-          ${item.status!=='processing'?`<button class="qb" onclick="processOne('${type}','${item.id}')">▶ Process</button>`:''}
+          ${item.status==='done'?`<button class="qb pri" onclick="dlItem('${type}','${item.id}')"><span class="iconify" data-icon="bx:download" data-width="13" data-height="13"></span> Download PNG</button>`:''}
+          <button class="qb" onclick="openEditor('${type}','${item.id}')"><span class="iconify" data-icon="bx:edit" data-width="13" data-height="13"></span> Edit</button>
+          ${item.status!=='processing'?`<button class="qb" onclick="processOne('${type}','${item.id}')"><span class="iconify" data-icon="bx:play" data-width="13" data-height="13"></span> Process</button>`:''}
         </div>
       </div>`);
     grid.appendChild(card);
@@ -1051,7 +1054,7 @@ bgEye.addEventListener('click',()=>enterEyedropper('bg'));
 document.getElementById('bg-btn').addEventListener('click',async()=>{
   if(!ED.canvas) return;
   const btn=document.getElementById('bg-btn');
-  btn.disabled=true;btn.textContent='⏳ Working…';
+  btn.disabled=true;btn.innerHTML='<span class="iconify" data-icon="bx:loader-alt" data-width="15" data-height="15" style="animation:spin 1s linear infinite"></span> Working…';
   showProg('Analysing…',0);await tick();
   try{
     const ctx=ED.ctx,c=ED.canvas,w=c.width,h=c.height;
@@ -1086,7 +1089,7 @@ document.getElementById('bg-btn').addEventListener('click',async()=>{
     showProg('Done!',100);ctx.putImageData(id,0,0);pushH();
     await new Promise(r=>setTimeout(r,350));hideProg();
   }catch(e){toast('BG error: '+e.message,'err');hideProg();}
-  btn.disabled=false;btn.textContent='✂ Remove Background';
+  btn.disabled=false;btn.innerHTML='<span class="iconify" data-icon="bx:scissors" data-width="15" data-height="15"></span> Remove Background';
 });
 
 // ════════════════════════════════════════════════
