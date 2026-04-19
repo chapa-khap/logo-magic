@@ -1571,13 +1571,16 @@ document.getElementById('zoom-out').addEventListener('click',()=>{
   const idx=getZoomIdx();
   if(idx>0) applyZoom(ZOOM_STEPS[idx-1]);
 });
-// Ctrl+scroll zoom
+// Scroll = zoom, Shift+scroll = pan horizontal
 document.getElementById('ecwrap').addEventListener('wheel',e=>{
-  if(!e.ctrlKey&&!e.metaKey) return;
-  e.preventDefault();
-  const idx=getZoomIdx();
-  if(e.deltaY<0&&idx<ZOOM_STEPS.length-1) applyZoom(ZOOM_STEPS[idx+1]);
-  else if(e.deltaY>0&&idx>0) applyZoom(ZOOM_STEPS[idx-1]);
+  // If no modifier — zoom
+  if(!e.shiftKey){
+    e.preventDefault();
+    const idx=getZoomIdx();
+    if(e.deltaY<0&&idx<ZOOM_STEPS.length-1) applyZoom(ZOOM_STEPS[idx+1]);
+    else if(e.deltaY>0&&idx>0) applyZoom(ZOOM_STEPS[idx-1]);
+  }
+  // Shift+scroll — let browser handle horizontal pan naturally
 },{passive:false});
 
 // ════════════════════════════════════════════════
