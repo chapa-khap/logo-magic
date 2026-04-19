@@ -313,6 +313,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
   display:flex;
   flex-direction:column;
   gap:8px;
+  flex-shrink:0;
 }
 #crop-preview-canvas{
   width:100%;height:auto;
@@ -986,6 +987,7 @@ function loadEditorImg(url){
     ctx.drawImage(img,0,0);
     ED.canvas=canvas;ED.ctx=ctx;
     pushH();resetCrop();updateHistBadge();
+    setTimeout(refreshPreview,50);
   };img.src=url;
 }
 
@@ -993,6 +995,7 @@ function pushH(){
   ED.history.push(ED.ctx.getImageData(0,0,ED.canvas.width,ED.canvas.height));
   if(ED.history.length>30) ED.history.shift();
   updateHistBadge();
+  refreshPreview();
 }
 function updateHistBadge(){document.getElementById('ed-hist').textContent=`history: ${Math.max(0,ED.history.length-1)}`;}
 
@@ -1004,6 +1007,7 @@ document.addEventListener('keydown',e=>{
 function doUndo(){
   if(ED.history.length<=1){toast('Nothing to undo','');return;}
   ED.history.pop();ED.ctx.putImageData(ED.history[ED.history.length-1],0,0);updateHistBadge();
+  refreshPreview();
 }
 document.getElementById('ed-reset').addEventListener('click',()=>{if(!ED.originURL) return;ED.history=[];loadEditorImg(ED.originURL);});
 document.getElementById('ed-close').addEventListener('click',closeEditor);
@@ -1294,14 +1298,7 @@ function resetCrop(){
   document.getElementById('c-apply').classList.remove('crop-active');
   document.getElementById('c-cancel').classList.remove('vis');
   document.getElementById('pan-bar').classList.remove('vis');
-  // reset preview to blank
-  const pc=document.getElementById('crop-preview-canvas');
-  const pctx=pc.getContext('2d');
-  pc.width=230;pc.height=140;
-  pc.style.width='100%';pc.style.height='auto';
-  pctx.clearRect(0,0,pc.width,pc.height);
-  document.getElementById('preview-dims').textContent='No crop active';
-  document.getElementById('preview-ratio').textContent='—';
+  setTimeout(refreshPreview, 0);
   // restore canvas centering
   const wrap=$wrap();wrap.style.justifyContent='center';wrap.style.alignItems='center';
 }
@@ -1345,37 +1342,56 @@ function updateCropFrame(){
 }
 
 function updateCropPreview(){
-  if(!ED.crop||!ED.canvas) return;
-  const {x,y,w,h}=ED.crop;
+  refreshPreview();
+}
+
+// Always-on preview: shows crop result if active, else full canvas
+function refreshPreview(){
+  if(!ED.canvas) return;
   const pc=document.getElementById('crop-preview-canvas');
-  const wrap=pc.parentElement;
-  // use actual sidebar inner width for preview size
-  const maxW=wrap.clientWidth-36;
-  const ar=w/h;
-  const pw=maxW;
-  const ph=Math.round(pw/ar);
-  pc.width=pw;pc.height=ph;
-  pc.style.width='100%';pc.style.height='auto';
+  const wrapEl=pc.parentElement;
+  const maxW=Math.max(100, wrapEl.clientWidth-36);
   const pctx=pc.getContext('2d');
-  pctx.clearRect(0,0,pw,ph);
-  const c=ED.canvas;
-  const sx=Math.max(0,x),sy=Math.max(0,y);
-  const sx2=Math.min(c.width,x+w),sy2=Math.min(c.height,y+h);
-  if(sx2>sx&&sy2>sy){
-    const scaleX=pw/w,scaleY=ph/h;
-    const offX=Math.max(0,-x),offY=Math.max(0,-y);
-    pctx.drawImage(c,sx,sy,sx2-sx,sy2-sy,
-      (sx-x+offX)*scaleX,(sy-y+offY)*scaleY,
-      (sx2-sx)*scaleX,(sy2-sy)*scaleY);
+
+  if(ED.crop){
+    // ── CROP ACTIVE: show exactly what will be cropped ──
+    const {x,y,w,h}=ED.crop;
+    const ar=w/h;
+    const pw=maxW;
+    const ph=Math.round(pw/ar);
+    pc.width=pw; pc.height=ph;
+    pctx.clearRect(0,0,pw,ph);
+    // fill expanded area with checkerboard (transparent zones)
+    const c=ED.canvas;
+    const sx=Math.max(0,x), sy=Math.max(0,y);
+    const sx2=Math.min(c.width,x+w), sy2=Math.min(c.height,y+h);
+    if(sx2>sx && sy2>sy){
+      const scaleX=pw/w, scaleY=ph/h;
+      const offX=Math.max(0,-x), offY=Math.max(0,-y);
+      pctx.drawImage(c, sx,sy, sx2-sx,sy2-sy,
+        (sx-x+offX)*scaleX, (sy-y+offY)*scaleY,
+        (sx2-sx)*scaleX, (sy2-sy)*scaleY);
+    }
+    const ratio=w/h;
+    let ratioStr='Free';
+    if(Math.abs(ratio-1)<0.02) ratioStr='1 : 1';
+    else if(Math.abs(ratio-4/5)<0.02) ratioStr='4 : 5';
+    else if(Math.abs(ratio-16/9)<0.04) ratioStr='16 : 9';
+    else ratioStr=(w/h).toFixed(2)+' : 1';
+    document.getElementById('preview-dims').textContent=Math.round(w)+' × '+Math.round(h)+'px';
+    document.getElementById('preview-ratio').textContent='✂ '+ratioStr;
+  } else {
+    // ── NO CROP: show full current canvas ──
+    const c=ED.canvas;
+    const ar=c.width/c.height;
+    const pw=maxW;
+    const ph=Math.round(pw/ar);
+    pc.width=pw; pc.height=ph;
+    pctx.clearRect(0,0,pw,ph);
+    pctx.drawImage(c,0,0,pw,ph);
+    document.getElementById('preview-dims').textContent=c.width+' × '+c.height+'px';
+    document.getElementById('preview-ratio').textContent='Full canvas';
   }
-  document.getElementById('preview-dims').textContent=Math.round(w)+' × '+Math.round(h)+'px';
-  const ratio=w/h;
-  let ratioStr='Free';
-  if(Math.abs(ratio-1)<0.02) ratioStr='1 : 1';
-  else if(Math.abs(ratio-4/5)<0.02) ratioStr='4 : 5';
-  else if(Math.abs(ratio-16/9)<0.04) ratioStr='16 : 9';
-  else ratioStr=(w/h).toFixed(2)+' : 1';
-  document.getElementById('preview-ratio').textContent=ratioStr;
 }
 
 // clamp crop — only enforce minimum size and aspect, allow going outside canvas
