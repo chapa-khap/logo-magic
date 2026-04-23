@@ -849,6 +849,10 @@ function addFiles(type, files) {
   });
   if (n) renderQueue(type); else toast('Дублікати пропущено','');
 }
+function removeItem(type, id){
+  S[type].items=S[type].items.filter(i=>String(i.id)!==String(id));
+  renderQueue(type);
+}
 
 // ═══════════════════════════════════════════════════════
 // RENDER QUEUE
@@ -878,6 +882,7 @@ function renderQueue(type) {
           ${item.status==='done'?`<button class="qb pri" onclick="dlItem('${type}','${item.id}')"><span class="iconify" data-icon="bx:download" data-width="13" data-height="13"></span> Завантажити PNG</button>`:''}
           <button class="qb" onclick="openEditor('${type}','${item.id}')"><span class="iconify" data-icon="bx:edit" data-width="13" data-height="13"></span> Редагувати</button>
           ${item.status!=='processing'?`<button class="qb" onclick="processOne('${type}','${item.id}')"><span class="iconify" data-icon="bx:play" data-width="13" data-height="13"></span> Обробити</button>`:''}
+          ${item.status!=='processing'?`<button class="qb" style="color:var(--error);border-color:var(--error);opacity:.7" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=.7" onclick="removeItem('${type}','${item.id}')"><span class="iconify" data-icon="bx:trash" data-width="13" data-height="13"></span> Видалити</button>`:''}
         </div>
       </div>`);
     grid.appendChild(card);
@@ -912,8 +917,74 @@ async function processLogo(item){
     const result=await callGemini(key,b64,item.file.type,LOGO_PROMPT);
     item.result=await autoTrim('data:image/png;base64,'+result,'transparent');
   }else{
-    const up=await upscaleCanvas(item.file,2);item.result=await blobToURL(up);
+    item.result=await browserRemoveBg(item.file);
   }
+}
+
+// ── Browser BG removal: flood-fill from all edges, multi-pass for complex logos ──
+function browserRemoveBg(file){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      const c=document.createElement('canvas');
+      c.width=img.width; c.height=img.height;
+      const ctx=c.getContext('2d');
+      ctx.drawImage(img,0,0);
+      const w=c.width, h=c.height;
+      const id=ctx.getImageData(0,0,w,h);
+      const d=id.data;
+
+      // Auto-detect BG color from corners
+      let sr=0,sg=0,sb=0;
+      const corners=[[0,0],[w-1,0],[0,h-1],[w-1,h-1]];
+      corners.forEach(([cx,cy])=>{const i=(cy*w+cx)*4;sr+=d[i];sg+=d[i+1];sb+=d[i+2];});
+      sr=sr/4|0; sg=sg/4|0; sb=sb/4|0;
+
+      const tol=32;
+      const dist=idx=>{const r=d[idx]-sr,g=d[idx+1]-sg,b=d[idx+2]-sb;return Math.sqrt(r*r+g*g+b*b);};
+
+      // Flood fill from all edge seeds
+      const mask=new Uint8Array(w*h);
+      const queue=[];
+      const seeds=[];
+      for(let x=0;x<w;x++){seeds.push([x,0]);seeds.push([x,h-1]);}
+      for(let y=1;y<h-1;y++){seeds.push([0,y]);seeds.push([w-1,y]);}
+      seeds.forEach(([cx,cy])=>{
+        const idx=cy*w+cx;
+        if(!mask[idx]&&dist(idx*4)<=tol){mask[idx]=1;queue.push(idx);}
+      });
+      let qi=0;
+      while(qi<queue.length){
+        const idx=queue[qi++];const x0=idx%w,y0=idx/w|0;
+        for(const n of[idx-1,idx+1,idx-w,idx+w]){
+          const nx=n%w;if(n<0||n>=w*h||Math.abs(nx-x0)>1)continue;
+          if(!mask[n]&&dist(n*4)<=tol){mask[n]=1;queue.push(n);}
+        }
+      }
+
+      // Smooth mask (radius 1)
+      const blur=new Float32Array(w*h);
+      for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+        let s=0,cnt=0;
+        for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+          const nx=x+dx,ny=y+dy;
+          if(nx>=0&&nx<w&&ny>=0&&ny<h){s+=mask[ny*w+nx];cnt++;}
+        }
+        blur[y*w+x]=s/cnt;
+      }
+      for(let i=0;i<w*h;i++){
+        if(blur[i]>0.05) d[i*4+3]=Math.round(d[i*4+3]*(1-blur[i]));
+      }
+
+      ctx.putImageData(id,0,0);
+      // Auto-trim transparent borders
+      autoTrim(c.toDataURL('image/png'),'transparent').then(res).catch(rej);
+    };
+    img.onerror=()=>rej(new Error('img load fail'));
+    img.src=url;
+  });
 }
 async function processPlayer(item){
   const key=getKey();if(!key) throw new Error('API key required');
