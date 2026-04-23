@@ -622,10 +622,22 @@ textarea:focus{outline:none;border-color:var(--accent)}
 // PROMPTS
 // ═══════════════════════════════════════════════════════
 const LOGO_PROMPT = `Professional image editor task: process this sports team logo.
-Remove background completely — full transparency, alpha=0. Preserve exact silhouette. Keep internal transparent holes. No white matte or fringe.
-Edges: sharp, pixel-perfect. Clean artifacts.
-Preserve all text, colors, gradients, shadows, glows exactly. Reconstruct details if blurry.
-Output: 1:1 square PNG, transparent background, tight crop — logo fills canvas edge to edge.`;
+
+BACKGROUND
+Replace the background with pure white #FFFFFF — flat and uniform. No gradients, no vignette, no shadows.
+
+QUALITY ENHANCEMENT
+Sharpen the logo — increase clarity, crispness, and visual definition.
+Do NOT change textures, materials, patterns, or structural details.
+Do NOT alter, remove, or modify any text, lettering, or typography in the logo.
+Preserve all colors, gradients, shadows, and glows exactly as they are.
+Reconstruct any blurry or degraded areas while maintaining the original style.
+
+EDGES
+Sharp, pixel-perfect edges. No white fringe, no aliasing artifacts.
+
+OUTPUT
+1:1 square PNG, white background, tight crop — logo fills canvas edge to edge.`;
 
 const PLAYER_GENERAL = `You are a professional sports photographer and image retoucher. Transform the provided athlete photo into a standardized professional profile image suitable for a sports website or betting platform.
 
@@ -671,7 +683,8 @@ Retain natural skin texture, pores, normal shadows, and natural fatigue marks �
 OUTPUT
 1:1 square PNG, minimum 1024×1024 pixels.
 Pure white background #FFFFFF, flat and uniform.
-Both shoulders visible, athlete fully in frame, small space above head.
+Tight crop — athlete fills the frame. Visible from top of head down to collarbone level, both shoulders fully in frame.
+If the athlete's head or top of skull is cut off or cropped in the original photo — reconstruct and complete the full head naturally.
 Professional sports profile image quality.`;
 
 const PLAYER_COMBAT = `You are a professional sports photographer and image retoucher. Transform the provided athlete photo into a standardized professional profile image suitable for a combat sports website or betting platform.
@@ -719,7 +732,8 @@ The result must look like a real combat athlete, not a studio beauty shot.
 OUTPUT
 1:1 square PNG, minimum 1024×1024 pixels.
 Pure white background #FFFFFF, flat and uniform.
-Both shoulders visible, athlete fully in frame, small space above head.
+Tight crop — athlete fills the frame. Visible from top of head down to collarbone level, both shoulders fully in frame.
+If the athlete's head or top of skull is cut off or cropped in the original photo — reconstruct and complete the full head naturally.
 Professional combat sports profile image quality.`;
 
 // ═══════════════════════════════════════════════════════
