@@ -1453,24 +1453,33 @@ function refreshPreview(){
   const pctx=pc.getContext('2d');
 
   if(ED.crop){
-    // ── CROP ACTIVE: show exactly what will be cropped ──
+    // ── CROP ACTIVE: render exactly the cropped region from the canvas ──
     const {x,y,w,h}=ED.crop;
+    const c=ED.canvas;
+
+    // Preview canvas dimensions (fit into maxW, keep aspect)
     const ar=w/h;
     const pw=maxW;
     const ph=Math.round(pw/ar);
     pc.width=pw; pc.height=ph;
     pctx.clearRect(0,0,pw,ph);
-    // fill expanded area with checkerboard (transparent zones)
-    const c=ED.canvas;
-    const sx=Math.max(0,x), sy=Math.max(0,y);
-    const sx2=Math.min(c.width,x+w), sy2=Math.min(c.height,y+h);
+
+    // Clamp source rect to actual canvas bounds
+    const sx=Math.max(0,x);
+    const sy=Math.max(0,y);
+    const sx2=Math.min(c.width, x+w);
+    const sy2=Math.min(c.height, y+h);
+
     if(sx2>sx && sy2>sy){
+      // Where in the preview does the visible (clamped) part start?
       const scaleX=pw/w, scaleY=ph/h;
-      const offX=Math.max(0,-x), offY=Math.max(0,-y);
-      pctx.drawImage(c, sx,sy, sx2-sx,sy2-sy,
-        (sx-x+offX)*scaleX, (sy-y+offY)*scaleY,
-        (sx2-sx)*scaleX, (sy2-sy)*scaleY);
+      const dstX=Math.max(0,-x)*scaleX;
+      const dstY=Math.max(0,-y)*scaleY;
+      const dstW=(sx2-sx)*scaleX;
+      const dstH=(sy2-sy)*scaleY;
+      pctx.drawImage(c, sx, sy, sx2-sx, sy2-sy, dstX, dstY, dstW, dstH);
     }
+
     const ratio=w/h;
     let ratioStr='Вільне';
     if(Math.abs(ratio-1)<0.02) ratioStr='1 : 1';
