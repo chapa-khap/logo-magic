@@ -906,7 +906,7 @@ async function processOne(type,id){
   try{
     if(type==='logo') await processLogo(item); else await processPlayer(item);
     item.status='done';
-  }catch(e){item.status='error';toast('Error: '+e.message,'err');console.error(e);}
+  }catch(e){item.status='error';toast('Помилка: '+e.message,'err');console.error(e);}
   renderQueue(type);
 }
 async function processLogo(item){
@@ -921,68 +921,76 @@ async function processLogo(item){
   }
 }
 
-// ── Browser BG removal: flood-fill from all edges, multi-pass for complex logos ──
+// ── Browser BG removal: flood-fill from all edges ──
 function browserRemoveBg(file){
   return new Promise((res,rej)=>{
-    const img=new Image();
+    // For SVG, convert to blob PNG first via canvas
     const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.crossOrigin='anonymous';
     img.onload=()=>{
-      URL.revokeObjectURL(url);
-      const c=document.createElement('canvas');
-      c.width=img.width; c.height=img.height;
-      const ctx=c.getContext('2d');
-      ctx.drawImage(img,0,0);
-      const w=c.width, h=c.height;
-      const id=ctx.getImageData(0,0,w,h);
-      const d=id.data;
+      try{
+        const c=document.createElement('canvas');
+        c.width=img.naturalWidth||img.width;
+        c.height=img.naturalHeight||img.height;
+        const ctx=c.getContext('2d');
+        ctx.drawImage(img,0,0,c.width,c.height);
+        URL.revokeObjectURL(url); // revoke AFTER draw
 
-      // Auto-detect BG color from corners
-      let sr=0,sg=0,sb=0;
-      const corners=[[0,0],[w-1,0],[0,h-1],[w-1,h-1]];
-      corners.forEach(([cx,cy])=>{const i=(cy*w+cx)*4;sr+=d[i];sg+=d[i+1];sb+=d[i+2];});
-      sr=sr/4|0; sg=sg/4|0; sb=sb/4|0;
+        const w=c.width, h=c.height;
+        let id;
+        try{ id=ctx.getImageData(0,0,w,h); }
+        catch(e){ rej(new Error('Cannot read pixels (CORS або SVG): '+e.message)); return; }
+        const d=id.data;
 
-      const tol=32;
-      const dist=idx=>{const r=d[idx]-sr,g=d[idx+1]-sg,b=d[idx+2]-sb;return Math.sqrt(r*r+g*g+b*b);};
+        // Auto-detect BG color from corners + edge midpoints
+        const samplePoints=[[0,0],[w-1,0],[0,h-1],[w-1,h-1],[w>>1,0],[w>>1,h-1],[0,h>>1],[w-1,h>>1]];
+        let sr=0,sg=0,sb=0;
+        samplePoints.forEach(([cx,cy])=>{const i=(cy*w+cx)*4;sr+=d[i];sg+=d[i+1];sb+=d[i+2];});
+        sr=sr/samplePoints.length|0; sg=sg/samplePoints.length|0; sb=sb/samplePoints.length|0;
 
-      // Flood fill from all edge seeds
-      const mask=new Uint8Array(w*h);
-      const queue=[];
-      const seeds=[];
-      for(let x=0;x<w;x++){seeds.push([x,0]);seeds.push([x,h-1]);}
-      for(let y=1;y<h-1;y++){seeds.push([0,y]);seeds.push([w-1,y]);}
-      seeds.forEach(([cx,cy])=>{
-        const idx=cy*w+cx;
-        if(!mask[idx]&&dist(idx*4)<=tol){mask[idx]=1;queue.push(idx);}
-      });
-      let qi=0;
-      while(qi<queue.length){
-        const idx=queue[qi++];const x0=idx%w,y0=idx/w|0;
-        for(const n of[idx-1,idx+1,idx-w,idx+w]){
-          const nx=n%w;if(n<0||n>=w*h||Math.abs(nx-x0)>1)continue;
-          if(!mask[n]&&dist(n*4)<=tol){mask[n]=1;queue.push(n);}
+        const tol=40;
+        const dist=idx=>{const r=d[idx]-sr,g=d[idx+1]-sg,b=d[idx+2]-sb;return Math.sqrt(r*r+g*g+b*b);};
+
+        // Flood fill from all edge seeds
+        const mask=new Uint8Array(w*h);
+        const queue=[];
+        for(let x=0;x<w;x++){
+          let idx=x; if(!mask[idx]&&dist(idx*4)<=tol){mask[idx]=1;queue.push(idx);}
+          idx=(h-1)*w+x; if(!mask[idx]&&dist(idx*4)<=tol){mask[idx]=1;queue.push(idx);}
         }
-      }
-
-      // Smooth mask (radius 1)
-      const blur=new Float32Array(w*h);
-      for(let y=0;y<h;y++) for(let x=0;x<w;x++){
-        let s=0,cnt=0;
-        for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
-          const nx=x+dx,ny=y+dy;
-          if(nx>=0&&nx<w&&ny>=0&&ny<h){s+=mask[ny*w+nx];cnt++;}
+        for(let y=1;y<h-1;y++){
+          let idx=y*w; if(!mask[idx]&&dist(idx*4)<=tol){mask[idx]=1;queue.push(idx);}
+          idx=y*w+w-1; if(!mask[idx]&&dist(idx*4)<=tol){mask[idx]=1;queue.push(idx);}
         }
-        blur[y*w+x]=s/cnt;
-      }
-      for(let i=0;i<w*h;i++){
-        if(blur[i]>0.05) d[i*4+3]=Math.round(d[i*4+3]*(1-blur[i]));
-      }
+        let qi=0;
+        while(qi<queue.length){
+          const idx=queue[qi++];const x0=idx%w,y0=idx/w|0;
+          for(const n of[idx-1,idx+1,idx-w,idx+w]){
+            const nx=n%w;if(n<0||n>=w*h||Math.abs(nx-x0)>1)continue;
+            if(!mask[n]&&dist(n*4)<=tol){mask[n]=1;queue.push(n);}
+          }
+        }
 
-      ctx.putImageData(id,0,0);
-      // Auto-trim transparent borders
-      autoTrim(c.toDataURL('image/png'),'transparent').then(res).catch(rej);
+        // Smooth mask (radius 2)
+        const blur=new Float32Array(w*h);
+        for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+          let s=0,cnt=0;
+          for(let dy=-2;dy<=2;dy++) for(let dx=-2;dx<=2;dx++){
+            const nx=x+dx,ny=y+dy;
+            if(nx>=0&&nx<w&&ny>=0&&ny<h){s+=mask[ny*w+nx];cnt++;}
+          }
+          blur[y*w+x]=s/cnt;
+        }
+        for(let i=0;i<w*h;i++){
+          if(blur[i]>0.05) d[i*4+3]=Math.round(d[i*4+3]*(1-blur[i]));
+        }
+
+        ctx.putImageData(id,0,0);
+        autoTrim(c.toDataURL('image/png'),'transparent').then(res).catch(rej);
+      }catch(e){ rej(e); }
     };
-    img.onerror=()=>rej(new Error('img load fail'));
+    img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('Не вдалося завантажити зображення')); };
     img.src=url;
   });
 }
