@@ -112,6 +112,7 @@ header{
 .drop-text{color:var(--text-dim);font-size:13px;line-height:1.6}
 .drop-text strong{color:var(--accent)}
 .drop-small{font-size:11px;color:var(--text-faint);margin-top:4px}
+kbd{display:inline-block;padding:1px 5px;background:var(--surface-3);border:1px solid var(--border-hi);border-radius:3px;font-family:var(--fm);font-size:10px;color:var(--text-dim);line-height:1.5}
 #logo-input,#player-input{display:none}
 .process-btn{
   width:100%;margin-top:12px;padding:0 20px;height:42px;
@@ -416,7 +417,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="drop-zone" id="logo-drop">
           <div class="drop-icon"><span class="iconify" data-icon="bx:image" data-width="32" data-height="32"></span></div>
           <div class="drop-text"><strong>Click to browse</strong> or drag & drop<br>PNG, JPG, WEBP, SVG — multiple files</div>
-          <div class="drop-small">Processed locally — nothing uploaded</div>
+          <div class="drop-small">Processed locally — nothing uploaded &nbsp;·&nbsp; <kbd>Ctrl+V</kbd> to paste</div>
         </div>
         <input type="file" id="logo-input" accept=".png,.jpg,.jpeg,.webp,.svg" multiple>
         <button class="process-btn" id="logo-process-all"><span class="iconify" data-icon="bx:cog" data-width="16" data-height="16"></span> Process All</button>
@@ -446,7 +447,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="drop-zone" id="player-drop">
           <div class="drop-icon"><span class="iconify" data-icon="bx:user" data-width="32" data-height="32"></span></div>
           <div class="drop-text"><strong>Click to browse</strong> or drag & drop<br>PNG, JPG, WEBP — multiple files</div>
-          <div class="drop-small">Gemini AI transforms photos — auto-cropped 1:1</div>
+          <div class="drop-small">Gemini AI transforms photos — auto-cropped 1:1 &nbsp;·&nbsp; <kbd>Ctrl+V</kbd> to paste</div>
         </div>
         <input type="file" id="player-input" accept=".png,.jpg,.jpeg,.webp" multiple>
         <button class="process-btn" id="player-process-all"><span class="iconify" data-icon="bx:cog" data-width="16" data-height="16"></span> Process All</button>
@@ -780,6 +781,25 @@ function toast(msg, type='') {
   const t = document.createElement('div'); t.className='toast '+type; t.textContent=msg;
   document.getElementById('toasts').appendChild(t); setTimeout(()=>t.remove(),3500);
 }
+// ═══════════════════════════════════════════════════════
+// CLIPBOARD PASTE (Ctrl+V)
+// ═══════════════════════════════════════════════════════
+document.addEventListener('paste', e => {
+  const tag = document.activeElement?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  const items = [...(e.clipboardData?.items || [])];
+  const imageItems = items.filter(i => i.type.startsWith('image/'));
+  if (!imageItems.length) return;
+  const activeTab = document.querySelector('.tab-btn.active')?.dataset?.tab || 'logo';
+  const files = imageItems.map((item, idx) => {
+    const blob = item.getAsFile();
+    const ext = item.type.split('/')[1] || 'png';
+    return new File([blob], `paste_${Date.now()}_${idx}.${ext}`, { type: item.type });
+  });
+  addFiles(activeTab, files);
+  toast(`Pasted ${files.length} image${files.length > 1 ? 's' : ''} → ${activeTab}`, 'ok');
+});
+
 const sportSel = document.getElementById('sport-category');
 const promptTA = document.getElementById('player-prompt');
 sportSel.addEventListener('change', ()=>promptTA.value=sportSel.value==='combat'?PLAYER_COMBAT:PLAYER_GENERAL);
