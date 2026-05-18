@@ -261,9 +261,9 @@ textarea:focus{outline:none;border-color:var(--accent)}
   background:repeating-conic-gradient(#1e1e1e 0% 25%,#141414 0% 50%) 0 0/20px 20px;
   border-radius:8px;cursor:grab;
   display:flex;align-items:center;justify-content:center;
+  user-select:none;
 }
-.mue-canvas-wrap:active{cursor:grabbing}
-.mue-canvas-wrap canvas{position:absolute;transform-origin:0 0;image-rendering:auto}
+.mue-canvas-wrap canvas{display:block;image-rendering:auto}
 .mue-panel-tools{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
 .mue-center{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;padding:14px}
 .mue-preview-wrap{
@@ -608,7 +608,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="mu-settings">
           <div class="mu-setting-group">
             <label>Відступ між гравцями</label>
-            <input type="range" id="mu-gap" min="0" max="120" value="0">
+            <input type="range" id="mu-gap" min="-120" max="120" value="0">
             <span id="mu-gap-v">0px</span>
           </div>
           <div class="mu-setting-group">
@@ -623,8 +623,8 @@ textarea:focus{outline:none;border-color:var(--accent)}
           <div class="mu-setting-group">
             <label>Формат</label>
             <div style="display:flex;gap:6px">
-              <button class="mu-btn small mu-ratio-btn act" data-ratio="2:1">2:1</button>
-              <button class="mu-btn small mu-ratio-btn" data-ratio="1:1">1:1</button>
+              <button class="mu-btn small mu-ratio-btn" data-ratio="2:1">2:1</button>
+              <button class="mu-btn small mu-ratio-btn act" data-ratio="1:1">1:1</button>
               <button class="mu-btn small mu-ratio-btn" data-ratio="free">Авто</button>
             </div>
           </div>
@@ -638,7 +638,8 @@ textarea:focus{outline:none;border-color:var(--accent)}
 
         <div class="mu-result-actions">
           <button class="mu-btn primary" id="mu-download"><span class="iconify" data-icon="bx:download" data-width="14"></span> Завантажити PNG</button>
-          <button class="mu-btn" id="mu-open-editor"><span class="iconify" data-icon="bx:edit" data-width="14"></span> Відкрити в редакторі</button>
+          <button class="mu-btn" id="mu-crop-result"><span class="iconify" data-icon="bx:crop" data-width="14"></span> Обрізати</button>
+          <button class="mu-btn" id="mu-open-editor"><span class="iconify" data-icon="bx:edit" data-width="14"></span> Редактор</button>
         </div>
       </div>
 
@@ -2032,14 +2033,14 @@ document.getElementById('ecwrap').addEventListener('wheel', e => {
 // MATCHUP TAB
 // ════════════════════════════════════════════════
 const MU = {
-  left: null,   // ImageBitmap or null
+  left: null,
   right: null,
   leftFlipped: false,
   rightFlipped: false,
-  bgMode: 'white',  // 'white' | 'black' | 'transparent' | 'custom'
+  bgMode: 'transparent',
   bgColor: '#ffffff',
   gap: 0,
-  ratio: '2:1',  // '2:1' | '1:1' | 'free'
+  ratio: '1:1',
 };
 
 function muLoadSlot(side, file) {
@@ -2097,30 +2098,28 @@ function muRender() {
   if (!L && !R) { hint.style.display = 'flex'; return; }
   hint.style.display = 'none';
 
-  const gap = MU.gap;
+  const gap = MU.gap; // can be negative (overlap)
 
-  // Each player gets a square slot based on max dimension
-  const slotW = L ? L.width : (R ? R.width : 400);
-  const slotH = L ? L.height : (R ? R.height : 400);
-  const rSlotW = R ? R.width : slotW;
-  const rSlotH = R ? R.height : slotH;
-
-  // Normalise both to same height
-  const h = Math.max(slotH, rSlotH);
-  const lW = L ? Math.round(slotW * (h / slotH)) : Math.round(rSlotW * (h / rSlotH));
-  const rW = R ? Math.round(rSlotW * (h / rSlotH)) : lW;
+  // Normalize both images to same height (use 1024 as base)
+  const baseH = 1024;
+  const lW = L ? Math.round(L.width * (baseH / L.height)) : baseH;
+  const rW = R ? Math.round(R.width * (baseH / R.height)) : baseH;
 
   let totalW = lW + rW + gap;
-  let totalH = h;
+  let totalH = baseH;
 
   // Apply ratio constraint
   if (MU.ratio === '2:1') {
     totalH = Math.round(totalW / 2);
   } else if (MU.ratio === '1:1') {
-    const sq = Math.max(totalW, totalH);
-    totalW = sq; totalH = sq;
+    // keep totalW, make height equal
+    totalH = totalW;
   }
   // 'free' — no constraint
+
+  // clamp minimum size
+  totalW = Math.max(64, totalW);
+  totalH = Math.max(64, totalH);
 
   rc.width = totalW;
   rc.height = totalH;
@@ -2133,15 +2132,19 @@ function muRender() {
     ctx.fillRect(0, 0, totalW, totalH);
   }
 
-  // Center players vertically
-  const drawPlayer = (canvas, flipped, dx, dw) => {
+  // Draw player into its slot with clipping to prevent overflow into other side
+  const drawPlayer = (canvas, flipped, slotX, slotW) => {
     if (!canvas) return;
-    const scale = Math.min(dw / canvas.width, totalH / canvas.height);
+    const scale = Math.min(slotW / canvas.width, totalH / canvas.height);
     const pw = canvas.width * scale;
     const ph = canvas.height * scale;
-    const ox = dx + (dw - pw) / 2;
+    const ox = slotX + (slotW - pw) / 2;
     const oy = (totalH - ph) / 2;
     ctx.save();
+    // clip to slot so overlap doesn't bleed
+    ctx.beginPath();
+    ctx.rect(slotX, 0, slotW, totalH);
+    ctx.clip();
     if (flipped) {
       ctx.translate(ox + pw, oy);
       ctx.scale(-1, 1);
@@ -2152,10 +2155,15 @@ function muRender() {
     ctx.restore();
   };
 
-  const lSlotX = 0;
+  // Left slot: 0..lW, Right slot starts at lW+gap
+  // When gap is negative, slots overlap — each is clipped to its half
   const rSlotX = lW + gap;
-  drawPlayer(L, MU.leftFlipped, lSlotX, lW);
-  drawPlayer(R, MU.rightFlipped, rSlotX, rW);
+  const lSlotW = gap < 0 ? lW + Math.round(gap / 2) : lW;
+  const rSlotW2 = gap < 0 ? rW + Math.round(gap / 2) : rW;
+  const rSlotXAdj = gap < 0 ? rSlotX - Math.round(gap / 2) : rSlotX;
+
+  drawPlayer(L, MU.leftFlipped,  0,         lSlotW);
+  drawPlayer(R, MU.rightFlipped, rSlotXAdj, rSlotW2);
 }
 
 // Setup drop zones
@@ -2213,6 +2221,19 @@ document.getElementById('mu-download').addEventListener('click', () => {
   toast('Matchup збережено ✓', 'ok');
 });
 
+// Crop result — open current canvas in main editor
+document.getElementById('mu-crop-result').addEventListener('click', () => {
+  const rc = document.getElementById('mu-result');
+  if (!MU.left && !MU.right) { toast('Немає зображення', ''); return; }
+  const dataURL = rc.toDataURL('image/png');
+  const tempId = 'mu_' + Date.now();
+  S.logo.items.unshift({ id: tempId, name: 'matchup.png', file: null, status: 'done', result: dataURL });
+  renderQueue('logo');
+  document.querySelector('[data-tab="logo"]').click();
+  setTimeout(() => openEditor('logo', tempId), 100);
+  toast('Відкрито в редакторі', 'ok');
+});
+
 // Ctrl+V on matchup tab
 document.addEventListener('paste', e => {
   const tag = document.activeElement?.tagName;
@@ -2240,12 +2261,11 @@ const MUE = {
 
 function mueOpen() {
   if (!MU.left && !MU.right) { toast('Немає гравців для редагування', ''); return; }
-  // Load images into MUE state
   ['left','right'].forEach(side => {
-    const src = MU[side];
-    MUE[side].img = src || null;
-    MUE[side].ox = 0; MUE[side].oy = 0; MUE[side].scale = 1;
-    MUE[side].flipped = MU[side + 'Flipped'] || false;
+    const s = MUE[side];
+    s.img = MU[side] || null;
+    s.flipped = MU[side + 'Flipped'] || false;
+    s.dragging = false;
   });
   document.getElementById('mu-editor-ov').classList.add('open');
   requestAnimationFrame(() => { mueFitBoth(); mueRenderAll(); });
@@ -2260,73 +2280,90 @@ function mueFit(side) {
   if (!s.img) return;
   const wrap = document.getElementById(`mue-wrap-${side}`);
   const ww = wrap.clientWidth, wh = wrap.clientHeight;
-  const scaleToFit = Math.min(ww / s.img.width, wh / s.img.height) * 0.9;
-  s.scale = scaleToFit;
-  s.ox = (ww - s.img.width * scaleToFit) / 2;
-  s.oy = (wh - s.img.height * scaleToFit) / 2;
+  const sq = Math.min(ww, wh) * 0.82;
+  // fit image into guide square
+  const sc = Math.min(sq / s.img.width, sq / s.img.height) * 0.92;
+  s.scale = sc;
+  // center image in wrap
+  s.ox = (ww - s.img.width  * sc) / 2;
+  s.oy = (wh - s.img.height * sc) / 2;
 }
-
 function mueFitBoth() { mueFit('left'); mueFit('right'); }
+
+// shared guide dimensions
+function mueGuide(side) {
+  const wrap = document.getElementById(`mue-wrap-${side}`);
+  const ww = wrap.clientWidth, wh = wrap.clientHeight;
+  const sq = Math.min(ww, wh) * 0.82;
+  return { sq, sqX: (ww - sq) / 2, sqY: (wh - sq) / 2, ww, wh };
+}
 
 function mueDrawSide(side) {
   const s = MUE[side];
   const wrap = document.getElementById(`mue-wrap-${side}`);
   const canvas = document.getElementById(`mue-canvas-${side}`);
   const ww = wrap.clientWidth, wh = wrap.clientHeight;
-  canvas.width = ww; canvas.height = wh;
+  if (canvas.width !== ww || canvas.height !== wh) { canvas.width = ww; canvas.height = wh; }
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, ww, wh);
 
-  // 1:1 guide box (square centered)
-  const sq = Math.min(ww, wh) * 0.85;
-  const sqX = (ww - sq) / 2, sqY = (wh - sq) / 2;
-  ctx.strokeStyle = 'rgba(0,231,138,0.35)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([6, 4]);
-  ctx.strokeRect(sqX, sqY, sq, sq);
-  ctx.setLineDash([]);
-
-  if (!s.img) return;
-  ctx.save();
-  const iw = s.img.width * s.scale;
-  const ih = s.img.height * s.scale;
-  if (s.flipped) {
-    ctx.translate(s.ox + iw, s.oy);
-    ctx.scale(-1, 1);
-    ctx.drawImage(s.img, 0, 0, iw, ih);
-  } else {
-    ctx.drawImage(s.img, s.ox, s.oy, iw, ih);
+  // Draw image first
+  if (s.img) {
+    ctx.save();
+    const iw = s.img.width * s.scale;
+    const ih = s.img.height * s.scale;
+    if (s.flipped) {
+      ctx.translate(s.ox + iw, s.oy);
+      ctx.scale(-1, 1);
+      ctx.drawImage(s.img, 0, 0, iw, ih);
+    } else {
+      ctx.drawImage(s.img, s.ox, s.oy, iw, ih);
+    }
+    ctx.restore();
   }
+
+  // Guide box — solid accent border (no dash), dimmed outside
+  const { sq, sqX, sqY } = mueGuide(side);
+  // darken outside zone
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,0.38)';
+  ctx.beginPath();
+  ctx.rect(0, 0, ww, wh);
+  ctx.rect(sqX, sqY, sq, sq); // counter-clockwise hole
+  ctx.fill('evenodd');
   ctx.restore();
+  // bright border
+  ctx.strokeStyle = 'rgba(0,231,138,0.9)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([]);
+  ctx.strokeRect(sqX + 1, sqY + 1, sq - 2, sq - 2);
+  // corner accents
+  const ca = 14;
+  ctx.strokeStyle = '#00e78a';
+  ctx.lineWidth = 3;
+  [[sqX,sqY],[sqX+sq,sqY],[sqX,sqY+sq],[sqX+sq,sqY+sq]].forEach(([cx,cy],i) => {
+    const sx = i%2===0?1:-1, sy = i<2?1:-1;
+    ctx.beginPath(); ctx.moveTo(cx+sx*ca,cy); ctx.lineTo(cx,cy); ctx.lineTo(cx,cy+sy*ca); ctx.stroke();
+  });
 }
 
 function mueRenderPreview() {
   const rc = document.getElementById('mue-preview');
-  const wrap = document.getElementById('mue-wrap-left');
-  const ww = wrap.clientWidth, wh = wrap.clientHeight;
-  const sq = Math.min(ww, wh) * 0.85;
-
-  // Result is 2:1 — two 1:1 slots side by side
+  const { sq, sqX, sqY, ww, wh } = mueGuide('left');
   const size = Math.round(sq);
   rc.width = size * 2; rc.height = size;
   const ctx = rc.getContext('2d');
-  ctx.fillStyle = MU.bgColor || '#ffffff';
-  ctx.fillRect(0, 0, size * 2, size);
+  ctx.clearRect(0, 0, size * 2, size);
 
   ['left','right'].forEach((side, si) => {
     const s = MUE[side];
     if (!s.img) return;
-    const sqX = (ww - sq) / 2, sqY = (wh - sq) / 2;
-    // Crop the square region from the side canvas
-    const sideCanvas = document.getElementById(`mue-canvas-${side}`);
-    // Draw only the sq region into the preview slot
+    const g = mueGuide(side);
     ctx.save();
-    ctx.beginPath();
-    ctx.rect(si * size, 0, size, size);
-    ctx.clip();
-    const scaleToSlot = size / sq;
-    const imgX = (s.ox - sqX) * scaleToSlot;
-    const imgY = (s.oy - sqY) * scaleToSlot;
+    ctx.beginPath(); ctx.rect(si * size, 0, size, size); ctx.clip();
+    const scaleToSlot = size / g.sq;
+    const imgX = (s.ox - g.sqX) * scaleToSlot;
+    const imgY = (s.oy - g.sqY) * scaleToSlot;
     const imgW = s.img.width * s.scale * scaleToSlot;
     const imgH = s.img.height * s.scale * scaleToSlot;
     if (s.flipped) {
@@ -2338,6 +2375,11 @@ function mueRenderPreview() {
     }
     ctx.restore();
   });
+
+  // Preview border
+  ctx.strokeStyle = 'rgba(0,231,138,0.5)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 1, size * 2 - 2, size - 2);
 }
 
 function mueRenderAll() {
@@ -2346,7 +2388,7 @@ function mueRenderAll() {
   mueRenderPreview();
 }
 
-// Drag to pan each side
+// Drag & wheel per side
 ['left','right'].forEach(side => {
   const wrap = document.getElementById(`mue-wrap-${side}`);
   const s = MUE[side];
@@ -2358,7 +2400,6 @@ function mueRenderAll() {
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
     const factor = e.deltaY < 0 ? 1.1 : 0.9;
-    // Zoom toward mouse
     s.ox = mx - (mx - s.ox) * factor;
     s.oy = my - (my - s.oy) * factor;
     s.scale *= factor;
@@ -2366,7 +2407,8 @@ function mueRenderAll() {
   }, { passive: false });
 
   wrap.addEventListener('mousedown', e => {
-    if (!s.img) return;
+    if (!s.img || e.button !== 0) return;
+    e.preventDefault();
     s.dragging = true; s.lastX = e.clientX; s.lastY = e.clientY;
     wrap.style.cursor = 'grabbing';
   });
@@ -2377,8 +2419,8 @@ function mueRenderAll() {
     s.lastX = e.clientX; s.lastY = e.clientY;
     mueRenderAll();
   });
-  document.addEventListener('mouseup', () => {
-    if (s.dragging) { s.dragging = false; wrap.style.cursor = 'grab'; }
+  document.addEventListener('mouseup', e => {
+    if (s.dragging && e.button === 0) { s.dragging = false; wrap.style.cursor = 'grab'; }
   });
 
   document.getElementById(`mue-flip-${side}`).addEventListener('click', () => {
@@ -2391,33 +2433,26 @@ function mueRenderAll() {
   });
 });
 
-// Crop 1:1 and apply to MU canvases
+// Crop 1:1 — bake current view into 1024x1024
 document.getElementById('mue-crop-btn').addEventListener('click', () => {
-  ['left','right'].forEach((side, si) => {
+  ['left','right'].forEach(side => {
     const s = MUE[side];
     if (!s.img) return;
-    const wrap = document.getElementById(`mue-wrap-${side}`);
-    const ww = wrap.clientWidth, wh = wrap.clientHeight;
-    const sq = Math.min(ww, wh) * 0.85;
-    const sqX = (ww - sq) / 2, sqY = (wh - sq) / 2;
-    // Crop image to the square guide box
+    const g = mueGuide(side);
     const out = document.createElement('canvas');
     out.width = 1024; out.height = 1024;
     const ctx = out.getContext('2d');
-    const scaleToSlot = 1024 / sq;
-    const imgX = (s.ox - sqX) * scaleToSlot;
-    const imgY = (s.oy - sqY) * scaleToSlot;
-    const imgW = s.img.width * s.scale * scaleToSlot;
-    const imgH = s.img.height * s.scale * scaleToSlot;
-    ctx.fillStyle = MU.bgColor || '#ffffff';
-    ctx.fillRect(0, 0, 1024, 1024);
-    if (s.flipped) {
-      ctx.save(); ctx.translate(imgX + imgW, imgY); ctx.scale(-1,1);
-      ctx.drawImage(s.img, 0, 0, imgW, imgH);
-      ctx.restore();
-    } else {
-      ctx.drawImage(s.img, imgX, imgY, imgW, imgH);
-    }
+    // transparent background
+    ctx.clearRect(0, 0, 1024, 1024);
+    const st = 1024 / g.sq;
+    const imgX = (s.ox - g.sqX) * st;
+    const imgY = (s.oy - g.sqY) * st;
+    const imgW = s.img.width * s.scale * st;
+    const imgH = s.img.height * s.scale * st;
+    ctx.save();
+    if (s.flipped) { ctx.translate(imgX + imgW, imgY); ctx.scale(-1,1); ctx.drawImage(s.img, 0, 0, imgW, imgH); }
+    else { ctx.drawImage(s.img, imgX, imgY, imgW, imgH); }
+    ctx.restore();
     MU[side] = out;
     MU[side + 'Flipped'] = false;
     s.img = out; s.flipped = false;
@@ -2429,22 +2464,18 @@ document.getElementById('mue-crop-btn').addEventListener('click', () => {
   toast('Кроп 1:1 застосовано ✓', 'ok');
 });
 
-// Save — apply to MU and close
 document.getElementById('mue-save').addEventListener('click', () => {
-  // Apply cropped versions back to MU
   document.getElementById('mue-crop-btn').click();
   mueClose();
   muRender();
   toast('Збережено ✓', 'ok');
 });
 
-// Download preview
 document.getElementById('mue-download').addEventListener('click', () => {
   const rc = document.getElementById('mue-preview');
   const a = document.createElement('a');
   a.href = rc.toDataURL('image/png');
-  a.download = 'matchup.png';
-  a.click();
+  a.download = 'matchup.png'; a.click();
 });
 
 document.getElementById('mue-close').addEventListener('click', mueClose);
