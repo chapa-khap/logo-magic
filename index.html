@@ -187,6 +187,65 @@ textarea:focus{outline:none;border-color:var(--accent)}
 @keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
+/* ══════════════════════ MATCHUP TAB ══════════════════════ */
+.matchup-layout{
+  display:grid;
+  grid-template-columns:280px 1fr 280px;
+  gap:16px;
+  padding:20px;
+  height:calc(100vh - 100px);
+  box-sizing:border-box;
+  min-height:0;
+}
+.mu-slot{display:flex;flex-direction:column;gap:10px}
+.mu-slot-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+.mu-drop{
+  border:2px dashed var(--border);border-radius:var(--r);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:28px 16px;cursor:pointer;transition:all .15s;
+  flex:1;min-height:200px;
+}
+.mu-drop:hover,.mu-drop.drag-over{border-color:var(--accent);background:rgba(0,231,138,.04)}
+.mu-drop.has-image{
+  border-style:solid;border-color:var(--border-hi);padding:0;overflow:hidden;cursor:default;
+}
+.mu-drop.has-image img{width:100%;height:100%;object-fit:contain;display:block}
+.mu-slot-actions{display:flex;gap:8px;flex-wrap:wrap}
+.mu-btn{
+  padding:6px 12px;border:1px solid var(--border);border-radius:var(--rs);
+  background:var(--surface-2);color:var(--text-dim);font-size:12px;font-weight:500;
+  cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px;
+}
+.mu-btn:hover{border-color:var(--accent);color:var(--accent)}
+.mu-btn.primary{background:var(--accent);border-color:transparent;color:#08090a;font-weight:700}
+.mu-btn.primary:hover{filter:brightness(1.1)}
+.mu-btn.danger{color:var(--error);border-color:var(--error);opacity:.7}
+.mu-btn.danger:hover{opacity:1}
+.mu-btn.small{padding:4px 8px;font-size:11px}
+.mu-btn.small.act{border-color:var(--accent);color:var(--accent);background:rgba(0,231,138,.08)}
+
+.mu-result-col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.mu-settings{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+.mu-setting-group{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-dim)}
+.mu-setting-group label{width:160px;flex-shrink:0;font-size:11px}
+.mu-setting-group input[type=range]{flex:1}
+.mu-setting-group span{width:36px;text-align:right;font-size:11px;color:var(--text-faint)}
+
+.mu-result-wrap{
+  flex:1;min-height:0;
+  border:1px solid var(--border);border-radius:var(--r);
+  background:repeating-conic-gradient(#1e1e1e 0% 25%,#141414 0% 50%) 0 0/20px 20px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+#mu-result{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.mu-empty-hint{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--text-faint);text-align:center;padding:20px;
+  pointer-events:none;
+}
+.mu-result-actions{display:flex;gap:8px;flex-shrink:0}
+
 /* ══════════════════════ EDITOR ══════════════════════ */
 #editor-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 #editor-ov.open{opacity:1;pointer-events:all}
@@ -300,7 +359,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .efbtn.pri:hover{filter:brightness(1.1)}
 
 /* Canvas pan scrollbars */
-.ecwrap{scroll-behavior:auto}
+.ecwrap{scroll-behavior:auto;padding:600px}
 .ecwrap::-webkit-scrollbar{width:6px;height:6px}
 .ecwrap::-webkit-scrollbar-track{background:var(--surface-2)}
 .ecwrap::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:3px}
@@ -423,6 +482,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
 <div class="tabs">
   <button class="tab-btn active" data-tab="logo"><span class="iconify" data-icon="bx:shield-quarter" data-width="14" data-height="14"></span> Логотип</button>
   <button class="tab-btn" data-tab="player"><span class="iconify" data-icon="bx:user" data-width="14" data-height="14"></span> Фото гравця</button>
+  <button class="tab-btn" data-tab="matchup"><span class="iconify" data-icon="bx:intersect" data-width="14" data-height="14"></span> Пара гравців</button>
 </div>
 
 <div class="main">
@@ -489,9 +549,86 @@ textarea:focus{outline:none;border-color:var(--accent)}
     </div>
     <div class="queue-grid" id="player-queue"><div class="queue-empty">Файлів ще немає.</div></div>
   </div>
-</div>
+  <div class="tab-panel" id="tab-matchup">
+    <div class="matchup-layout">
 
-<!-- API MODAL -->
+      <!-- LEFT PLAYER -->
+      <div class="mu-slot" id="mu-slot-left">
+        <div class="mu-slot-title">Гравець 1 (ліворуч)</div>
+        <div class="mu-drop" id="mu-drop-left">
+          <span class="iconify" data-icon="bx:user" data-width="36" data-height="36" style="color:var(--text-faint)"></span>
+          <div style="font-size:13px;color:var(--text-faint);margin-top:8px">Клікніть або перетягніть</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:4px">PNG, JPG, WEBP &nbsp;·&nbsp; <kbd>Ctrl+V</kbd></div>
+        </div>
+        <input type="file" id="mu-input-left" accept=".png,.jpg,.jpeg,.webp">
+        <canvas id="mu-canvas-left" style="display:none"></canvas>
+        <div class="mu-slot-actions" id="mu-actions-left" style="display:none">
+          <button class="mu-btn" id="mu-flip-left" title="Дзеркально відобразити"><span class="iconify" data-icon="bx:reflect-horizontal" data-width="14"></span> Дзеркало</button>
+          <button class="mu-btn danger" id="mu-clear-left"><span class="iconify" data-icon="bx:trash" data-width="14"></span> Очистити</button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="mu-result-col">
+        <div class="mu-slot-title" style="text-align:center">Результат</div>
+
+        <!-- Settings bar -->
+        <div class="mu-settings">
+          <div class="mu-setting-group">
+            <label>Відступ між гравцями</label>
+            <input type="range" id="mu-gap" min="0" max="120" value="0">
+            <span id="mu-gap-v">0px</span>
+          </div>
+          <div class="mu-setting-group">
+            <label>Фон</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="color" id="mu-bg-color" value="#ffffff" title="Колір фону">
+              <button class="mu-btn small" id="mu-bg-transparent" title="Прозорий фон">Прозорий</button>
+              <button class="mu-btn small" id="mu-bg-white">Білий</button>
+              <button class="mu-btn small" id="mu-bg-black">Чорний</button>
+            </div>
+          </div>
+          <div class="mu-setting-group">
+            <label>Формат</label>
+            <div style="display:flex;gap:6px">
+              <button class="mu-btn small mu-ratio-btn act" data-ratio="2:1">2:1</button>
+              <button class="mu-btn small mu-ratio-btn" data-ratio="1:1">1:1</button>
+              <button class="mu-btn small mu-ratio-btn" data-ratio="free">Авто</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Result canvas -->
+        <div class="mu-result-wrap" id="mu-result-wrap">
+          <canvas id="mu-result" width="800" height="400"></canvas>
+          <div class="mu-empty-hint" id="mu-empty-hint">Завантажте обох гравців щоб побачити результат</div>
+        </div>
+
+        <div class="mu-result-actions">
+          <button class="mu-btn primary" id="mu-download"><span class="iconify" data-icon="bx:download" data-width="14"></span> Завантажити PNG</button>
+          <button class="mu-btn" id="mu-open-editor"><span class="iconify" data-icon="bx:edit" data-width="14"></span> Відкрити в редакторі</button>
+        </div>
+      </div>
+
+      <!-- RIGHT PLAYER -->
+      <div class="mu-slot" id="mu-slot-right">
+        <div class="mu-slot-title">Гравець 2 (праворуч)</div>
+        <div class="mu-drop" id="mu-drop-right">
+          <span class="iconify" data-icon="bx:user" data-width="36" data-height="36" style="color:var(--text-faint)"></span>
+          <div style="font-size:13px;color:var(--text-faint);margin-top:8px">Клікніть або перетягніть</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:4px">PNG, JPG, WEBP &nbsp;·&nbsp; <kbd>Ctrl+V</kbd></div>
+        </div>
+        <input type="file" id="mu-input-right" accept=".png,.jpg,.jpeg,.webp">
+        <canvas id="mu-canvas-right" style="display:none"></canvas>
+        <div class="mu-slot-actions" id="mu-actions-right" style="display:none">
+          <button class="mu-btn" id="mu-flip-right" title="Дзеркально відобразити"><span class="iconify" data-icon="bx:reflect-horizontal" data-width="14"></span> Дзеркало</button>
+          <button class="mu-btn danger" id="mu-clear-right"><span class="iconify" data-icon="bx:trash" data-width="14"></span> Очистити</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 <div class="overlay" id="api-modal">
   <div class="modal">
     <h2>Gemini API ключ</h2>
@@ -1156,6 +1293,12 @@ function loadEditorImg(url){
     ctx.drawImage(img,0,0);
     ED.canvas=canvas;ED.ctx=ctx;
     pushH();resetCrop();updateHistBadge();
+    // Centre scroll after padding added
+    requestAnimationFrame(()=>{
+      const wrap=$wrap();
+      wrap.scrollLeft=(wrap.scrollWidth-wrap.clientWidth)/2;
+      wrap.scrollTop=(wrap.scrollHeight-wrap.clientHeight)/2;
+    });
     setTimeout(refreshPreview,50);
   };img.src=url;
 }
@@ -1721,23 +1864,53 @@ function getZoomIdx(){
   ZOOM_STEPS.forEach((v,i)=>{const d=Math.abs(v-cur);if(d<bestD){bestD=d;best=i;}});
   return best;
 }
-function applyZoom(newScale){
+function applyZoom(newScale, pivotX, pivotY){
   if(!ED.canvas) return;
+  const wrap=$wrap();
+  const oldScale=ED.scale;
+
+  // If no pivot provided (button click) — use center of viewport
+  if(pivotX===undefined){
+    pivotX=wrap.clientWidth/2;
+    pivotY=wrap.clientHeight/2;
+  }
+
+  // Canvas position relative to wrap viewport before zoom
+  const canvasEl=ED.canvas;
+  const wrapRect=wrap.getBoundingClientRect();
+  const canvasRect=canvasEl.getBoundingClientRect();
+  // Position of pivot point in canvas-pixel space
+  const canvasPivotX=(pivotX+wrap.scrollLeft-(canvasRect.left-wrapRect.left+wrap.scrollLeft))/oldScale;
+  const canvasPivotY=(pivotY+wrap.scrollTop-(canvasRect.top-wrapRect.top+wrap.scrollTop))/oldScale;
+
+  // Apply new scale
   ED.scale=newScale;
-  const c=ED.canvas;
-  c.style.width=Math.round(c.width*newScale)+'px';
-  c.style.height=Math.round(c.height*newScale)+'px';
+  canvasEl.style.width=Math.round(canvasEl.width*newScale)+'px';
+  canvasEl.style.height=Math.round(canvasEl.height*newScale)+'px';
   document.getElementById('zoom-label').textContent=Math.round(newScale*100)+'%';
   if(ED.crop) updateCropFrame();
-  // re-centre after zoom
-  const wrap=$wrap();
-  setTimeout(()=>{
-    wrap.scrollLeft=(wrap.scrollWidth-wrap.clientWidth)/2;
-    wrap.scrollTop=(wrap.scrollHeight-wrap.clientHeight)/2;
-    document.getElementById('pan-x').value=50;
-    document.getElementById('pan-y').value=50;
-  },0);
+
+  // After DOM updates, set scroll so the pivot pixel stays under cursor
+  requestAnimationFrame(()=>{
+    // Where the canvas starts in the scrollable space after zoom
+    const newCanvasW=canvasEl.width*newScale;
+    const newCanvasH=canvasEl.height*newScale;
+    // ecwrap uses flex centering — canvas offset inside scrollWidth
+    const canvasOffX=Math.max(0,(wrap.scrollWidth-newCanvasW)/2);
+    const canvasOffY=Math.max(0,(wrap.scrollHeight-newCanvasH)/2);
+    // We want canvasPivot * newScale + canvasOff - pivotX = scrollLeft
+    const targetScrollX=canvasOffX+canvasPivotX*newScale-pivotX;
+    const targetScrollY=canvasOffY+canvasPivotY*newScale-pivotY;
+    wrap.scrollLeft=Math.max(0,targetScrollX);
+    wrap.scrollTop=Math.max(0,targetScrollY);
+    // sync pan sliders
+    const maxSX=Math.max(1,wrap.scrollWidth-wrap.clientWidth);
+    const maxSY=Math.max(1,wrap.scrollHeight-wrap.clientHeight);
+    document.getElementById('pan-x').value=Math.round((wrap.scrollLeft/maxSX)*100);
+    document.getElementById('pan-y').value=Math.round((wrap.scrollTop/maxSY)*100);
+  });
 }
+
 document.getElementById('zoom-in').addEventListener('click',()=>{
   const idx=getZoomIdx();
   if(idx<ZOOM_STEPS.length-1) applyZoom(ZOOM_STEPS[idx+1]);
@@ -1746,17 +1919,237 @@ document.getElementById('zoom-out').addEventListener('click',()=>{
   const idx=getZoomIdx();
   if(idx>0) applyZoom(ZOOM_STEPS[idx-1]);
 });
-// Scroll = zoom, Shift+scroll = pan horizontal
+
+// Wheel = zoom to cursor, Shift+wheel = horizontal pan
 document.getElementById('ecwrap').addEventListener('wheel',e=>{
-  // If no modifier — zoom
   if(!e.shiftKey){
     e.preventDefault();
+    const wrap=$wrap();
+    const wrapRect=wrap.getBoundingClientRect();
+    // Mouse position relative to wrap viewport
+    const mx=e.clientX-wrapRect.left;
+    const my=e.clientY-wrapRect.top;
     const idx=getZoomIdx();
-    if(e.deltaY<0&&idx<ZOOM_STEPS.length-1) applyZoom(ZOOM_STEPS[idx+1]);
-    else if(e.deltaY>0&&idx>0) applyZoom(ZOOM_STEPS[idx-1]);
+    if(e.deltaY<0&&idx<ZOOM_STEPS.length-1) applyZoom(ZOOM_STEPS[idx+1],mx,my);
+    else if(e.deltaY>0&&idx>0) applyZoom(ZOOM_STEPS[idx-1],mx,my);
   }
-  // Shift+scroll — let browser handle horizontal pan naturally
 },{passive:false});
+
+// ════════════════════════════════════════════════
+// MATCHUP TAB
+// ════════════════════════════════════════════════
+const MU = {
+  left: null,   // ImageBitmap or null
+  right: null,
+  leftFlipped: false,
+  rightFlipped: false,
+  bgMode: 'white',  // 'white' | 'black' | 'transparent' | 'custom'
+  bgColor: '#ffffff',
+  gap: 0,
+  ratio: '2:1',  // '2:1' | '1:1' | 'free'
+};
+
+function muLoadSlot(side, file) {
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    // Draw into offscreen canvas so we can use it
+    const c = document.createElement('canvas');
+    c.width = img.naturalWidth; c.height = img.naturalHeight;
+    c.getContext('2d').drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    MU[side] = c;
+    muShowThumb(side, c);
+    muRender();
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); toast('Не вдалося завантажити', 'err'); };
+  img.src = url;
+}
+
+function muShowThumb(side, canvas) {
+  const drop = document.getElementById(`mu-drop-${side}`);
+  const actions = document.getElementById(`mu-actions-${side}`);
+  drop.innerHTML = '';
+  drop.classList.add('has-image');
+  const img = document.createElement('img');
+  img.src = canvas.toDataURL('image/png');
+  drop.appendChild(img);
+  actions.style.display = 'flex';
+}
+
+function muClearSlot(side) {
+  MU[side] = null;
+  MU[side + 'Flipped'] = false;
+  const drop = document.getElementById(`mu-drop-${side}`);
+  drop.classList.remove('has-image');
+  drop.innerHTML = `
+    <span class="iconify" data-icon="bx:user" data-width="36" data-height="36" style="color:var(--text-faint)"></span>
+    <div style="font-size:13px;color:var(--text-faint);margin-top:8px">Клікніть або перетягніть</div>
+    <div style="font-size:11px;color:var(--text-faint);margin-top:4px">PNG, JPG, WEBP &nbsp;·&nbsp; <kbd>Ctrl+V</kbd></div>`;
+  document.getElementById(`mu-actions-${side}`).style.display = 'none';
+  muRender();
+}
+
+function muFlipSlot(side) {
+  if (!MU[side]) return;
+  MU[side + 'Flipped'] = !MU[side + 'Flipped'];
+  muRender();
+}
+
+function muRender() {
+  const rc = document.getElementById('mu-result');
+  const hint = document.getElementById('mu-empty-hint');
+  const L = MU.left, R = MU.right;
+
+  if (!L && !R) { hint.style.display = 'flex'; return; }
+  hint.style.display = 'none';
+
+  const gap = MU.gap;
+
+  // Each player gets a square slot based on max dimension
+  const slotW = L ? L.width : (R ? R.width : 400);
+  const slotH = L ? L.height : (R ? R.height : 400);
+  const rSlotW = R ? R.width : slotW;
+  const rSlotH = R ? R.height : slotH;
+
+  // Normalise both to same height
+  const h = Math.max(slotH, rSlotH);
+  const lW = L ? Math.round(slotW * (h / slotH)) : Math.round(rSlotW * (h / rSlotH));
+  const rW = R ? Math.round(rSlotW * (h / rSlotH)) : lW;
+
+  let totalW = lW + rW + gap;
+  let totalH = h;
+
+  // Apply ratio constraint
+  if (MU.ratio === '2:1') {
+    totalH = Math.round(totalW / 2);
+  } else if (MU.ratio === '1:1') {
+    const sq = Math.max(totalW, totalH);
+    totalW = sq; totalH = sq;
+  }
+  // 'free' — no constraint
+
+  rc.width = totalW;
+  rc.height = totalH;
+  const ctx = rc.getContext('2d');
+  ctx.clearRect(0, 0, totalW, totalH);
+
+  // Background
+  if (MU.bgMode !== 'transparent') {
+    ctx.fillStyle = MU.bgColor;
+    ctx.fillRect(0, 0, totalW, totalH);
+  }
+
+  // Center players vertically
+  const drawPlayer = (canvas, flipped, dx, dw) => {
+    if (!canvas) return;
+    const scale = Math.min(dw / canvas.width, totalH / canvas.height);
+    const pw = canvas.width * scale;
+    const ph = canvas.height * scale;
+    const ox = dx + (dw - pw) / 2;
+    const oy = (totalH - ph) / 2;
+    ctx.save();
+    if (flipped) {
+      ctx.translate(ox + pw, oy);
+      ctx.scale(-1, 1);
+      ctx.drawImage(canvas, 0, 0, pw, ph);
+    } else {
+      ctx.drawImage(canvas, ox, oy, pw, ph);
+    }
+    ctx.restore();
+  };
+
+  const lSlotX = 0;
+  const rSlotX = lW + gap;
+  drawPlayer(L, MU.leftFlipped, lSlotX, lW);
+  drawPlayer(R, MU.rightFlipped, rSlotX, rW);
+}
+
+// Setup drop zones
+['left','right'].forEach(side => {
+  const drop = document.getElementById(`mu-drop-${side}`);
+  const input = document.getElementById(`mu-input-${side}`);
+
+  drop.addEventListener('click', () => { if (!MU[side]) input.click(); });
+  input.addEventListener('change', e => { if (e.target.files[0]) muLoadSlot(side, e.target.files[0]); });
+
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag-over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('drag-over'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault(); drop.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('image/')) muLoadSlot(side, f);
+  });
+
+  document.getElementById(`mu-flip-${side}`).addEventListener('click', () => muFlipSlot(side));
+  document.getElementById(`mu-clear-${side}`).addEventListener('click', () => muClearSlot(side));
+});
+
+// Gap slider
+const muGapEl = document.getElementById('mu-gap');
+muGapEl.addEventListener('input', () => {
+  MU.gap = parseInt(muGapEl.value);
+  document.getElementById('mu-gap-v').textContent = MU.gap + 'px';
+  muRender();
+});
+
+// BG controls
+document.getElementById('mu-bg-transparent').addEventListener('click', () => { MU.bgMode='transparent'; muRender(); });
+document.getElementById('mu-bg-white').addEventListener('click', () => { MU.bgMode='white'; MU.bgColor='#ffffff'; document.getElementById('mu-bg-color').value='#ffffff'; muRender(); });
+document.getElementById('mu-bg-black').addEventListener('click', () => { MU.bgMode='black'; MU.bgColor='#111111'; document.getElementById('mu-bg-color').value='#111111'; muRender(); });
+document.getElementById('mu-bg-color').addEventListener('input', e => { MU.bgMode='custom'; MU.bgColor=e.target.value; muRender(); });
+
+// Ratio buttons
+document.querySelectorAll('.mu-ratio-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mu-ratio-btn').forEach(b => b.classList.remove('act'));
+    btn.classList.add('act');
+    MU.ratio = btn.dataset.ratio;
+    muRender();
+  });
+});
+
+// Download
+document.getElementById('mu-download').addEventListener('click', () => {
+  const rc = document.getElementById('mu-result');
+  if (!MU.left && !MU.right) { toast('Немає зображення для завантаження', ''); return; }
+  const a = document.createElement('a');
+  a.href = rc.toDataURL('image/png');
+  a.download = 'matchup.png';
+  a.click();
+  toast('Matchup збережено ✓', 'ok');
+});
+
+// Open in editor
+document.getElementById('mu-open-editor').addEventListener('click', () => {
+  const rc = document.getElementById('mu-result');
+  if (!MU.left && !MU.right) { toast('Немає зображення', ''); return; }
+  // Create a temp queue item and open it
+  const dataURL = rc.toDataURL('image/png');
+  const tempId = 'mu_' + Date.now();
+  S.logo.items.unshift({ id: tempId, name: 'matchup.png', file: null, status: 'done', result: dataURL });
+  renderQueue('logo');
+  // Switch to logo tab and open editor
+  document.querySelector('[data-tab="logo"]').click();
+  setTimeout(() => openEditor('logo', tempId), 100);
+});
+
+// Ctrl+V on matchup tab
+document.addEventListener('paste', e => {
+  const tag = document.activeElement?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  const activeTab = document.querySelector('.tab-btn.active')?.dataset?.tab;
+  if (activeTab !== 'matchup') return;
+  const items = [...(e.clipboardData?.items || [])];
+  const imageItems = items.filter(i => i.type.startsWith('image/'));
+  if (!imageItems.length) return;
+  // Fill left first, then right
+  const side = !MU.left ? 'left' : (!MU.right ? 'right' : 'left');
+  const blob = imageItems[0].getAsFile();
+  const ext = imageItems[0].type.split('/')[1] || 'png';
+  muLoadSlot(side, new File([blob], `paste.${ext}`, { type: imageItems[0].type }));
+  toast(`Вставлено → ${side === 'left' ? 'Гравець 1' : 'Гравець 2'}`, 'ok');
+});
 
 // ════════════════════════════════════════════════
 // INIT
