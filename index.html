@@ -290,7 +290,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .ebody{display:flex;flex:1;min-height:0;position:relative}
 
 /* Canvas area */
-.ecwrap{flex:1;position:relative;overflow:auto;background:repeating-conic-gradient(#1e1e1e 0% 25%,#141414 0% 50%) 0 0/24px 24px;display:flex;align-items:center;justify-content:center}
+.ecwrap{flex:1;position:relative;overflow:hidden;background:repeating-conic-gradient(#1e1e1e 0% 25%,#141414 0% 50%) 0 0/24px 24px}
 #ec{display:block;image-rendering:auto;position:relative;z-index:1}
 
 /* Crop frame — positioned absolute over ecwrap */
@@ -391,7 +391,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .efbtn.pri:hover{filter:brightness(1.1)}
 
 /* Canvas pan scrollbars */
-.ecwrap{scroll-behavior:auto;overflow:hidden}
+.ecwrap{scroll-behavior:auto;overflow:hidden;position:relative}
 .ecwrap::-webkit-scrollbar{width:6px;height:6px}
 .ecwrap::-webkit-scrollbar-track{background:var(--surface-2)}
 .ecwrap::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:3px}
@@ -1361,12 +1361,12 @@ function loadEditorImg(url){
   ED.originURL=url;
   const img=new Image();
   img.onload=()=>{
-    const wrap=$wrap(),canvas=$ec();
+    const wrap=$wrap(), canvas=$ec();
     const maxW=wrap.clientWidth-40, maxH=wrap.clientHeight-40;
     const scale=Math.min(1, maxW/img.width, maxH/img.height);
     canvas.width=img.width; canvas.height=img.height;
-    // Reset transform — canvas centered via flex, tx/ty=0
-    ED.scale=scale; ED.tx=0; ED.ty=0;
+    ED.scale=scale;
+    centerCanvas();
     const ctx=canvas.getContext('2d');
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.drawImage(img,0,0);
@@ -1671,7 +1671,7 @@ document.getElementById('trim-btn').addEventListener('click',async()=>{
     const oy=Math.round((side-img.height)/2);
     ctx.drawImage(img,ox,oy);
     const wrap=$wrap();const maxW=wrap.clientWidth-40,maxH=wrap.clientHeight-40;
-    ED.scale=Math.min(1,maxW/c.width,maxH/c.height); ED.tx=0; ED.ty=0;
+    ED.scale=Math.min(1,maxW/c.width,maxH/c.height); centerCanvas();
     applyTransform();
     pushH();toast('Підрізано → квадрат 1:1','ok');
   };img.src=trimmed;
@@ -1831,7 +1831,7 @@ document.getElementById('c-apply').addEventListener('click',()=>{
   ctx.drawImage(tmp,0,0);
 
   const wrap=$wrap();const maxW=wrap.clientWidth-40,maxH=wrap.clientHeight-40;
-  ED.scale=Math.min(1,maxW/c.width,maxH/c.height); ED.tx=0; ED.ty=0;
+  ED.scale=Math.min(1,maxW/c.width,maxH/c.height); centerCanvas();
   applyTransform();
   resetCrop();pushH();toast('Кроп застосовано','ok');
 });
@@ -1889,13 +1889,12 @@ document.addEventListener('mouseup',()=>{dragS=null;hdrag=null;});
 function initPanSliders(){
   const px=document.getElementById('pan-x');
   const py=document.getElementById('pan-y');
-  const maxPan=()=>Math.max($wrap().clientWidth,$wrap().clientHeight)*2;
   px.addEventListener('input',()=>{
-    ED.tx=((px.value-50)/100)*maxPan();
+    ED.cx=(px.value/100)*$wrap().clientWidth;
     applyTransform();
   });
   py.addEventListener('input',()=>{
-    ED.ty=((py.value-50)/100)*maxPan();
+    ED.cy=(py.value/100)*$wrap().clientHeight;
     applyTransform();
   });
 }
@@ -1923,44 +1922,56 @@ document.getElementById('bg-sw-checker').addEventListener('click',()=>setCanvasB
 document.getElementById('bg-sw-white').addEventListener('click',()=>setCanvasBg('white'));
 document.getElementById('bg-sw-black').addEventListener('click',()=>setCanvasBg('black'));
 
-// ── ZOOM & PAN — transform-based, unlimited ──
-// Canvas sits at center of ecwrap via flex. We apply CSS transform for zoom+pan.
-// ED.tx / ED.ty = translate offset in screen pixels; ED.scale = zoom level.
+// ── ZOOM & PAN ──
+// Strategy: canvas is position:absolute inside ecwrap (overflow:hidden).
+// ED.cx / ED.cy = canvas CENTER in wrap-local coords. ED.scale = zoom.
+// This avoids all flex/scroll confusion — pivot math is straightforward.
 
-Object.assign(ED, { tx: 0, ty: 0 });
+Object.assign(ED, { cx: 0, cy: 0 });
 
 function applyTransform() {
   if (!ED.canvas) return;
   const c = ED.canvas;
-  // Size canvas display via transform scale (not style.width/height)
-  // Canvas style size = natural size; transform handles visual scale + position
-  c.style.width  = c.width  + 'px';
-  c.style.height = c.height + 'px';
-  c.style.transform = `translate(${ED.tx}px, ${ED.ty}px) scale(${ED.scale})`;
+  const hw = (c.width  * ED.scale) / 2;
+  const hh = (c.height * ED.scale) / 2;
+  c.style.position = 'absolute';
+  c.style.width    = c.width  + 'px';
+  c.style.height   = c.height + 'px';
+  c.style.left     = '0';
+  c.style.top      = '0';
+  c.style.transformOrigin = '0 0';
+  c.style.transform = `translate(${Math.round(ED.cx - hw)}px,${Math.round(ED.cy - hh)}px) scale(${ED.scale})`;
   document.getElementById('zoom-label').textContent = Math.round(ED.scale * 100) + '%';
   if (ED.crop) updateCropFrame();
-  // update pan sliders (cosmetic only)
   syncPanSliders();
 }
 
-function syncPanSliders() {
-  // Map tx/ty to 0-100 range where 50 = centered
+function centerCanvas() {
   const wrap = $wrap();
-  const maxPan = Math.max(wrap.clientWidth, wrap.clientHeight) * 2;
-  document.getElementById('pan-x').value = Math.round(50 + (ED.tx / maxPan) * 100);
-  document.getElementById('pan-y').value = Math.round(50 + (ED.ty / maxPan) * 100);
+  ED.cx = wrap.clientWidth  / 2;
+  ED.cy = wrap.clientHeight / 2;
 }
 
-function applyZoom(newScale, pivotX, pivotY) {
+function syncPanSliders() {
+  const wrap = $wrap();
+  const px = document.getElementById('pan-x');
+  const py = document.getElementById('pan-y');
+  // 0..100 where 50 = centered in wrap
+  px.value = Math.round(Math.max(0, Math.min(100, (ED.cx / wrap.clientWidth)  * 100)));
+  py.value = Math.round(Math.max(0, Math.min(100, (ED.cy / wrap.clientHeight) * 100)));
+}
+
+function applyZoom(newScale, pivotWrapX, pivotWrapY) {
   if (!ED.canvas) return;
   const wrap = $wrap();
-  // Default pivot = viewport center
-  if (pivotX === undefined) { pivotX = wrap.clientWidth / 2; pivotY = wrap.clientHeight / 2; }
-  // Pivot in canvas-local space (relative to canvas center before transform)
+  if (pivotWrapX === undefined) {
+    pivotWrapX = wrap.clientWidth  / 2;
+    pivotWrapY = wrap.clientHeight / 2;
+  }
+  // pivot is in wrap-local coords; scale canvas center around it
   const ratio = newScale / ED.scale;
-  // Adjust translate so the point under cursor stays fixed
-  ED.tx = pivotX + (ED.tx - pivotX) * ratio;
-  ED.ty = pivotY + (ED.ty - pivotY) * ratio;
+  ED.cx = pivotWrapX + (ED.cx - pivotWrapX) * ratio;
+  ED.cy = pivotWrapY + (ED.cy - pivotWrapY) * ratio;
   ED.scale = newScale;
   applyTransform();
 }
@@ -1994,6 +2005,28 @@ document.getElementById('ecwrap').addEventListener('wheel', e => {
     else if (e.deltaY > 0 && idx > 0) applyZoom(ZOOM_STEPS[idx - 1], mx, my);
   }
 }, { passive: false });
+
+// Middle-click (button=1) drag to pan
+(()=>{
+  let panning = false, lastX = 0, lastY = 0;
+  const wrap = $wrap();
+  wrap.addEventListener('mousedown', e => {
+    if (e.button !== 1) return;
+    e.preventDefault();
+    panning = true; lastX = e.clientX; lastY = e.clientY;
+    wrap.style.cursor = 'grabbing';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!panning) return;
+    ED.cx += e.clientX - lastX;
+    ED.cy += e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    applyTransform();
+  });
+  document.addEventListener('mouseup', e => {
+    if (e.button === 1 && panning) { panning = false; wrap.style.cursor = ''; }
+  });
+})();
 
 // ════════════════════════════════════════════════
 // MATCHUP TAB
