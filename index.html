@@ -2098,26 +2098,23 @@ function muRender() {
   if (!L && !R) { hint.style.display = 'flex'; return; }
   hint.style.display = 'none';
 
-  const gap = MU.gap; // can be negative (overlap)
+  const gap = MU.gap; // positive = space, negative = overlap
 
-  // Normalize both images to same height (use 1024 as base)
-  const baseH = 1024;
-  const lW = L ? Math.round(L.width * (baseH / L.height)) : baseH;
-  const rW = R ? Math.round(R.width * (baseH / R.height)) : baseH;
+  // Each player slot is always square (1:1) — 1024px base
+  const slotSize = 1024;
 
-  let totalW = lW + rW + gap;
-  let totalH = baseH;
+  // Total canvas width depends on ratio
+  // Логіка: два слоти по slotSize, зміщені на gap
+  // gap>0 — відстань між ними, gap<0 — перекриття
+  let totalW = slotSize * 2 + gap;
+  let totalH = slotSize;
 
-  // Apply ratio constraint
   if (MU.ratio === '2:1') {
     totalH = Math.round(totalW / 2);
   } else if (MU.ratio === '1:1') {
-    // keep totalW, make height equal
     totalH = totalW;
   }
-  // 'free' — no constraint
 
-  // clamp minimum size
   totalW = Math.max(64, totalW);
   totalH = Math.max(64, totalH);
 
@@ -2126,24 +2123,30 @@ function muRender() {
   const ctx = rc.getContext('2d');
   ctx.clearRect(0, 0, totalW, totalH);
 
-  // Background
   if (MU.bgMode !== 'transparent') {
     ctx.fillStyle = MU.bgColor;
     ctx.fillRect(0, 0, totalW, totalH);
   }
 
-  // Draw player into its slot with clipping to prevent overflow into other side
-  const drawPlayer = (canvas, flipped, slotX, slotW) => {
+  // Slot positions:
+  // Left slot: x=0, width=slotSize
+  // Right slot: x=slotSize+gap, width=slotSize
+  // When gap<0 they overlap; each is clipped to its own half of totalW
+  const lSlotX = 0;
+  const rSlotX = slotSize + gap;
+  const midX = totalW / 2; // clip boundary when overlapping
+
+  const drawPlayer = (canvas, flipped, slotX, clipX, clipW) => {
     if (!canvas) return;
-    const scale = Math.min(slotW / canvas.width, totalH / canvas.height);
+    // fit image into slotSize x totalH
+    const scale = Math.min(slotSize / canvas.width, totalH / canvas.height);
     const pw = canvas.width * scale;
     const ph = canvas.height * scale;
-    const ox = slotX + (slotW - pw) / 2;
+    const ox = slotX + (slotSize - pw) / 2;
     const oy = (totalH - ph) / 2;
     ctx.save();
-    // clip to slot so overlap doesn't bleed
     ctx.beginPath();
-    ctx.rect(slotX, 0, slotW, totalH);
+    ctx.rect(clipX, 0, clipW, totalH);
     ctx.clip();
     if (flipped) {
       ctx.translate(ox + pw, oy);
@@ -2155,15 +2158,15 @@ function muRender() {
     ctx.restore();
   };
 
-  // Left slot: 0..lW, Right slot starts at lW+gap
-  // When gap is negative, slots overlap — each is clipped to its half
-  const rSlotX = lW + gap;
-  const lSlotW = gap < 0 ? lW + Math.round(gap / 2) : lW;
-  const rSlotW2 = gap < 0 ? rW + Math.round(gap / 2) : rW;
-  const rSlotXAdj = gap < 0 ? rSlotX - Math.round(gap / 2) : rSlotX;
-
-  drawPlayer(L, MU.leftFlipped,  0,         lSlotW);
-  drawPlayer(R, MU.rightFlipped, rSlotXAdj, rSlotW2);
+  if (gap >= 0) {
+    // No overlap — full slots, no clipping needed
+    drawPlayer(L, MU.leftFlipped,  lSlotX, lSlotX, slotSize);
+    drawPlayer(R, MU.rightFlipped, rSlotX, rSlotX, slotSize);
+  } else {
+    // Overlap — clip each player to its half of the canvas
+    drawPlayer(L, MU.leftFlipped,  lSlotX, 0,    midX);
+    drawPlayer(R, MU.rightFlipped, rSlotX, midX, totalW - midX);
+  }
 }
 
 // Setup drop zones
