@@ -1406,6 +1406,11 @@ document.getElementById('ed-cancel').addEventListener('click',closeEditor);
 function closeEditor(){
   document.getElementById('editor-ov').classList.remove('open');
   resetCrop();deactivateAllTools();hideBrushCursor();
+  // Reset ALL drag/paint states so nothing stays captured after close
+  ED.painting = false;
+  dragS = null; hdrag = null;
+  // Release any pointer capture
+  document.querySelectorAll('canvas').forEach(c => { try { c.releasePointerCapture && c.releasePointerCapture(1); } catch(e){} });
 }
 document.getElementById('ed-save').addEventListener('click',()=>{
   if(!ED.canvas) return;
@@ -1592,7 +1597,10 @@ ecEl.addEventListener('mousedown',e=>{
 });
 
 document.addEventListener('mouseup',e=>{
-  if(ED.painting){ED.painting=false;pushH();}
+  if(ED.painting){
+    ED.painting=false;
+    if(document.getElementById('editor-ov').classList.contains('open')) pushH();
+  }
 });
 
 // ── MAGIC WAND ──
@@ -1852,7 +1860,7 @@ $cf().addEventListener('mousedown',e=>{
 });
 
 document.addEventListener('mousemove',e=>{
-  if(!dragS||!ED.crop) return;
+  if(!dragS||!ED.crop||!document.getElementById('editor-ov').classList.contains('open')) return;
   const s=ED.scale;
   const dx=(e.clientX-dragS.x)/s;
   const dy=(e.clientY-dragS.y)/s;
@@ -1888,7 +1896,9 @@ document.addEventListener('mousemove',e=>{
   updateCropFrame();
 });
 
-document.addEventListener('mouseup',()=>{dragS=null;hdrag=null;});
+document.addEventListener('mouseup',()=>{
+  if(dragS||hdrag){ dragS=null; hdrag=null; }
+});
 
 // ── PAN SLIDERS — move canvas via transform tx/ty ──
 function initPanSliders(){
