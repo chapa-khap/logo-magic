@@ -503,8 +503,8 @@ textarea:focus{outline:none;border-color:var(--accent)}
   <span style="font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Betadmins Logo Enchancer</span>
   <div class="hspc"></div>
   <select id="model-select">
-    <option value="gemini-2.5-flash-image">gemini-2.5-flash-image</option>
-    <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview</option>
+    <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview (рекомендовано)</option>
+    <option value="gemini-2.5-flash-preview-05-20">gemini-2.5-flash-preview</option>
     <option value="gemini-2.0-flash-exp">gemini-2.0-flash-exp</option>
   </select>
   <button class="hbtn ico" id="theme-toggle" title="Toggle theme"><span class="iconify" data-icon="bx:moon" data-width="16" data-height="16"></span></button>
@@ -1255,12 +1255,12 @@ function autoTrim(dataURL, mode){
 // GEMINI
 // ═══════════════════════════════════════════════════════
 async function callGemini(apiKey,b64,mimeType,prompt){
-  const model=document.getElementById('model-select').value||'gemini-2.5-flash-image';
+  const model=document.getElementById('model-select').value||'gemini-2.0-flash-preview-image-generation';
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const body={contents:[{parts:[
     {inline_data:{mime_type:mimeType.includes('svg')?'image/png':mimeType,data:b64}},
     {text:prompt}
-  ]}],generationConfig:{responseModalities:['IMAGE','TEXT'],imageConfig:{aspectRatio:'1:1'}}};
+  ]}],generationConfig:{responseModalities:['IMAGE','TEXT']}};
   const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
   const data=await res.json();
@@ -1268,7 +1268,11 @@ async function callGemini(apiKey,b64,mimeType,prompt){
     if(p.inlineData?.mimeType?.startsWith('image')) return p.inlineData.data;
     if(p.inline_data?.mime_type?.startsWith('image')) return p.inline_data.data;
   }
-  throw new Error('No image in response: '+JSON.stringify(data).slice(0,400));
+  // Fallback: scan entire response for base64 image data
+  const raw=JSON.stringify(data);
+  const m=raw.match(/"data"\s*:\s*"([A-Za-z0-9+/=]{100,})"/);
+  if(m) return m[1];
+  throw new Error('No image in response: '+raw.slice(0,600));
 }
 
 // ═══════════════════════════════════════════════════════
