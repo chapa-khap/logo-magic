@@ -503,7 +503,8 @@ textarea:focus{outline:none;border-color:var(--accent)}
   <span style="font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Betadmins Logo Enchancer</span>
   <div class="hspc"></div>
   <select id="model-select">
-    <option value="gemini-2.5-flash-preview-05-20">gemini-2.5-flash-preview-05-20</option>
+    <option value="gemini-2.0-flash-exp">gemini-2.0-flash-exp</option>
+    <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview-image-generation</option>
   </select>
   <button class="hbtn ico" id="theme-toggle" title="Toggle theme"><span class="iconify" data-icon="bx:moon" data-width="16" data-height="16"></span></button>
   <button class="hbtn" id="api-btn"><div class="api-dot" id="api-dot"></div><span id="api-label">Set API Key</span></button>
@@ -1253,8 +1254,8 @@ function autoTrim(dataURL, mode){
 // GEMINI
 // ═══════════════════════════════════════════════════════
 async function callGemini(apiKey,b64,mimeType,prompt){
-  const model=document.getElementById('model-select').value||'gemini-2.5-flash-preview-05-20';
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  const model=document.getElementById('model-select').value||'gemini-2.0-flash-exp';
+  const isPreview=model.includes('preview');const url=`https://generativelanguage.googleapis.com/${isPreview?'v1':'v1beta'}/models/${model}:generateContent?key=${apiKey}`;
   const body={contents:[{parts:[
     {inline_data:{mime_type:mimeType.includes('svg')?'image/png':mimeType,data:b64}},
     {text:prompt}
