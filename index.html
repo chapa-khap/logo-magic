@@ -2491,6 +2491,41 @@ document.getElementById('mu-open-editor').addEventListener('click', mueOpen);
 // ════════════════════════════════════════════════
 // INIT 
 // ════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// GLOBAL HANG PREVENTION
+// ═══════════════════════════════════════════════
+function resetAllState() {
+  // Close all overlays
+  document.getElementById('editor-ov').classList.remove('open');
+  document.getElementById('mu-editor-ov').classList.remove('open');
+  document.querySelectorAll('.overlay').forEach(o => o.classList.remove('open'));
+  // Reset drag states
+  ['left','right'].forEach(side => { if(MUE[side]) { MUE[side].dragging = false; } });
+  if(ED) { ED.painting = false; }
+  // Reset ED drag
+  const ecwrap = document.getElementById('ecwrap');
+  if(ecwrap) ecwrap.style.cursor = '';
+  document.querySelectorAll('.mue-canvas-wrap').forEach(w => w.style.cursor = 'grab');
+}
+
+// Reset on window blur (mouse released outside browser)
+window.addEventListener('blur', () => {
+  ['left','right'].forEach(side => {
+    if(MUE[side]) { MUE[side].dragging = false; }
+    const wrap = document.getElementById('mue-wrap-' + side);
+    if(wrap) wrap.style.cursor = 'grab';
+  });
+  if(ED) ED.painting = false;
+});
+
+// Emergency reset: double-click on overlay background closes it
+document.getElementById('editor-ov').addEventListener('click', e => {
+  if(e.target === document.getElementById('editor-ov')) closeEditor();
+});
+document.getElementById('mu-editor-ov').addEventListener('click', e => {
+  if(e.target === document.getElementById('mu-editor-ov')) mueClose();
+});
+
 updateApiUI();
 if(!getKey()) setTimeout(()=>apiModal.classList.add('open'),800);
 </script>
