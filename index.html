@@ -190,20 +190,21 @@ textarea:focus{outline:none;border-color:var(--accent)}
 /* ══════════════════════ MATCHUP TAB ══════════════════════ */
 .matchup-layout{
   display:grid;
-  grid-template-columns:280px 1fr 280px;
+  grid-template-columns:340px 1fr 340px;
   gap:16px;
-  padding:20px;
-  height:calc(100vh - 100px);
+  padding:16px 20px;
+  height:calc(100vh - 106px);
   box-sizing:border-box;
   min-height:0;
+  overflow:hidden;
 }
-.mu-slot{display:flex;flex-direction:column;gap:10px}
+.mu-slot{display:flex;flex-direction:column;gap:10px;min-height:0;overflow:hidden}
 .mu-slot-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
 .mu-drop{
   border:2px dashed var(--border);border-radius:var(--r);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:28px 16px;cursor:pointer;transition:all .15s;
-  flex:1;min-height:200px;
+  flex:1;min-height:0;
 }
 .mu-drop:hover,.mu-drop.drag-over{border-color:var(--accent);background:rgba(0,231,138,.04)}
 .mu-drop.has-image{
@@ -608,7 +609,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="mu-settings">
           <div class="mu-setting-group">
             <label>Відступ між гравцями</label>
-            <input type="range" id="mu-gap" min="-120" max="120" value="0">
+            <input type="range" id="mu-gap" min="-600" max="400" step="10" value="0">
             <span id="mu-gap-v">0px</span>
           </div>
           <div class="mu-setting-group">
@@ -1406,10 +1407,8 @@ document.getElementById('ed-cancel').addEventListener('click',closeEditor);
 function closeEditor(){
   document.getElementById('editor-ov').classList.remove('open');
   resetCrop();deactivateAllTools();hideBrushCursor();
-  // Reset ALL drag/paint states so nothing stays captured after close
   ED.painting = false;
-  dragS = null; hdrag = null;
-  // Release any pointer capture
+  dragS = null; hdrag = null; cropS = null;
   document.querySelectorAll('canvas').forEach(c => { try { c.releasePointerCapture && c.releasePointerCapture(1); } catch(e){} });
 }
 document.getElementById('ed-save').addEventListener('click',()=>{
@@ -1860,7 +1859,10 @@ $cf().addEventListener('mousedown',e=>{
 });
 
 document.addEventListener('mousemove',e=>{
-  if(!dragS||!ED.crop||!document.getElementById('editor-ov').classList.contains('open')) return;
+  if(!document.getElementById('editor-ov').classList.contains('open')){
+    dragS=null; hdrag=null; return;
+  }
+  if(!dragS||!ED.crop) return;
   const s=ED.scale;
   const dx=(e.clientX-dragS.x)/s;
   const dy=(e.clientY-dragS.y)/s;
@@ -1897,7 +1899,7 @@ document.addEventListener('mousemove',e=>{
 });
 
 document.addEventListener('mouseup',()=>{
-  if(dragS||hdrag){ dragS=null; hdrag=null; }
+  dragS=null; hdrag=null;
 });
 
 // ── PAN SLIDERS — move canvas via transform tx/ty ──
@@ -2172,15 +2174,9 @@ function muRender() {
     ctx.restore();
   };
 
-  if (gap >= 0) {
-    // No overlap — full slots, no clipping needed
-    drawPlayer(L, MU.leftFlipped,  lSlotX, lSlotX, slotSize);
-    drawPlayer(R, MU.rightFlipped, rSlotX, rSlotX, slotSize);
-  } else {
-    // Overlap — clip each player to its half of the canvas
-    drawPlayer(L, MU.leftFlipped,  lSlotX, 0,    midX);
-    drawPlayer(R, MU.rightFlipped, rSlotX, midX, totalW - midX);
-  }
+  // Draw without clipping — images overlap freely
+  drawPlayer(L, MU.leftFlipped,  lSlotX, 0, totalW);
+  drawPlayer(R, MU.rightFlipped, rSlotX, 0, totalW);
 }
 
 // Setup drop zones
