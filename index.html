@@ -190,21 +190,20 @@ textarea:focus{outline:none;border-color:var(--accent)}
 /* ══════════════════════ MATCHUP TAB ══════════════════════ */
 .matchup-layout{
   display:grid;
-  grid-template-columns:340px 1fr 340px;
+  grid-template-columns:280px 1fr 280px;
   gap:16px;
-  padding:16px 20px;
-  height:calc(100vh - 106px);max-height:1080px;
+  padding:20px;
+  height:calc(100vh - 100px);
   box-sizing:border-box;
   min-height:0;
-  overflow:hidden;
 }
-.mu-slot{display:flex;flex-direction:column;gap:10px;min-height:0;overflow:hidden;}
+.mu-slot{display:flex;flex-direction:column;gap:10px}
 .mu-slot-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
 .mu-drop{
   border:2px dashed var(--border);border-radius:var(--r);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:28px 16px;cursor:pointer;transition:all .15s;
-  flex:1;min-height:0;
+  flex:1;min-height:200px;
 }
 .mu-drop:hover,.mu-drop.drag-over{border-color:var(--accent);background:rgba(0,231,138,.04)}
 .mu-drop.has-image{
@@ -222,10 +221,12 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .mu-btn.primary:hover{filter:brightness(1.1)}
 .mu-btn.danger{color:var(--error);border-color:var(--error);opacity:.7}
 .mu-btn.danger:hover{opacity:1}
+.mu-btn.accent{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
+.mu-btn.accent:hover{background:rgba(0,231,138,.2)}
 .mu-btn.small{padding:4px 8px;font-size:11px}
 .mu-btn.small.act{border-color:var(--accent);color:var(--accent);background:rgba(0,231,138,.08)}
 
-.mu-result-col{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:0;overflow:hidden}
+.mu-result-col{display:flex;flex-direction:column;gap:12px;min-width:0}
 .mu-settings{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:10px;flex-shrink:0}
 .mu-setting-group{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-dim)}
 .mu-setting-group label{width:160px;flex-shrink:0;font-size:11px}
@@ -245,7 +246,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
   font-size:13px;color:var(--text-faint);text-align:center;padding:20px;
   pointer-events:none;
 }
-.mu-result-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.mu-result-actions{display:flex;gap:8px;flex-shrink:0}
 
 /* ══════════════════════ EDITOR ══════════════════════ */
 #editor-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -504,9 +505,9 @@ textarea:focus{outline:none;border-color:var(--accent)}
   <span style="font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Betadmins Logo Enchancer</span>
   <div class="hspc"></div>
   <select id="model-select">
-    <option value="gemini-2.5-flash-image">gemini-2.5-flash-image (рекомендовано)</option>
-    <option value="gemini-3.1-flash-image-preview">gemini-3.1-flash-image-preview</option>
-    <option value="gemini-3-pro-image-preview">gemini-3-pro-image-preview</option>
+    <option value="gemini-2.5-flash-image">gemini-2.5-flash-image</option>
+    <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview</option>
+    <option value="gemini-2.0-flash-exp">gemini-2.0-flash-exp</option>
   </select>
   <button class="hbtn ico" id="theme-toggle" title="Toggle theme"><span class="iconify" data-icon="bx:moon" data-width="16" data-height="16"></span></button>
   <button class="hbtn" id="api-btn"><div class="api-dot" id="api-dot"></div><span id="api-label">Set API Key</span></button>
@@ -609,7 +610,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="mu-settings">
           <div class="mu-setting-group">
             <label>Відступ між гравцями</label>
-            <input type="range" id="mu-gap" min="-600" max="400" step="10" value="0">
+            <input type="range" id="mu-gap" min="-120" max="120" value="0">
             <span id="mu-gap-v">0px</span>
           </div>
           <div class="mu-setting-group">
@@ -625,8 +626,8 @@ textarea:focus{outline:none;border-color:var(--accent)}
             <label>Формат</label>
             <div style="display:flex;gap:6px">
               <button class="mu-btn small mu-ratio-btn" data-ratio="2:1">2:1</button>
-              <button class="mu-btn small mu-ratio-btn act" data-ratio="1:1">1:1</button>
-              <button class="mu-btn small mu-ratio-btn" data-ratio="free">Авто</button>
+              <button class="mu-btn small mu-ratio-btn" data-ratio="1:1">1:1</button>
+              <button class="mu-btn small mu-ratio-btn act" data-ratio="free">Авто</button>
             </div>
           </div>
         </div>
@@ -1261,7 +1262,7 @@ async function callGemini(apiKey,b64,mimeType,prompt){
   const body={contents:[{parts:[
     {inline_data:{mime_type:mimeType.includes('svg')?'image/png':mimeType,data:b64}},
     {text:prompt}
-  ]}],generationConfig:{responseModalities:['IMAGE','TEXT']}};
+  ]}],generationConfig:{responseModalities:['IMAGE','TEXT'],imageConfig:{aspectRatio:'1:1'}}};
   const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
   const data=await res.json();
@@ -1269,11 +1270,7 @@ async function callGemini(apiKey,b64,mimeType,prompt){
     if(p.inlineData?.mimeType?.startsWith('image')) return p.inlineData.data;
     if(p.inline_data?.mime_type?.startsWith('image')) return p.inline_data.data;
   }
-  // Fallback: scan entire response for base64 image data
-  const raw=JSON.stringify(data);
-  const m=raw.match(/"data"\s*:\s*"([A-Za-z0-9+/=]{100,})"/);
-  if(m) return m[1];
-  throw new Error('No image in response: '+raw.slice(0,600));
+  throw new Error('No image in response: '+JSON.stringify(data).slice(0,400));
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1407,9 +1404,6 @@ document.getElementById('ed-cancel').addEventListener('click',closeEditor);
 function closeEditor(){
   document.getElementById('editor-ov').classList.remove('open');
   resetCrop();deactivateAllTools();hideBrushCursor();
-  ED.painting = false;
-  dragS = null; hdrag = null; cropS = null;
-  document.querySelectorAll('canvas').forEach(c => { try { c.releasePointerCapture && c.releasePointerCapture(1); } catch(e){} });
 }
 document.getElementById('ed-save').addEventListener('click',()=>{
   if(!ED.canvas) return;
@@ -1596,10 +1590,7 @@ ecEl.addEventListener('mousedown',e=>{
 });
 
 document.addEventListener('mouseup',e=>{
-  if(ED.painting){
-    ED.painting=false;
-    if(document.getElementById('editor-ov').classList.contains('open')) pushH();
-  }
+  if(ED.painting){ED.painting=false;pushH();}
 });
 
 // ── MAGIC WAND ──
@@ -1859,9 +1850,6 @@ $cf().addEventListener('mousedown',e=>{
 });
 
 document.addEventListener('mousemove',e=>{
-  if(!document.getElementById('editor-ov').classList.contains('open')){
-    dragS=null; hdrag=null; return;
-  }
   if(!dragS||!ED.crop) return;
   const s=ED.scale;
   const dx=(e.clientX-dragS.x)/s;
@@ -1898,9 +1886,7 @@ document.addEventListener('mousemove',e=>{
   updateCropFrame();
 });
 
-document.addEventListener('mouseup',()=>{
-  dragS=null; hdrag=null;
-});
+document.addEventListener('mouseup',()=>{dragS=null;hdrag=null;});
 
 // ── PAN SLIDERS — move canvas via transform tx/ty ──
 function initPanSliders(){
@@ -2056,7 +2042,7 @@ const MU = {
   bgMode: 'transparent',
   bgColor: '#ffffff',
   gap: 0,
-  ratio: '2:1',
+  ratio: 'free',
 };
 
 function muLoadSlot(side, file) {
@@ -2174,9 +2160,15 @@ function muRender() {
     ctx.restore();
   };
 
-  // Draw without clipping — images overlap freely
-  drawPlayer(L, MU.leftFlipped,  lSlotX, 0, totalW);
-  drawPlayer(R, MU.rightFlipped, rSlotX, 0, totalW);
+  if (gap >= 0) {
+    // No overlap — full slots, no clipping needed
+    drawPlayer(L, MU.leftFlipped,  lSlotX, lSlotX, slotSize);
+    drawPlayer(R, MU.rightFlipped, rSlotX, rSlotX, slotSize);
+  } else {
+    // Overlap — clip each player to its half of the canvas
+    drawPlayer(L, MU.leftFlipped,  lSlotX, 0,    midX);
+    drawPlayer(R, MU.rightFlipped, rSlotX, midX, totalW - midX);
+  }
 }
 
 // Setup drop zones
@@ -2223,12 +2215,124 @@ document.querySelectorAll('.mu-ratio-btn').forEach(btn => {
   });
 });
 
-// Download
-document.getElementById('mu-download').addEventListener('click', () => {
+// Автокроп: знаходить реальні межі контенту і повертає обрізаний canvas
+function muAutocropCanvas() {
   const rc = document.getElementById('mu-result');
+  const L = MU.left, R = MU.right;
+  if (!L && !R) return rc;
+
+  function getContentBounds(canvas) {
+    const w = canvas.width, h = canvas.height;
+    const data = canvas.getContext('2d').getImageData(0, 0, w, h).data;
+    let minX = w, minY = h, maxX = 0, maxY = 0;
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        if (data[(y * w + x) * 4 + 3] > 8) {
+          if (x < minX) minX = x; if (x > maxX) maxX = x;
+          if (y < minY) minY = y; if (y > maxY) maxY = y;
+        }
+      }
+    }
+    return (minX > maxX || minY > maxY) ? null : { minX, minY, maxX, maxY };
+  }
+
+  function getHalfWidths(canvas, flipped) {
+    const b = getContentBounds(canvas);
+    if (!b) return null;
+    return { bounds: b, flipped };
+  }
+
+  const slotSize = 1024, gap = MU.gap;
+  let totalW = slotSize * 2 + gap;
+  let totalH = slotSize;
+  if (MU.ratio === '2:1') totalH = Math.round(totalW / 2);
+  else if (MU.ratio === '1:1') totalH = totalW;
+  totalW = Math.max(64, totalW);
+  totalH = Math.max(64, totalH);
+
+  function getLayout(canvas, slotX) {
+    const scale = Math.min(slotSize / canvas.width, totalH / canvas.height);
+    const pw = canvas.width * scale, ph = canvas.height * scale;
+    return { scale, pw, ph, ox: slotX + (slotSize - pw) / 2, oy: (totalH - ph) / 2 };
+  }
+
+  function contentInResult(canvas, layout, flipped, hw) {
+    if (!hw) return null;
+    const b = hw.bounds, s = layout.scale;
+    let x0 = layout.ox + b.minX * s, x1 = layout.ox + b.maxX * s;
+    const y0 = layout.oy + b.minY * s, y1 = layout.oy + b.maxY * s;
+    if (flipped) {
+      const cx = layout.ox + layout.pw / 2;
+      return { x0: cx - (x1 - cx), x1: cx + (cx - x0), y0, y1 };
+    }
+    return { x0, x1, y0, y1 };
+  }
+
+  const lHW = L ? getHalfWidths(L, MU.leftFlipped)  : null;
+  const rHW = R ? getHalfWidths(R, MU.rightFlipped) : null;
+  const lRect = L ? contentInResult(L, getLayout(L, 0),              MU.leftFlipped,  lHW) : null;
+  const rRect = R ? contentInResult(R, getLayout(R, slotSize + gap), MU.rightFlipped, rHW) : null;
+
+  const PAD = 20;
+  const midX = totalW / 2, midY = totalH / 2;
+  let cropX0, cropX1, cropY0, cropY1;
+
+  if (lRect && rRect) {
+    const halfW = Math.max(midX - lRect.x0, rRect.x1 - midX) + PAD;
+    cropX0 = Math.max(0, Math.round(midX - halfW));
+    cropX1 = Math.min(totalW, Math.round(midX + halfW));
+    const halfH = Math.max(midY - Math.min(lRect.y0, rRect.y0), Math.max(lRect.y1, rRect.y1) - midY) + PAD;
+    cropY0 = Math.max(0, Math.round(midY - halfH));
+    cropY1 = Math.min(totalH, Math.round(midY + halfH));
+  } else {
+    const rect = lRect || rRect;
+    cropX0 = Math.max(0, Math.round(rect.x0 - PAD));
+    cropX1 = Math.min(totalW, Math.round(rect.x1 + PAD));
+    cropY0 = Math.max(0, Math.round(rect.y0 - PAD));
+    cropY1 = Math.min(totalH, Math.round(rect.y1 + PAD));
+  }
+
+  const cropW = cropX1 - cropX0, cropH = cropY1 - cropY0;
+  if (cropW < 10 || cropH < 10) return rc;
+
+  // Застосовуємо вибраний формат: розширюємо кроп до потрібного співвідношення сторін
+  let finalX0 = cropX0, finalY0 = cropY0, finalW = cropW, finalH = cropH;
+  if (MU.ratio === '2:1') {
+    // Потрібно W = H * 2; розширюємо меншу сторону відносно центру
+    if (cropW / cropH < 2) {
+      finalW = Math.round(cropH * 2);
+      const cx = (cropX0 + cropX1) / 2;
+      finalX0 = Math.max(0, Math.round(cx - finalW / 2));
+      finalW = Math.min(totalW - finalX0, finalW);
+      finalH = cropH;
+    } else {
+      finalH = Math.round(cropW / 2);
+      const cy = (cropY0 + cropY1) / 2;
+      finalY0 = Math.max(0, Math.round(cy - finalH / 2));
+      finalH = Math.min(totalH - finalY0, finalH);
+      finalW = cropW;
+    }
+  } else if (MU.ratio === '1:1') {
+    const side = Math.max(cropW, cropH);
+    const cx = (cropX0 + cropX1) / 2, cy = (cropY0 + cropY1) / 2;
+    finalX0 = Math.max(0, Math.round(cx - side / 2));
+    finalY0 = Math.max(0, Math.round(cy - side / 2));
+    finalW = Math.min(totalW - finalX0, side);
+    finalH = Math.min(totalH - finalY0, side);
+  }
+
+  const out = document.createElement('canvas');
+  out.width = finalW; out.height = finalH;
+  out.getContext('2d').drawImage(rc, finalX0, finalY0, finalW, finalH, 0, 0, finalW, finalH);
+  return out;
+}
+
+// Download — автокроп за замовчуванням
+document.getElementById('mu-download').addEventListener('click', () => {
   if (!MU.left && !MU.right) { toast('Немає зображення для завантаження', ''); return; }
+  const out = muAutocropCanvas();
   const a = document.createElement('a');
-  a.href = rc.toDataURL('image/png');
+  a.href = out.toDataURL('image/png');
   a.download = 'matchup.png';
   a.click();
   toast('Matchup збережено ✓', 'ok');
@@ -2236,9 +2340,9 @@ document.getElementById('mu-download').addEventListener('click', () => {
 
 // Crop result — open current canvas in main editor
 document.getElementById('mu-crop-result').addEventListener('click', () => {
-  const rc = document.getElementById('mu-result');
   if (!MU.left && !MU.right) { toast('Немає зображення', ''); return; }
-  const dataURL = rc.toDataURL('image/png');
+  const out = muAutocropCanvas();
+  const dataURL = out.toDataURL('image/png');
   const tempId = 'mu_' + Date.now();
   S.logo.items.unshift({ id: tempId, name: 'matchup.png', file: null, status: 'done', result: dataURL });
   renderQueue('logo');
@@ -2497,41 +2601,6 @@ document.getElementById('mu-open-editor').addEventListener('click', mueOpen);
 // ════════════════════════════════════════════════
 // INIT 
 // ════════════════════════════════════════════════
-// ═══════════════════════════════════════════════
-// GLOBAL HANG PREVENTION
-// ═══════════════════════════════════════════════
-function resetAllState() {
-  // Close all overlays
-  document.getElementById('editor-ov').classList.remove('open');
-  document.getElementById('mu-editor-ov').classList.remove('open');
-  document.querySelectorAll('.overlay').forEach(o => o.classList.remove('open'));
-  // Reset drag states
-  ['left','right'].forEach(side => { if(MUE[side]) { MUE[side].dragging = false; } });
-  if(ED) { ED.painting = false; }
-  // Reset ED drag
-  const ecwrap = document.getElementById('ecwrap');
-  if(ecwrap) ecwrap.style.cursor = '';
-  document.querySelectorAll('.mue-canvas-wrap').forEach(w => w.style.cursor = 'grab');
-}
-
-// Reset on window blur (mouse released outside browser)
-window.addEventListener('blur', () => {
-  ['left','right'].forEach(side => {
-    if(MUE[side]) { MUE[side].dragging = false; }
-    const wrap = document.getElementById('mue-wrap-' + side);
-    if(wrap) wrap.style.cursor = 'grab';
-  });
-  if(ED) ED.painting = false;
-});
-
-// Emergency reset: double-click on overlay background closes it
-document.getElementById('editor-ov').addEventListener('click', e => {
-  if(e.target === document.getElementById('editor-ov')) closeEditor();
-});
-document.getElementById('mu-editor-ov').addEventListener('click', e => {
-  if(e.target === document.getElementById('mu-editor-ov')) mueClose();
-});
-
 updateApiUI();
 if(!getKey()) setTimeout(()=>apiModal.classList.add('open'),800);
 </script>
