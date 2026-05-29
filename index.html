@@ -610,8 +610,8 @@ textarea:focus{outline:none;border-color:var(--accent)}
         <div class="mu-settings">
           <div class="mu-setting-group">
             <label>Відступ між гравцями</label>
-            <input type="range" id="mu-gap" min="-120" max="120" value="0">
-            <span id="mu-gap-v">0px</span>
+            <input type="range" id="mu-gap" min="-30" max="30" value="0">
+            <span id="mu-gap-v">0%</span>
           </div>
           <div class="mu-setting-group">
             <label>Фон</label>
@@ -2100,10 +2100,9 @@ function muRender() {
   if (!L && !R) { hint.style.display = 'flex'; return; }
   hint.style.display = 'none';
 
-  const gap = MU.gap; // positive = space, negative = overlap
-
   // Each player slot is always square (1:1) — 1024px base
   const slotSize = 1024;
+  const gap = Math.round(slotSize * MU.gap / 100); // відсотки → пікселі
 
   // Total canvas width depends on ratio
   // Логіка: два слоти по slotSize, зміщені на gap
@@ -2194,8 +2193,8 @@ function muRender() {
 // Gap slider
 const muGapEl = document.getElementById('mu-gap');
 muGapEl.addEventListener('input', () => {
-  MU.gap = parseInt(muGapEl.value);
-  document.getElementById('mu-gap-v').textContent = MU.gap + 'px';
+  MU.gap = parseInt(muGapEl.value); // відсотки від slotSize
+  document.getElementById('mu-gap-v').textContent = MU.gap + '%';
   muRender();
 });
 
@@ -2242,7 +2241,7 @@ function muAutocropCanvas() {
     return { bounds: b, flipped };
   }
 
-  const slotSize = 1024, gap = MU.gap;
+  const slotSize = 1024, gap = Math.round(slotSize * MU.gap / 100);
   let totalW = slotSize * 2 + gap;
   let totalH = slotSize;
   if (MU.ratio === '2:1') totalH = Math.round(totalW / 2);
@@ -2274,13 +2273,13 @@ function muAutocropCanvas() {
   const rRect = R ? contentInResult(R, getLayout(R, slotSize + gap), MU.rightFlipped, rHW) : null;
 
   const PAD = 20;
-  const midX = totalW / 2, midY = totalH / 2;
+  const midY = totalH / 2;
   let cropX0, cropX1, cropY0, cropY1;
 
   if (lRect && rRect) {
-    const halfW = Math.max(midX - lRect.x0, rRect.x1 - midX) + PAD;
-    cropX0 = Math.max(0, Math.round(midX - halfW));
-    cropX1 = Math.min(totalW, Math.round(midX + halfW));
+    // Беремо реальні зовнішні краї обох гравців — без примусової симетрії
+    cropX0 = Math.max(0, Math.round(Math.min(lRect.x0, rRect.x0) - PAD));
+    cropX1 = Math.min(totalW, Math.round(Math.max(lRect.x1, rRect.x1) + PAD));
     const halfH = Math.max(midY - Math.min(lRect.y0, rRect.y0), Math.max(lRect.y1, rRect.y1) - midY) + PAD;
     cropY0 = Math.max(0, Math.round(midY - halfH));
     cropY1 = Math.min(totalH, Math.round(midY + halfH));
