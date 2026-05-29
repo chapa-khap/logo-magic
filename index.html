@@ -2273,16 +2273,24 @@ function muAutocropCanvas() {
   const rRect = R ? contentInResult(R, getLayout(R, slotSize + gap), MU.rightFlipped, rHW) : null;
 
   const PAD = 20;
-  const midY = totalH / 2;
   let cropX0, cropX1, cropY0, cropY1;
 
   if (lRect && rRect) {
-    // Беремо реальні зовнішні краї обох гравців — без примусової симетрії
+    // Горизонталь: реальні зовнішні краї
     cropX0 = Math.max(0, Math.round(Math.min(lRect.x0, rRect.x0) - PAD));
     cropX1 = Math.min(totalW, Math.round(Math.max(lRect.x1, rRect.x1) + PAD));
-    const halfH = Math.max(midY - Math.min(lRect.y0, rRect.y0), Math.max(lRect.y1, rRect.y1) - midY) + PAD;
-    cropY0 = Math.max(0, Math.round(midY - halfH));
-    cropY1 = Math.min(totalH, Math.round(midY + halfH));
+    if (MU.ratio === 'free') {
+      // Зверху: по найвищому гравцю (менший y0 = вища голова) — щоб не обрізати
+      // Знизу: по найвищому гравцю (менший y1 = коротші ноги) — щоб не було відступу
+      cropY0 = Math.max(0, Math.round(Math.min(lRect.y0, rRect.y0) - PAD));
+      cropY1 = Math.min(totalH, Math.round(Math.min(lRect.y1, rRect.y1) + PAD));
+    } else {
+      // Для 2:1 і 1:1 — симетрично від центру по найбільших межах
+      const midY = totalH / 2;
+      const halfH = Math.max(midY - Math.min(lRect.y0, rRect.y0), Math.max(lRect.y1, rRect.y1) - midY) + PAD;
+      cropY0 = Math.max(0, Math.round(midY - halfH));
+      cropY1 = Math.min(totalH, Math.round(midY + halfH));
+    }
   } else {
     const rect = lRect || rRect;
     cropX0 = Math.max(0, Math.round(rect.x0 - PAD));
